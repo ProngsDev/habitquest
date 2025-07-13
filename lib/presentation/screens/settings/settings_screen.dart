@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/theme_providers.dart';
@@ -23,7 +24,7 @@ class SettingsScreen extends ConsumerWidget {
         child: ListView(
           children: [
             const SizedBox(height: 16),
-            
+
             // Theme Section
             _buildSection(
               title: 'Appearance',
@@ -39,7 +40,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            
+
             // Notifications Section
             _buildSection(
               title: 'Notifications',
@@ -56,7 +57,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            
+
             // Data Section
             _buildSection(
               title: 'Data',
@@ -76,15 +77,12 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            
+
             // About Section
             _buildSection(
               title: 'About',
               children: [
-                _buildSettingsTile(
-                  title: 'Version',
-                  subtitle: '1.0.0',
-                ),
+                _buildSettingsTile(title: 'Version', subtitle: '1.0.0'),
                 _buildSettingsTile(
                   title: 'Privacy Policy',
                   onTap: () {
@@ -109,30 +107,30 @@ class SettingsScreen extends ConsumerWidget {
     required String title,
     required List<Widget> children,
   }) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Text(
-            title.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: CupertinoColors.systemGrey,
-            ),
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Text(
+          title.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: CupertinoColors.systemGrey,
           ),
         ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: CupertinoColors.systemBackground,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(children: children),
+      ),
+      Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemBackground,
+          borderRadius: BorderRadius.circular(12),
         ),
-        const SizedBox(height: 24),
-      ],
-    );
+        child: Column(children: children),
+      ),
+      const SizedBox(height: 24),
+    ],
+  );
 
   Widget _buildSettingsTile({
     required String title,
@@ -141,28 +139,26 @@ class SettingsScreen extends ConsumerWidget {
     VoidCallback? onTap,
     Color? textColor,
   }) => CupertinoListTile(
-      title: Text(
-        title,
-        style: TextStyle(
-          color: textColor ?? CupertinoColors.label,
-          fontSize: 17,
-        ),
-      ),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle,
-              style: const TextStyle(
-                color: CupertinoColors.systemGrey,
-                fontSize: 15,
-              ),
-            )
-          : null,
-      trailing: trailing ?? 
-          (onTap != null 
-              ? const Icon(CupertinoIcons.chevron_right, size: 16)
-              : null),
-      onTap: onTap,
-    );
+    title: Text(
+      title,
+      style: TextStyle(color: textColor ?? CupertinoColors.label, fontSize: 17),
+    ),
+    subtitle: subtitle != null
+        ? Text(
+            subtitle,
+            style: const TextStyle(
+              color: CupertinoColors.systemGrey,
+              fontSize: 15,
+            ),
+          )
+        : null,
+    trailing:
+        trailing ??
+        (onTap != null
+            ? const Icon(CupertinoIcons.chevron_right, size: 16)
+            : null),
+    onTap: onTap,
+  );
 
   String _getThemeModeText(ThemeMode mode) {
     switch (mode) {

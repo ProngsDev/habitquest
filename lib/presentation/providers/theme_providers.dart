@@ -1,16 +1,18 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_theme.dart';
 
 /// Provider for theme mode (light/dark)
-final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) => 
-    ThemeModeNotifier());
+final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>(
+  (ref) => ThemeModeNotifier(),
+);
 
 /// Provider for current theme data
 final currentThemeProvider = Provider<CupertinoThemeData>((ref) {
   final themeMode = ref.watch(themeModeProvider);
-  
+
   switch (themeMode) {
     case ThemeMode.light:
       return AppTheme.lightTheme;
@@ -26,7 +28,7 @@ final currentThemeProvider = Provider<CupertinoThemeData>((ref) {
 /// Provider for checking if dark mode is active
 final isDarkModeProvider = Provider<bool>((ref) {
   final themeMode = ref.watch(themeModeProvider);
-  
+
   switch (themeMode) {
     case ThemeMode.light:
       return false;

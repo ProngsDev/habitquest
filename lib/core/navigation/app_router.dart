@@ -26,7 +26,7 @@ class AppRouter {
           builder: (_) => const HomeScreen(),
           settings: settings,
         );
-        
+
       case AppRoutes.habitForm:
         final args = settings.arguments as Map<String, dynamic>?;
         return CupertinoPageRoute<void>(
@@ -37,32 +37,32 @@ class AppRouter {
           settings: settings,
           fullscreenDialog: true,
         );
-        
+
       case AppRoutes.habitDetail:
-        final habitId = settings.arguments as String;
+        final habitId = settings.arguments! as String;
         return CupertinoPageRoute<void>(
           builder: (_) => HabitDetailScreen(habitId: habitId),
           settings: settings,
         );
-        
+
       case AppRoutes.progress:
         return CupertinoPageRoute<void>(
           builder: (_) => const ProgressScreen(),
           settings: settings,
         );
-        
+
       case AppRoutes.profile:
         return CupertinoPageRoute<void>(
           builder: (_) => const ProfileScreen(),
           settings: settings,
         );
-        
+
       case AppRoutes.settings:
         return CupertinoPageRoute<void>(
           builder: (_) => const SettingsScreen(),
           settings: settings,
         );
-        
+
       default:
         return CupertinoPageRoute<void>(
           builder: (_) => const _NotFoundScreen(),
@@ -79,11 +79,7 @@ class AppNavigation {
     String routeName, {
     Object? arguments,
   }) {
-    Navigator.pushNamed(
-      context,
-      routeName,
-      arguments: arguments,
-    );
+    Navigator.pushNamed(context, routeName, arguments: arguments);
   }
 
   static void pushReplacementNamed(
@@ -91,11 +87,7 @@ class AppNavigation {
     String routeName, {
     Object? arguments,
   }) {
-    Navigator.pushReplacementNamed(
-      context,
-      routeName,
-      arguments: arguments,
-    );
+    Navigator.pushReplacementNamed(context, routeName, arguments: arguments);
   }
 
   static void pop(BuildContext context, [Object? result]) {
@@ -103,10 +95,7 @@ class AppNavigation {
   }
 
   static void popUntil(BuildContext context, String routeName) {
-    Navigator.popUntil(
-      context,
-      ModalRoute.withName(routeName),
-    );
+    Navigator.popUntil(context, ModalRoute.withName(routeName));
   }
 
   // Specific navigation methods
@@ -114,19 +103,12 @@ class AppNavigation {
     pushNamed(
       context,
       AppRoutes.habitForm,
-      arguments: {
-        'habitId': habitId,
-        'isEditing': habitId != null,
-      },
+      arguments: {'habitId': habitId, 'isEditing': habitId != null},
     );
   }
 
   static void toHabitDetail(BuildContext context, String habitId) {
-    pushNamed(
-      context,
-      AppRoutes.habitDetail,
-      arguments: habitId,
-    );
+    pushNamed(context, AppRoutes.habitDetail, arguments: habitId);
   }
 
   static void toSettings(BuildContext context) {
@@ -140,38 +122,33 @@ class _NotFoundScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Page Not Found'),
+    navigationBar: const CupertinoNavigationBar(middle: Text('Page Not Found')),
+    child: const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            CupertinoIcons.exclamationmark_triangle,
+            size: 64,
+            color: CupertinoColors.systemGrey,
+          ),
+          SizedBox(height: 16),
+          Text(
+            'Page Not Found',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: CupertinoColors.label,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'The page you are looking for does not exist.',
+            style: TextStyle(fontSize: 16, color: CupertinoColors.systemGrey),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
-      child: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              CupertinoIcons.exclamationmark_triangle,
-              size: 64,
-              color: CupertinoColors.systemGrey,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Page Not Found',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: CupertinoColors.label,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'The page you are looking for does not exist.',
-              style: TextStyle(
-                fontSize: 16,
-                color: CupertinoColors.systemGrey,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
+    ),
+  );
 }

@@ -139,7 +139,7 @@ class AppTheme {
     'social': CupertinoColors.systemPink,
     'creativity': CupertinoColors.systemYellow,
     'mindfulness': CupertinoColors.systemGreen,
-    'other': CupertinoColors.systemGray,
+    'other': CupertinoColors.systemGrey,
   };
 
   // Difficulty colors
@@ -151,16 +151,16 @@ class AppTheme {
 
   // Level colors
   static const List<Color> levelColors = [
-    CupertinoColors.systemGray,    // Novice
-    CupertinoColors.systemBlue,    // Apprentice
-    CupertinoColors.systemGreen,   // Intermediate
-    CupertinoColors.systemOrange,  // Competent
-    CupertinoColors.systemPurple,  // Experienced
-    CupertinoColors.systemPink,    // Skilled
-    CupertinoColors.systemRed,     // Advanced
-    CupertinoColors.systemYellow,  // Expert
-    CupertinoColors.systemTeal,    // Master
-    CupertinoColors.systemIndigo,  // Grandmaster
+    CupertinoColors.systemGrey, // Novice
+    CupertinoColors.systemBlue, // Apprentice
+    CupertinoColors.systemGreen, // Intermediate
+    CupertinoColors.systemOrange, // Competent
+    CupertinoColors.systemPurple, // Experienced
+    CupertinoColors.systemPink, // Skilled
+    CupertinoColors.systemRed, // Advanced
+    CupertinoColors.systemYellow, // Expert
+    CupertinoColors.systemTeal, // Master
+    CupertinoColors.systemIndigo, // Grandmaster
   ];
 
   // Text styles
@@ -213,11 +213,11 @@ class AppTheme {
   );
 
   // Helper methods
-  static Color getCategoryColor(String category) => 
-      categoryColors[category.toLowerCase()] ?? CupertinoColors.systemGray;
+  static Color getCategoryColor(String category) =>
+      categoryColors[category.toLowerCase()] ?? CupertinoColors.systemGrey;
 
-  static Color getDifficultyColor(String difficulty) => 
-      difficultyColors[difficulty.toLowerCase()] ?? CupertinoColors.systemGray;
+  static Color getDifficultyColor(String difficulty) =>
+      difficultyColors[difficulty.toLowerCase()] ?? CupertinoColors.systemGrey;
 
   static Color getLevelColor(int level) {
     final index = ((level - 1) / 10).floor().clamp(0, levelColors.length - 1);

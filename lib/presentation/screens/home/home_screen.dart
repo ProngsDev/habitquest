@@ -127,21 +127,18 @@ class HabitsTab extends StatelessWidget {
                 forceColumns: ResponsiveUtils.isMobile(context) ? 3 : null,
                 children: [
                   _buildStatCard(
-                    context,
                     'Level',
                     '1',
                     CupertinoIcons.star_fill,
                     CupertinoColors.systemYellow,
                   ),
                   _buildStatCard(
-                    context,
                     'Streak',
                     '0',
                     CupertinoIcons.flame_fill,
                     CupertinoColors.systemOrange,
                   ),
                   _buildStatCard(
-                    context,
                     'XP',
                     '0',
                     CupertinoIcons.bolt_fill,
