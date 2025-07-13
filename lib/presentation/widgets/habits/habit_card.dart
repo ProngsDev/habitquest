@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/enums/habit_enums.dart';
 import '../../../core/navigation/app_router.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../domain/entities/habit.dart';
 import '../common/custom_card.dart';
 
@@ -154,7 +153,6 @@ class HabitCard extends ConsumerWidget {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: CupertinoColors.systemYellow.withValues(alpha: 0.3),
-              width: 1,
             ),
           ),
           child: Row(
@@ -226,7 +224,7 @@ class HabitCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

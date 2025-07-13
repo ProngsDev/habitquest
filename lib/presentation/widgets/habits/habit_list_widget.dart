@@ -49,10 +49,16 @@ class HabitListWidget extends ConsumerWidget {
     }
   }
 
-  Widget _buildHabitsList(BuildContext context, WidgetRef ref, List<Habit> habits) {
+  Widget _buildHabitsList(
+    BuildContext context,
+    WidgetRef ref,
+    List<Habit> habits,
+  ) {
     // Apply category filter if specified
     final filteredHabits = categoryFilter != null
-        ? habits.where((habit) => habit.category.name == categoryFilter).toList()
+        ? habits
+              .where((habit) => habit.category.name == categoryFilter)
+              .toList()
         : habits;
 
     if (filteredHabits.isEmpty) {
@@ -80,9 +86,7 @@ class HabitListWidget extends ConsumerWidget {
     return const Center(
       child: Padding(
         padding: EdgeInsets.all(32),
-        child: LoadingWidget(
-          message: 'Loading habits...',
-        ),
+        child: LoadingWidget(message: 'Loading habits...'),
       ),
     );
   }
@@ -142,13 +146,13 @@ class HabitListWidget extends ConsumerWidget {
   }
 
   void _handleHabitCompletion(WidgetRef ref, Habit habit) {
-    // TODO: Implement habit completion tracking
+    // TODO(enhancement): Implement habit completion tracking
     // This will be implemented in the next phase
-    print('Habit completed: ${habit.name}');
+    debugPrint('Habit completed: ${habit.name}');
   }
 
   bool _isHabitCompletedToday(Habit habit) {
-    // TODO: Implement actual completion checking
+    // TODO(enhancement): Implement actual completion checking
     // This will be implemented in the next phase
     return false;
   }
@@ -172,17 +176,11 @@ class TodaysHabitsWidget extends ConsumerWidget {
 class CategoryHabitsWidget extends ConsumerWidget {
   final String category;
 
-  const CategoryHabitsWidget({
-    super.key,
-    required this.category,
-  });
+  const CategoryHabitsWidget({super.key, required this.category});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return HabitListWidget(
-      showActiveOnly: true,
-      categoryFilter: category,
-    );
+    return HabitListWidget(showActiveOnly: true, categoryFilter: category);
   }
 }
 
@@ -190,10 +188,7 @@ class CategoryHabitsWidget extends ConsumerWidget {
 class HabitSearchResultsWidget extends ConsumerWidget {
   final String searchQuery;
 
-  const HabitSearchResultsWidget({
-    super.key,
-    required this.searchQuery,
-  });
+  const HabitSearchResultsWidget({super.key, required this.searchQuery});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -208,10 +203,7 @@ class HabitSearchResultsWidget extends ConsumerWidget {
 class CompactHabitListWidget extends ConsumerWidget {
   final int maxItems;
 
-  const CompactHabitListWidget({
-    super.key,
-    this.maxItems = 3,
-  });
+  const CompactHabitListWidget({super.key, this.maxItems = 3});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -224,16 +216,18 @@ class CompactHabitListWidget extends ConsumerWidget {
         }
 
         final displayHabits = habits.take(maxItems).toList();
-        
+
         return Column(
           children: [
-            ...displayHabits.map((habit) => HabitCard(
-              habit: habit,
-              onTap: () => AppNavigation.toHabitDetail(context, habit.id),
-              onComplete: () => _handleHabitCompletion(ref, habit),
-              isCompleted: _isHabitCompletedToday(habit),
-            )),
-            
+            ...displayHabits.map(
+              (habit) => HabitCard(
+                habit: habit,
+                onTap: () => AppNavigation.toHabitDetail(context, habit.id),
+                onComplete: () => _handleHabitCompletion(ref, habit),
+                isCompleted: _isHabitCompletedToday(habit),
+              ),
+            ),
+
             if (habits.length > maxItems) ...[
               const SizedBox(height: 8),
               CupertinoButton(
@@ -253,12 +247,12 @@ class CompactHabitListWidget extends ConsumerWidget {
   }
 
   void _handleHabitCompletion(WidgetRef ref, Habit habit) {
-    // TODO: Implement habit completion tracking
-    print('Habit completed: ${habit.name}');
+    // TODO(enhancement): Implement habit completion tracking
+    debugPrint('Habit completed: ${habit.name}');
   }
 
   bool _isHabitCompletedToday(Habit habit) {
-    // TODO: Implement actual completion checking
+    // TODO(enhancement): Implement actual completion checking
     return false;
   }
 }
