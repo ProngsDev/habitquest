@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
+
 /// Domain entity representing a user
+@immutable
 class User {
   final String id;
   final String name;
@@ -18,11 +21,11 @@ class User {
   const User({
     required this.id,
     required this.name,
+    required this.createdAt,
+    required this.lastActiveAt,
     this.email,
     this.totalXp = 0,
     this.level = 1,
-    required this.createdAt,
-    required this.lastActiveAt,
     this.avatarPath,
     this.coins = 0,
     this.preferences = const {},
@@ -45,24 +48,22 @@ class User {
     int? longestStreak,
     int? currentStreak,
     int? totalHabitsCompleted,
-  }) {
-    return User(
-      id: id,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      totalXp: totalXp ?? this.totalXp,
-      level: level ?? this.level,
-      createdAt: createdAt,
-      lastActiveAt: lastActiveAt ?? this.lastActiveAt,
-      avatarPath: avatarPath ?? this.avatarPath,
-      coins: coins ?? this.coins,
-      preferences: preferences ?? this.preferences,
-      unlockedAchievements: unlockedAchievements ?? this.unlockedAchievements,
-      longestStreak: longestStreak ?? this.longestStreak,
-      currentStreak: currentStreak ?? this.currentStreak,
-      totalHabitsCompleted: totalHabitsCompleted ?? this.totalHabitsCompleted,
-    );
-  }
+  }) => User(
+    id: id,
+    name: name ?? this.name,
+    email: email ?? this.email,
+    totalXp: totalXp ?? this.totalXp,
+    level: level ?? this.level,
+    createdAt: createdAt,
+    lastActiveAt: lastActiveAt ?? this.lastActiveAt,
+    avatarPath: avatarPath ?? this.avatarPath,
+    coins: coins ?? this.coins,
+    preferences: preferences ?? this.preferences,
+    unlockedAchievements: unlockedAchievements ?? this.unlockedAchievements,
+    longestStreak: longestStreak ?? this.longestStreak,
+    currentStreak: currentStreak ?? this.currentStreak,
+    totalHabitsCompleted: totalHabitsCompleted ?? this.totalHabitsCompleted,
+  );
 
   /// Get XP progress in current level
   int get xpProgressInLevel => totalXp % 100;
@@ -83,7 +84,6 @@ class User {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() {
-    return 'User(id: $id, name: $name, level: $level, totalXp: $totalXp)';
-  }
+  String toString() =>
+      'User(id: $id, name: $name, level: $level, totalXp: $totalXp)';
 }

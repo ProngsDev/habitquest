@@ -3,43 +3,36 @@ import 'package:intl/intl.dart';
 /// Utility functions for date operations
 class DateUtils {
   /// Get the start of the day for a given date
-  static DateTime startOfDay(DateTime date) {
-    return DateTime(date.year, date.month, date.day);
-  }
+  static DateTime startOfDay(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
 
   /// Get the end of the day for a given date
-  static DateTime endOfDay(DateTime date) {
-    return DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
-  }
+  static DateTime endOfDay(DateTime date) =>
+      DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
 
   /// Check if two dates are on the same day
-  static bool isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
-  }
+  static bool isSameDay(DateTime date1, DateTime date2) =>
+      date1.year == date2.year &&
+      date1.month == date2.month &&
+      date1.day == date2.day;
 
   /// Get the number of days between two dates
   static int daysBetween(DateTime from, DateTime to) {
-    from = startOfDay(from);
-    to = startOfDay(to);
-    return (to.difference(from).inHours / 24).round();
+    final fromStart = startOfDay(from);
+    final toStart = startOfDay(to);
+    return (toStart.difference(fromStart).inHours / 24).round();
   }
 
   /// Format date for display
-  static String formatDate(DateTime date) {
-    return DateFormat('MMM dd, yyyy').format(date);
-  }
+  static String formatDate(DateTime date) =>
+      DateFormat('MMM dd, yyyy').format(date);
 
   /// Format date for short display
-  static String formatDateShort(DateTime date) {
-    return DateFormat('MMM dd').format(date);
-  }
+  static String formatDateShort(DateTime date) =>
+      DateFormat('MMM dd').format(date);
 
   /// Format time for display
-  static String formatTime(DateTime time) {
-    return DateFormat('HH:mm').format(time);
-  }
+  static String formatTime(DateTime time) => DateFormat('HH:mm').format(time);
 
   /// Get the start of the week (Monday)
   static DateTime startOfWeek(DateTime date) {
@@ -54,20 +47,21 @@ class DateUtils {
   }
 
   /// Get the start of the month
-  static DateTime startOfMonth(DateTime date) {
-    return DateTime(date.year, date.month, 1);
-  }
+  static DateTime startOfMonth(DateTime date) =>
+      DateTime(date.year, date.month);
 
   /// Get the end of the month
-  static DateTime endOfMonth(DateTime date) {
-    return DateTime(date.year, date.month + 1, 0, 23, 59, 59, 999);
-  }
+  static DateTime endOfMonth(DateTime date) =>
+      DateTime(date.year, date.month + 1, 0, 23, 59, 59, 999);
 
   /// Get a list of dates for the current week
   static List<DateTime> getCurrentWeekDates() {
     final now = DateTime.now();
     final startOfWeekDate = startOfWeek(now);
-    return List.generate(7, (index) => startOfWeekDate.add(Duration(days: index)));
+    return List.generate(
+      7,
+      (index) => startOfWeekDate.add(Duration(days: index)),
+    );
   }
 
   /// Get a list of dates for the current month
@@ -76,7 +70,7 @@ class DateUtils {
     final startOfMonthDate = startOfMonth(now);
     final endOfMonthDate = endOfMonth(now);
     final daysInMonth = endOfMonthDate.day;
-    
+
     return List.generate(
       daysInMonth,
       (index) => startOfMonthDate.add(Duration(days: index)),
@@ -84,9 +78,7 @@ class DateUtils {
   }
 
   /// Check if a date is today
-  static bool isToday(DateTime date) {
-    return isSameDay(date, DateTime.now());
-  }
+  static bool isToday(DateTime date) => isSameDay(date, DateTime.now());
 
   /// Check if a date is yesterday
   static bool isYesterday(DateTime date) {

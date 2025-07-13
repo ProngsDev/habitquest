@@ -9,15 +9,13 @@ class HabitQuestApp extends StatelessWidget {
   const HabitQuestApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return CupertinoApp(
-      title: 'HabitQuest',
-      theme: const CupertinoThemeData(
-        primaryColor: CupertinoColors.systemBlue,
-        brightness: Brightness.light,
-      ),
-      home: const HomeScreen(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
+  Widget build(BuildContext context) => const CupertinoApp(
+    title: 'HabitQuest',
+    theme: CupertinoThemeData(
+      primaryColor: CupertinoColors.systemBlue,
+      brightness: Brightness.light,
+    ),
+    home: HomeScreen(),
+    debugShowCheckedModeBanner: false,
+  );
 }

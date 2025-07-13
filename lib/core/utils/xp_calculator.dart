@@ -4,22 +4,25 @@ import '../enums/habit_enums.dart';
 /// Utility class for calculating XP and levels
 class XpCalculator {
   /// Calculate XP earned for completing a habit
-  static int calculateHabitXp(HabitDifficulty difficulty, {int streakCount = 0}) {
-    int baseXp = AppConstants.baseXpPerHabit * difficulty.xpMultiplier;
-    
+  static int calculateHabitXp(
+    HabitDifficulty difficulty, {
+    int streakCount = 0,
+  }) {
+    final baseXp = AppConstants.baseXpPerHabit * difficulty.xpMultiplier;
+
     // Apply streak bonus if applicable
     if (streakCount >= AppConstants.minStreakForBonus) {
-      baseXp = (baseXp * AppConstants.streakBonusMultiplier).round();
+      return (baseXp * AppConstants.streakBonusMultiplier).round();
     }
-    
+
     return baseXp;
   }
 
   /// Calculate level from total XP
   static int calculateLevel(int totalXp) {
     if (totalXp <= 0) return 1;
-    
-    int level = (totalXp / AppConstants.xpPerLevel).floor() + 1;
+
+    final level = (totalXp / AppConstants.xpPerLevel).floor() + 1;
     return level > AppConstants.maxLevel ? AppConstants.maxLevel : level;
   }
 
@@ -30,15 +33,14 @@ class XpCalculator {
   }
 
   /// Calculate XP progress towards next level
-  static int xpProgressInCurrentLevel(int totalXp) {
-    return totalXp % AppConstants.xpPerLevel;
-  }
+  static int xpProgressInCurrentLevel(int totalXp) =>
+      totalXp % AppConstants.xpPerLevel;
 
   /// Calculate percentage progress towards next level
   static double levelProgressPercentage(int totalXp) {
     final currentLevel = calculateLevel(totalXp);
-    if (currentLevel >= AppConstants.maxLevel) return 1.0;
-    
+    if (currentLevel >= AppConstants.maxLevel) return 1;
+
     final progressInLevel = xpProgressInCurrentLevel(totalXp);
     return progressInLevel / AppConstants.xpPerLevel;
   }
@@ -69,7 +71,7 @@ class XpCalculator {
     if (streakCount >= AppConstants.minStreakForBonus) {
       return AppConstants.streakBonusMultiplier;
     }
-    return 1.0;
+    return 1;
   }
 
   /// Calculate weekly XP goal based on user level

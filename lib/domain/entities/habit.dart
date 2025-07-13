@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
+
 import '../../core/enums/habit_enums.dart';
 
 /// Domain entity representing a habit
+@immutable
 class Habit {
   final String id;
   final String name;
@@ -24,10 +27,10 @@ class Habit {
     required this.difficulty,
     required this.frequency,
     required this.createdAt,
+    required this.colorValue,
     this.reminderTime,
     this.isActive = true,
     this.iconName,
-    required this.colorValue,
     this.targetCount = 1,
     this.unit,
   });
@@ -44,23 +47,21 @@ class Habit {
     int? colorValue,
     int? targetCount,
     String? unit,
-  }) {
-    return Habit(
-      id: id,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      category: category ?? this.category,
-      difficulty: difficulty ?? this.difficulty,
-      frequency: frequency ?? this.frequency,
-      createdAt: createdAt,
-      reminderTime: reminderTime ?? this.reminderTime,
-      isActive: isActive ?? this.isActive,
-      iconName: iconName ?? this.iconName,
-      colorValue: colorValue ?? this.colorValue,
-      targetCount: targetCount ?? this.targetCount,
-      unit: unit ?? this.unit,
-    );
-  }
+  }) => Habit(
+    id: id,
+    name: name ?? this.name,
+    description: description ?? this.description,
+    category: category ?? this.category,
+    difficulty: difficulty ?? this.difficulty,
+    frequency: frequency ?? this.frequency,
+    createdAt: createdAt,
+    reminderTime: reminderTime ?? this.reminderTime,
+    isActive: isActive ?? this.isActive,
+    iconName: iconName ?? this.iconName,
+    colorValue: colorValue ?? this.colorValue,
+    targetCount: targetCount ?? this.targetCount,
+    unit: unit ?? this.unit,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -72,7 +73,6 @@ class Habit {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() {
-    return 'Habit(id: $id, name: $name, category: $category, difficulty: $difficulty)';
-  }
+  String toString() =>
+      'Habit(id: $id, name: $name, category: $category, difficulty: $difficulty)';
 }
