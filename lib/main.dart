@@ -8,6 +8,7 @@ import 'data/models/achievement_model.dart';
 import 'data/models/habit_completion_model.dart';
 import 'data/models/habit_model.dart';
 import 'data/models/user_model.dart';
+import 'presentation/providers/theme_providers.dart';
 import 'presentation/screens/home/home_screen.dart';
 
 void main() async {
@@ -37,17 +38,18 @@ void main() async {
   runApp(const ProviderScope(child: HabitQuestApp()));
 }
 
-class HabitQuestApp extends StatelessWidget {
+class HabitQuestApp extends ConsumerWidget {
   const HabitQuestApp({super.key});
 
   @override
-  Widget build(BuildContext context) => const CupertinoApp(
-    title: 'HabitQuest',
-    theme: CupertinoThemeData(
-      primaryColor: CupertinoColors.systemBlue,
-      brightness: Brightness.light,
-    ),
-    home: HomeScreen(),
-    debugShowCheckedModeBanner: false,
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentTheme = ref.watch(currentThemeProvider);
+
+    return CupertinoApp(
+      title: 'HabitQuest',
+      theme: currentTheme,
+      home: const HomeScreen(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
 }
