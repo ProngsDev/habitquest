@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/navigation/app_router.dart';
+import '../../../core/utils/responsive_utils.dart';
 import '../../providers/app_providers.dart';
+import '../../widgets/layout/responsive_grid.dart';
 import '../profile/profile_screen.dart';
 import '../progress/progress_screen.dart';
 
@@ -69,78 +71,81 @@ class HabitsTab extends StatelessWidget {
         ),
       ),
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+        child: ResponsiveContainer(
           child: Column(
             children: [
               // Welcome section
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: ResponsiveUtils.getResponsivePadding(context),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [
                       CupertinoColors.systemBlue,
-                      CupertinoColors.systemBlue.darkColor,
+                      CupertinoColors.systemBlue,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '🚀 Welcome to HabitQuest!',
                       style: TextStyle(
                         color: CupertinoColors.white,
-                        fontSize: 24,
+                        fontSize: ResponsiveUtils.getResponsiveFontSize(
+                          context,
+                          baseFontSize: 24,
+                        ),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'Start your journey to better habits',
                       style: TextStyle(
                         color: CupertinoColors.white,
-                        fontSize: 16,
+                        fontSize: ResponsiveUtils.getResponsiveFontSize(
+                          context,
+                          baseFontSize: 16,
+                        ),
                         fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(
+                height: ResponsiveUtils.getResponsiveSpacing(context) * 1.5,
+              ),
 
               // Quick stats
-              Row(
+              ResponsiveGrid(
+                forceColumns: ResponsiveUtils.isMobile(context) ? 3 : null,
                 children: [
-                  Expanded(
-                    child: _buildStatCard(
-                      'Level',
-                      '1',
-                      CupertinoIcons.star_fill,
-                      CupertinoColors.systemYellow,
-                    ),
+                  _buildStatCard(
+                    context,
+                    'Level',
+                    '1',
+                    CupertinoIcons.star_fill,
+                    CupertinoColors.systemYellow,
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                      'Streak',
-                      '0',
-                      CupertinoIcons.flame_fill,
-                      CupertinoColors.systemOrange,
-                    ),
+                  _buildStatCard(
+                    context,
+                    'Streak',
+                    '0',
+                    CupertinoIcons.flame_fill,
+                    CupertinoColors.systemOrange,
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                      'XP',
-                      '0',
-                      CupertinoIcons.bolt_fill,
-                      CupertinoColors.systemPurple,
-                    ),
+                  _buildStatCard(
+                    context,
+                    'XP',
+                    '0',
+                    CupertinoIcons.bolt_fill,
+                    CupertinoColors.systemPurple,
                   ),
                 ],
               ),
