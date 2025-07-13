@@ -8,6 +8,7 @@ import '../../../core/utils/responsive_utils.dart';
 import '../../../domain/entities/habit.dart';
 import '../../providers/app_providers.dart';
 import '../../providers/habit_providers.dart';
+import '../../providers/notification_providers.dart';
 import '../../widgets/common/custom_text_field.dart';
 
 /// Screen for creating and editing habits
@@ -207,9 +208,25 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
         await ref.read(habitRepositoryProvider).createHabit(newHabit);
       }
 
+      // Schedule notification if reminder is set
+      final notificationNotifier = ref.read(habitNotificationProvider.notifier);
+      if (widget.isEditing && widget.habitId != null) {
+        // For editing, we need to get the updated habit from the repository
+        final updatedHabitAsync = ref.read(habitByIdProvider(widget.habitId!));
+        final updatedHabit = updatedHabitAsync.when(
+          data: (habit) => habit,
+          loading: () => null,
+          error: (_, __) => null,
+        );
+        if (updatedHabit != null) {
+          await notificationNotifier.updateHabitNotification(updatedHabit);
+        }
+      }
+
       // Refresh habits list
-      ref.invalidate(habitsProvider);
-      ref.invalidate(activeHabitsProvider);
+      ref
+        ..invalidate(habitsProvider)
+        ..invalidate(activeHabitsProvider);
 
       if (mounted) {
         Navigator.pop(context);

@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'core/constants/app_constants.dart';
 import 'core/enums/habit_enums.dart';
 import 'core/navigation/app_router.dart';
+import 'core/services/notification_service.dart';
 import 'data/models/achievement_model.dart';
 import 'data/models/habit_completion_model.dart';
 import 'data/models/habit_model.dart';
@@ -34,6 +35,9 @@ void main() async {
   await Hive.openBox<UserModel>(AppConstants.userBoxName);
   await Hive.openBox<HabitModel>(AppConstants.habitsBoxName);
   await Hive.openBox<AchievementModel>(AppConstants.achievementsBoxName);
+
+  // Initialize notification service
+  await NotificationService().initialize();
 
   runApp(const ProviderScope(child: HabitQuestApp()));
 }
