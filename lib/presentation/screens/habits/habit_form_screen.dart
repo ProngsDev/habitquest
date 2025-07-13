@@ -445,7 +445,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? CupertinoColors.systemBlue.withOpacity(0.1)
+                    ? CupertinoColors.systemBlue.withValues(alpha: 0.1)
                     : null,
                 border: category != HabitCategory.values.last
                     ? const Border(

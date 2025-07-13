@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/enums/habit_enums.dart';
 import '../../../core/navigation/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/responsive_utils.dart';
