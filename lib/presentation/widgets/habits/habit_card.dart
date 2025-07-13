@@ -261,24 +261,7 @@ class HabitCard extends ConsumerWidget {
   }
 
   IconData _getCategoryIcon(HabitCategory category) {
-    switch (category) {
-      case HabitCategory.health:
-        return CupertinoIcons.heart_fill;
-      case HabitCategory.fitness:
-        return CupertinoIcons.sportscourt_fill;
-      case HabitCategory.productivity:
-        return CupertinoIcons.briefcase_fill;
-      case HabitCategory.learning:
-        return CupertinoIcons.book_fill;
-      case HabitCategory.mindfulness:
-        return CupertinoIcons.leaf_arrow_circlepath;
-      case HabitCategory.social:
-        return CupertinoIcons.person_2_fill;
-      case HabitCategory.creativity:
-        return CupertinoIcons.paintbrush_fill;
-      case HabitCategory.other:
-        return CupertinoIcons.circle_grid_3x3_fill;
-    }
+    return category.icon;
   }
 
   int _calculateXP() {

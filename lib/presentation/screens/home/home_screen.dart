@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/navigation/app_router.dart';
 import '../../../core/utils/responsive_utils.dart';
+import '../../../core/utils/xp_calculator.dart';
 import '../../providers/app_providers.dart';
 import '../../providers/habit_providers.dart';
 import '../../widgets/habits/habit_list_widget.dart';
@@ -135,7 +136,9 @@ class HabitsTab extends ConsumerWidget {
                     _buildStatCard(
                       'Level',
                       '${stats['userLevel'] ?? 1}',
-                      CupertinoIcons.star_fill,
+                      XpCalculator.getLevelIcon(
+                        (stats['userLevel'] ?? 1) as int,
+                      ),
                       CupertinoColors.systemYellow,
                     ),
                     _buildStatCard(

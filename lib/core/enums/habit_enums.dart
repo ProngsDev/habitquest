@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 
 part 'habit_enums.g.dart';
@@ -78,6 +79,30 @@ enum HabitCategory {
     }
   }
 
+  /// Professional Cupertino icon for the category
+  IconData get icon {
+    switch (this) {
+      case HabitCategory.health:
+        return CupertinoIcons.heart_fill;
+      case HabitCategory.fitness:
+        return CupertinoIcons.sportscourt_fill;
+      case HabitCategory.learning:
+        return CupertinoIcons.book_fill;
+      case HabitCategory.productivity:
+        return CupertinoIcons.bolt_fill;
+      case HabitCategory.social:
+        return CupertinoIcons.person_2_fill;
+      case HabitCategory.creativity:
+        return CupertinoIcons.paintbrush_fill;
+      case HabitCategory.mindfulness:
+        return CupertinoIcons.leaf_arrow_circlepath;
+      case HabitCategory.other:
+        return CupertinoIcons.square_list_fill;
+    }
+  }
+
+  /// Legacy emoji support (deprecated - use icon instead)
+  @Deprecated('Use icon instead for better visual consistency')
   String get emoji {
     switch (this) {
       case HabitCategory.health:

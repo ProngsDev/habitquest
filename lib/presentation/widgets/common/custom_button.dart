@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/// Custom button widget with iOS-style design
-class CustomButton extends StatelessWidget {
+/// Enhanced custom button widget with modern iOS-style design and animations
+class CustomButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
@@ -13,6 +13,7 @@ class CustomButton extends StatelessWidget {
   final double? width;
   final double height;
   final EdgeInsetsGeometry? padding;
+  final bool enableHapticFeedback;
 
   const CustomButton({
     super.key,
@@ -26,60 +27,140 @@ class CustomButton extends StatelessWidget {
     this.width,
     this.height = 50.0,
     this.padding,
+    this.enableHapticFeedback = true,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
-    final defaultBackgroundColor = isSecondary
-        ? (isDark ? Colors.grey[800] : Colors.grey[200])
-        : theme.primaryColor;
-    
-    final defaultTextColor = isSecondary
-        ? theme.textTheme.bodyLarge?.color
-        : Colors.white;
+  State<CustomButton> createState() => _CustomButtonState();
+}
 
-    return SizedBox(
-      width: width,
-      height: height,
-      child: CupertinoButton(
-        onPressed: isLoading ? null : onPressed,
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 16.0),
-        color: backgroundColor ?? defaultBackgroundColor,
-        borderRadius: BorderRadius.circular(12.0),
-        child: isLoading
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CupertinoActivityIndicator(
-                  color: Colors.white,
-                ),
-              )
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[
-                    Icon(
-                      icon,
-                      color: textColor ?? defaultTextColor,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 8),
-                  ],
-                  Text(
-                    text,
-                    style: TextStyle(
-                      color: textColor ?? defaultTextColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+class _CustomButtonState extends State<CustomButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+  bool _isPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 150),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _handleTapDown(TapDownDetails details) {
+    if (widget.onPressed != null && !widget.isLoading) {
+      setState(() => _isPressed = true);
+      _animationController.forward();
+    }
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    _resetPress();
+  }
+
+  void _handleTapCancel() {
+    _resetPress();
+  }
+
+  void _resetPress() {
+    if (_isPressed) {
+      setState(() => _isPressed = false);
+      _animationController.reverse();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = CupertinoTheme.of(context).brightness == Brightness.dark;
+
+    final defaultBackgroundColor = widget.isSecondary
+        ? (isDark ? CupertinoColors.systemGrey5 : CupertinoColors.systemGrey6)
+        : CupertinoColors.systemBlue;
+
+    final defaultTextColor = widget.isSecondary
+        ? CupertinoColors.label
+        : CupertinoColors.white;
+
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: GestureDetector(
+            onTapDown: _handleTapDown,
+            onTapUp: _handleTapUp,
+            onTapCancel: _handleTapCancel,
+            child: Container(
+              width: widget.width,
+              height: widget.height,
+              decoration: BoxDecoration(
+                color: widget.backgroundColor ?? defaultBackgroundColor,
+                borderRadius: BorderRadius.circular(12.0),
+                boxShadow: widget.isSecondary
+                    ? null
+                    : [
+                        BoxShadow(
+                          color:
+                              (widget.backgroundColor ?? defaultBackgroundColor)
+                                  .withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
               ),
-      ),
+              child: CupertinoButton(
+                onPressed: widget.isLoading ? null : widget.onPressed,
+                padding:
+                    widget.padding ??
+                    const EdgeInsets.symmetric(horizontal: 16.0),
+                borderRadius: BorderRadius.circular(12.0),
+                child: widget.isLoading
+                    ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CupertinoActivityIndicator(
+                          color: widget.textColor ?? defaultTextColor,
+                        ),
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (widget.icon != null) ...[
+                            Icon(
+                              widget.icon,
+                              color: widget.textColor ?? defaultTextColor,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          Text(
+                            widget.text,
+                            style: TextStyle(
+                              color: widget.textColor ?? defaultTextColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -143,7 +224,7 @@ class CustomIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return SizedBox(
       width: size,
       height: size,

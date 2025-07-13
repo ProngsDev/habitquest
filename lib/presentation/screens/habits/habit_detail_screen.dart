@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -101,9 +103,10 @@ class HabitDetailScreen extends ConsumerWidget {
                   color: categoryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Text(
-                  habit.category.emoji,
-                  style: const TextStyle(fontSize: 24),
+                child: Icon(
+                  habit.category.icon,
+                  size: 24,
+                  color: categoryColor,
                 ),
               ),
               const SizedBox(width: 16),
@@ -396,7 +399,7 @@ class HabitDetailScreen extends ConsumerWidget {
           _buildDetailRow(
             'Category',
             habit.category.displayName,
-            habit.category.emoji,
+            habit.category.icon,
             AppTheme.getCategoryColor(habit.category.name),
           ),
           const SizedBox(height: 12),
@@ -410,7 +413,9 @@ class HabitDetailScreen extends ConsumerWidget {
           _buildDetailRow(
             'Status',
             habit.isActive ? 'Active' : 'Inactive',
-            habit.isActive ? '✅' : '⏸️',
+            habit.isActive
+                ? CupertinoIcons.checkmark_circle_fill
+                : CupertinoIcons.pause_circle_fill,
             habit.isActive
                 ? CupertinoColors.systemGreen
                 : CupertinoColors.systemGrey,
@@ -423,13 +428,13 @@ class HabitDetailScreen extends ConsumerWidget {
   Widget _buildDetailRow(
     String label,
     String value,
-    String? emoji,
+    IconData? icon,
     Color color,
   ) {
     return Row(
       children: [
-        if (emoji != null) ...[
-          Text(emoji, style: const TextStyle(fontSize: 20)),
+        if (icon != null) ...[
+          Icon(icon, color: color, size: 20),
           const SizedBox(width: 12),
         ] else ...[
           Container(
@@ -590,8 +595,8 @@ class HabitDetailScreen extends ConsumerWidget {
             isDestructiveAction: true,
             child: const Text('Delete'),
             onPressed: () async {
-              Navigator.pop(context);
-              await _deleteHabit(context, habit);
+              Navigator.pop(context); // Close dialog first
+              await _deleteHabitWithLoading(context, habit);
             },
           ),
         ],
@@ -599,10 +604,32 @@ class HabitDetailScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _deleteHabit(BuildContext context, Habit habit) async {
+  Future<void> _deleteHabitWithLoading(
+    BuildContext context,
+    Habit habit,
+  ) async {
+    // Show loading dialog
+    unawaited(
+      showCupertinoDialog<void>(
+        context: context,
+        builder: (context) => const CupertinoAlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CupertinoActivityIndicator(),
+              SizedBox(height: 16),
+              Text('Deleting habit...'),
+            ],
+          ),
+        ),
+      ),
+    );
+
     try {
       final ref = ProviderScope.containerOf(context);
       final repository = ref.read(habitRepositoryProvider);
+
+      // Delete the habit
       await repository.deleteHabit(habit.id);
 
       // Invalidate providers to refresh UI
@@ -610,22 +637,35 @@ class HabitDetailScreen extends ConsumerWidget {
         ..invalidate(habitsProvider)
         ..invalidate(activeHabitsProvider);
 
+      // Wait a brief moment for providers to update
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+
       if (context.mounted) {
-        Navigator.pop(context); // Go back to previous screen
+        // Close loading dialog
+        Navigator.pop(context);
+
+        // Navigate back to home with proper route clearing
+        Navigator.of(context).popUntil((route) => route.isFirst);
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (context.mounted) {
-        showCupertinoDialog<void>(
-          context: context,
-          builder: (context) => CupertinoAlertDialog(
-            title: const Text('Error'),
-            content: Text('Failed to delete habit: $e'),
-            actions: [
-              CupertinoDialogAction(
-                child: const Text('OK'),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
+        // Close loading dialog
+        Navigator.pop(context);
+
+        // Show error dialog
+        unawaited(
+          showCupertinoDialog<void>(
+            context: context,
+            builder: (context) => CupertinoAlertDialog(
+              title: const Text('Error'),
+              content: Text('Failed to delete habit: $e'),
+              actions: [
+                CupertinoDialogAction(
+                  child: const Text('OK'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
           ),
         );
       }

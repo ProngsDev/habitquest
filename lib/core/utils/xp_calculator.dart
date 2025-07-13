@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../constants/app_constants.dart';
 import '../enums/habit_enums.dart';
 
@@ -102,7 +104,23 @@ class XpCalculator {
     return 'Novice';
   }
 
-  /// Get emoji for level range
+  /// Get professional Cupertino icon for level range
+  static IconData getLevelIcon(int level) {
+    if (level >= 90) return CupertinoIcons.star_circle_fill; // Master level
+    if (level >= 80) return CupertinoIcons.star_fill; // Expert level
+    if (level >= 70) return CupertinoIcons.star; // Advanced level
+    if (level >= 60) return CupertinoIcons.circle_fill; // Proficient level
+    if (level >= 50) return CupertinoIcons.circle; // Intermediate level
+    if (level >= 40) return CupertinoIcons.bolt_fill; // Experienced level
+    if (level >= 30) return CupertinoIcons.bolt; // Developing level
+    if (level >= 20) return CupertinoIcons.flame; // Growing level
+    if (level >= 10)
+      return CupertinoIcons.leaf_arrow_circlepath; // Learning level
+    return CupertinoIcons.circle; // Beginner level
+  }
+
+  /// Legacy emoji support (deprecated - use getLevelIcon instead)
+  @Deprecated('Use getLevelIcon instead for better visual consistency')
   static String getLevelEmoji(int level) {
     if (level >= 90) return '👑';
     if (level >= 80) return '🏆';

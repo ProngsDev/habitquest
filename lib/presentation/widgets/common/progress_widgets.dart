@@ -1,5 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/cupertino.dart';
+
+import '../../../core/utils/xp_calculator.dart';
 
 /// Circular progress indicator with percentage
 class CircularProgressWidget extends StatelessWidget {
@@ -24,34 +27,34 @@ class CircularProgressWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-      width: size,
-      height: size,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          CustomPaint(
-            size: Size(size, size),
-            painter: _CircularProgressPainter(
-              progress: progress,
-              strokeWidth: strokeWidth,
-              progressColor: progressColor ?? CupertinoColors.systemBlue,
-              backgroundColor: backgroundColor ?? CupertinoColors.systemGrey5,
+    width: size,
+    height: size,
+    child: Stack(
+      alignment: Alignment.center,
+      children: [
+        CustomPaint(
+          size: Size(size, size),
+          painter: _CircularProgressPainter(
+            progress: progress,
+            strokeWidth: strokeWidth,
+            progressColor: progressColor ?? CupertinoColors.systemBlue,
+            backgroundColor: backgroundColor ?? CupertinoColors.systemGrey5,
+          ),
+        ),
+        if (child != null)
+          child!
+        else if (showPercentage)
+          Text(
+            '${(progress * 100).round()}%',
+            style: TextStyle(
+              fontSize: size * 0.2,
+              fontWeight: FontWeight.w600,
+              color: CupertinoColors.label,
             ),
           ),
-          if (child != null)
-            child!
-          else if (showPercentage)
-            Text(
-              '${(progress * 100).round()}%',
-              style: TextStyle(
-                fontSize: size * 0.2,
-                fontWeight: FontWeight.w600,
-                color: CupertinoColors.label,
-              ),
-            ),
-        ],
-      ),
-    );
+      ],
+    ),
+  );
 }
 
 class _CircularProgressPainter extends CustomPainter {
@@ -123,8 +126,9 @@ class LinearProgressWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(height / 2);
-    
+    final effectiveBorderRadius =
+        borderRadius ?? BorderRadius.circular(height / 2);
+
     return Container(
       height: height,
       decoration: BoxDecoration(
@@ -163,7 +167,7 @@ class XpProgressWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = xpForNextLevel > 0 ? currentXp / xpForNextLevel : 0.0;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -180,6 +184,12 @@ class XpProgressWidget extends StatelessWidget {
         ],
         Row(
           children: [
+            Icon(
+              XpCalculator.getLevelIcon(level),
+              size: 16,
+              color: CupertinoColors.systemBlue,
+            ),
+            const SizedBox(width: 4),
             Text(
               'Level $level',
               style: const TextStyle(
@@ -225,7 +235,7 @@ class StreakProgressWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = targetStreak > 0 ? currentStreak / targetStreak : 0.0;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -455,7 +455,13 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
               ),
               child: Row(
                 children: [
-                  Text(category.emoji, style: const TextStyle(fontSize: 24)),
+                  Icon(
+                    category.icon,
+                    size: 24,
+                    color: isSelected
+                        ? CupertinoColors.systemBlue
+                        : CupertinoColors.systemGrey,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
