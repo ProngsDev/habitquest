@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/navigation/app_router.dart';
 import '../../../core/utils/responsive_utils.dart';
 import '../../providers/app_providers.dart';
+import '../../providers/habit_providers.dart';
+import '../../widgets/habits/habit_list_widget.dart';
 import '../../widgets/layout/responsive_grid.dart';
 import '../profile/profile_screen.dart';
 import '../progress/progress_screen.dart';
@@ -36,8 +38,10 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-      tabBuilder: (context, index) =>
-          CupertinoTabView(builder: (context) => _getTabScreen(index)),
+      tabBuilder: (context, index) => CupertinoTabView(
+        onGenerateRoute: AppRouter.generateRoute,
+        builder: (context) => _getTabScreen(index),
+      ),
     );
   }
 
@@ -56,11 +60,12 @@ class HomeScreen extends ConsumerWidget {
 }
 
 /// Habits tab content
-class HabitsTab extends StatelessWidget {
+class HabitsTab extends ConsumerWidget {
   const HabitsTab({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statsAsync = ref.watch(habitStatsProvider);
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: const Text('Habits'),
@@ -123,28 +128,76 @@ class HabitsTab extends StatelessWidget {
               ),
 
               // Quick stats
-              ResponsiveGrid(
-                forceColumns: ResponsiveUtils.isMobile(context) ? 3 : null,
-                children: [
-                  _buildStatCard(
-                    'Level',
-                    '1',
-                    CupertinoIcons.star_fill,
-                    CupertinoColors.systemYellow,
-                  ),
-                  _buildStatCard(
-                    'Streak',
-                    '0',
-                    CupertinoIcons.flame_fill,
-                    CupertinoColors.systemOrange,
-                  ),
-                  _buildStatCard(
-                    'XP',
-                    '0',
-                    CupertinoIcons.bolt_fill,
-                    CupertinoColors.systemPurple,
-                  ),
-                ],
+              statsAsync.when(
+                data: (stats) => ResponsiveGrid(
+                  forceColumns: ResponsiveUtils.isMobile(context) ? 3 : null,
+                  children: [
+                    _buildStatCard(
+                      'Level',
+                      '${stats['userLevel'] ?? 1}',
+                      CupertinoIcons.star_fill,
+                      CupertinoColors.systemYellow,
+                    ),
+                    _buildStatCard(
+                      'Streak',
+                      '${stats['currentStreak'] ?? 0}',
+                      CupertinoIcons.flame_fill,
+                      CupertinoColors.systemOrange,
+                    ),
+                    _buildStatCard(
+                      'XP',
+                      '${stats['userXp'] ?? 0}',
+                      CupertinoIcons.bolt_fill,
+                      CupertinoColors.systemPurple,
+                    ),
+                  ],
+                ),
+                loading: () => ResponsiveGrid(
+                  forceColumns: ResponsiveUtils.isMobile(context) ? 3 : null,
+                  children: [
+                    _buildStatCard(
+                      'Level',
+                      '1',
+                      CupertinoIcons.star_fill,
+                      CupertinoColors.systemYellow,
+                    ),
+                    _buildStatCard(
+                      'Streak',
+                      '0',
+                      CupertinoIcons.flame_fill,
+                      CupertinoColors.systemOrange,
+                    ),
+                    _buildStatCard(
+                      'XP',
+                      '0',
+                      CupertinoIcons.bolt_fill,
+                      CupertinoColors.systemPurple,
+                    ),
+                  ],
+                ),
+                error: (_, __) => ResponsiveGrid(
+                  forceColumns: ResponsiveUtils.isMobile(context) ? 3 : null,
+                  children: [
+                    _buildStatCard(
+                      'Level',
+                      '1',
+                      CupertinoIcons.star_fill,
+                      CupertinoColors.systemYellow,
+                    ),
+                    _buildStatCard(
+                      'Streak',
+                      '0',
+                      CupertinoIcons.flame_fill,
+                      CupertinoColors.systemOrange,
+                    ),
+                    _buildStatCard(
+                      'XP',
+                      '0',
+                      CupertinoIcons.bolt_fill,
+                      CupertinoColors.systemPurple,
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 24),
 
@@ -158,39 +211,8 @@ class HabitsTab extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Empty state
-              const Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        CupertinoIcons.add_circled,
-                        size: 64,
-                        color: CupertinoColors.systemGrey,
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'No habits yet',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: CupertinoColors.systemGrey,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Tap the + button to create your first habit',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: CupertinoColors.systemGrey2,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // Habits list - this replaces the static empty state
+              const Expanded(child: TodaysHabitsWidget()),
             ],
           ),
         ),
