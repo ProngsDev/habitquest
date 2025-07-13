@@ -4,12 +4,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'core/constants/app_constants.dart';
 import 'core/enums/habit_enums.dart';
+import 'core/navigation/app_router.dart';
 import 'data/models/achievement_model.dart';
 import 'data/models/habit_completion_model.dart';
 import 'data/models/habit_model.dart';
 import 'data/models/user_model.dart';
 import 'presentation/providers/theme_providers.dart';
-import 'presentation/screens/home/home_screen.dart';
 
 void main() async {
   // Ensure Flutter is initialized
@@ -48,7 +48,8 @@ class HabitQuestApp extends ConsumerWidget {
     return CupertinoApp(
       title: 'HabitQuest',
       theme: currentTheme,
-      home: const HomeScreen(),
+      initialRoute: AppRoutes.home,
+      onGenerateRoute: AppRouter.generateRoute,
       debugShowCheckedModeBanner: false,
     );
   }

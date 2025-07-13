@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/navigation/app_router.dart';
 import '../../providers/app_providers.dart';
+import '../profile/profile_screen.dart';
+import '../progress/progress_screen.dart';
 
 /// Main home screen with tab navigation
 class HomeScreen extends ConsumerWidget {
@@ -41,9 +44,9 @@ class HomeScreen extends ConsumerWidget {
       case 0:
         return const HabitsTab();
       case 1:
-        return const ProgressTab();
+        return const ProgressScreen();
       case 2:
-        return const ProfileTab();
+        return const ProfileScreen();
       default:
         return const HabitsTab();
     }
@@ -57,9 +60,13 @@ class HabitsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Habits'),
-        trailing: Icon(CupertinoIcons.add),
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text('Habits'),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () => AppNavigation.toHabitForm(context),
+          child: const Icon(CupertinoIcons.add),
+        ),
       ),
       child: SafeArea(
         child: Padding(
@@ -219,27 +226,5 @@ class HabitsTab extends StatelessWidget {
         ),
       ],
     ),
-  );
-}
-
-/// Progress tab content
-class ProgressTab extends StatelessWidget {
-  const ProgressTab({super.key});
-
-  @override
-  Widget build(BuildContext context) => const CupertinoPageScaffold(
-    navigationBar: CupertinoNavigationBar(middle: Text('Progress')),
-    child: Center(child: Text('Progress tab - Coming soon!')),
-  );
-}
-
-/// Profile tab content
-class ProfileTab extends StatelessWidget {
-  const ProfileTab({super.key});
-
-  @override
-  Widget build(BuildContext context) => const CupertinoPageScaffold(
-    navigationBar: CupertinoNavigationBar(middle: Text('Profile')),
-    child: Center(child: Text('Profile tab - Coming soon!')),
   );
 }
