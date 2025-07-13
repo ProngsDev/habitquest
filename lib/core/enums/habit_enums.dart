@@ -1,9 +1,17 @@
+import 'package:hive/hive.dart';
+
+part 'habit_enums.g.dart';
+
 /// Enums for habit-related functionality
 
 /// Difficulty levels for habits
+@HiveType(typeId: 10)
 enum HabitDifficulty {
+  @HiveField(0)
   easy,
+  @HiveField(1)
   medium,
+  @HiveField(2)
   hard;
 
   String get displayName {
@@ -30,14 +38,23 @@ enum HabitDifficulty {
 }
 
 /// Categories for organizing habits
+@HiveType(typeId: 11)
 enum HabitCategory {
+  @HiveField(0)
   health,
+  @HiveField(1)
   fitness,
+  @HiveField(2)
   learning,
+  @HiveField(3)
   productivity,
+  @HiveField(4)
   social,
+  @HiveField(5)
   creativity,
+  @HiveField(6)
   mindfulness,
+  @HiveField(7)
   other;
 
   String get displayName {
@@ -84,9 +101,13 @@ enum HabitCategory {
 }
 
 /// Frequency options for habits
+@HiveType(typeId: 12)
 enum HabitFrequency {
+  @HiveField(0)
   daily,
+  @HiveField(1)
   weekly,
+  @HiveField(2)
   monthly;
 
   String get displayName {
@@ -102,10 +123,15 @@ enum HabitFrequency {
 }
 
 /// Status of a habit completion
+@HiveType(typeId: 13)
 enum CompletionStatus {
+  @HiveField(0)
   pending,
+  @HiveField(1)
   completed,
+  @HiveField(2)
   skipped,
+  @HiveField(3)
   failed;
 
   String get displayName {
