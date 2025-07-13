@@ -34,6 +34,7 @@ void main() async {
   // Open Hive boxes
   await Hive.openBox<UserModel>(AppConstants.userBoxName);
   await Hive.openBox<HabitModel>(AppConstants.habitsBoxName);
+  await Hive.openBox<HabitCompletionModel>(AppConstants.completionsBoxName);
   await Hive.openBox<AchievementModel>(AppConstants.achievementsBoxName);
 
   // Initialize notification service

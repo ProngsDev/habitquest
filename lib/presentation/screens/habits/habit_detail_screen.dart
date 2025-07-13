@@ -6,6 +6,9 @@ import '../../../core/navigation/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/responsive_utils.dart';
 import '../../../domain/entities/habit.dart';
+import '../../../domain/entities/habit_completion.dart';
+import '../../providers/app_providers.dart';
+import '../../providers/habit_completion_providers.dart' as completion;
 import '../../providers/habit_providers.dart';
 import '../../widgets/common/custom_card.dart';
 import '../../widgets/common/loading_widget.dart';
@@ -180,12 +183,28 @@ class HabitDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildProgressSection(BuildContext context, Habit habit) {
-    // Mock data for now - in a real app, this would come from completion tracking
-    const currentStreak = 5;
-    const longestStreak = 12;
-    const completionRate = 0.75;
-    const totalCompletions = 45;
+    return Consumer(
+      builder: (context, ref, child) {
+        final statsAsync = ref.watch(completion.habitStatsProvider(habit.id));
 
+        return statsAsync.when(
+          data: (HabitStats stats) =>
+              _buildProgressContent(context, habit, stats),
+          loading: () => const CustomCard(
+            child: Center(child: LoadingWidget(message: 'Loading progress...')),
+          ),
+          error: (error, _) =>
+              CustomCard(child: Text('Error loading progress: $error')),
+        );
+      },
+    );
+  }
+
+  Widget _buildProgressContent(
+    BuildContext context,
+    Habit habit,
+    HabitStats stats,
+  ) {
     return CustomCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,7 +225,7 @@ class HabitDetailScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     CircularProgressWidget(
-                      progress: completionRate,
+                      progress: stats.completionRate,
                       size: 80,
                       progressColor: AppTheme.getCategoryColor(
                         habit.category.name,
@@ -230,21 +249,21 @@ class HabitDetailScreen extends ConsumerWidget {
                   children: [
                     _buildProgressStat(
                       'Current Streak',
-                      '$currentStreak days',
+                      '${stats.currentStreak} days',
                       CupertinoIcons.flame_fill,
                       CupertinoColors.systemOrange,
                     ),
                     const SizedBox(height: 12),
                     _buildProgressStat(
                       'Longest Streak',
-                      '$longestStreak days',
+                      '${stats.longestStreak} days',
                       CupertinoIcons.star_fill,
                       CupertinoColors.systemYellow,
                     ),
                     const SizedBox(height: 12),
                     _buildProgressStat(
                       'Total Completions',
-                      '$totalCompletions times',
+                      '${stats.totalCompletions} times',
                       CupertinoIcons.checkmark_circle_fill,
                       CupertinoColors.systemGreen,
                     ),
@@ -447,69 +466,111 @@ class HabitDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildActionButtons(BuildContext context, Habit habit) {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: CupertinoButton.filled(
-            onPressed: () {
-              // TODO: Mark as complete for today
-              _showCompletionDialog(context, habit);
-            },
-            child: const Text('Mark as Complete'),
+    return Consumer(
+      builder: (context, ref, child) {
+        final isCompletedAsync = ref.watch(
+          completion.isHabitCompletedTodayProvider(habit.id),
+        );
+
+        return isCompletedAsync.when(
+          data: (isCompleted) => Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: isCompleted
+                    ? CupertinoButton(
+                        onPressed: () => _undoCompletion(ref, habit.id),
+                        color: CupertinoColors.systemGreen,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              CupertinoIcons.checkmark_circle_fill,
+                              color: CupertinoColors.white,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Completed Today',
+                              style: TextStyle(color: CupertinoColors.white),
+                            ),
+                          ],
+                        ),
+                      )
+                    : CupertinoButton.filled(
+                        onPressed: () => _completeHabit(ref, habit),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              CupertinoIcons.checkmark_circle,
+                              color: CupertinoColors.white,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Mark as Complete',
+                              style: TextStyle(color: CupertinoColors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: CupertinoButton(
+                      onPressed: () =>
+                          AppNavigation.toHabitForm(context, habitId: habit.id),
+                      color: CupertinoColors.systemGrey5,
+                      child: const Text(
+                        'Edit Habit',
+                        style: TextStyle(color: CupertinoColors.label),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CupertinoButton(
+                      onPressed: () => _showDeleteDialog(context, habit),
+                      color: CupertinoColors.systemRed,
+                      child: const Text('Delete Habit'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: CupertinoButton(
-                onPressed: () =>
-                    AppNavigation.toHabitForm(context, habitId: habit.id),
-                color: CupertinoColors.systemGrey5,
-                child: const Text(
-                  'Edit Habit',
-                  style: TextStyle(color: CupertinoColors.label),
-                ),
-              ),
+          loading: () => const SizedBox(
+            width: double.infinity,
+            child: CupertinoButton(
+              onPressed: null,
+              child: CupertinoActivityIndicator(),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: CupertinoButton(
-                onPressed: () => _showDeleteDialog(context, habit),
-                color: CupertinoColors.systemRed,
-                child: const Text('Delete Habit'),
-              ),
+          ),
+          error: (_, __) => const SizedBox(
+            width: double.infinity,
+            child: CupertinoButton(
+              onPressed: null,
+              child: Text('Error loading completion status'),
             ),
-          ],
-        ),
-      ],
+          ),
+        );
+      },
     );
   }
 
-  void _showCompletionDialog(BuildContext context, Habit habit) {
-    showCupertinoDialog<void>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Mark as Complete'),
-        content: Text('Mark "${habit.name}" as completed for today?'),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.pop(context),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: const Text('Complete'),
-            onPressed: () {
-              Navigator.pop(context);
-              // TODO: Implement completion logic
-              _showSuccessMessage(context);
-            },
-          ),
-        ],
-      ),
+  void _completeHabit(WidgetRef ref, Habit habit) async {
+    final notifier = ref.read(
+      completion.habitCompletionNotifierProvider.notifier,
     );
+    await notifier.completeHabit(habit);
+  }
+
+  void _undoCompletion(WidgetRef ref, String habitId) async {
+    final notifier = ref.read(
+      completion.habitCompletionNotifierProvider.notifier,
+    );
+    await notifier.undoCompletion(habitId);
   }
 
   void _showDeleteDialog(BuildContext context, Habit habit) {
@@ -528,10 +589,9 @@ class HabitDetailScreen extends ConsumerWidget {
           CupertinoDialogAction(
             isDestructiveAction: true,
             child: const Text('Delete'),
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              // TODO: Implement deletion logic
-              Navigator.pop(context); // Go back to previous screen
+              await _deleteHabit(context, habit);
             },
           ),
         ],
@@ -539,22 +599,37 @@ class HabitDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _showSuccessMessage(BuildContext context) {
-    showCupertinoDialog<void>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('🎉 Great Job!'),
-        content: const Text(
-          'Habit completed successfully! Keep up the great work.',
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('OK'),
-            onPressed: () => Navigator.pop(context),
+  Future<void> _deleteHabit(BuildContext context, Habit habit) async {
+    try {
+      final ref = ProviderScope.containerOf(context);
+      final repository = ref.read(habitRepositoryProvider);
+      await repository.deleteHabit(habit.id);
+
+      // Invalidate providers to refresh UI
+      ref
+        ..invalidate(habitsProvider)
+        ..invalidate(activeHabitsProvider);
+
+      if (context.mounted) {
+        Navigator.pop(context); // Go back to previous screen
+      }
+    } catch (e) {
+      if (context.mounted) {
+        showCupertinoDialog<void>(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text('Error'),
+            content: Text('Failed to delete habit: $e'),
+            actions: [
+              CupertinoDialogAction(
+                child: const Text('OK'),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
+      }
+    }
   }
 
   Widget _buildNotFound(BuildContext context) {

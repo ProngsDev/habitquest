@@ -8,6 +8,7 @@ class AppConstants {
   static const String hiveBoxName = 'habitquest_box';
   static const String userBoxName = 'user_box';
   static const String habitsBoxName = 'habits_box';
+  static const String completionsBoxName = 'completions_box';
   static const String achievementsBoxName = 'achievements_box';
 
   // Gamification
