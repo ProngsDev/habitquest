@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/navigation/app_router.dart';
 import '../../../domain/entities/habit.dart';
+import '../../providers/habit_completion_providers.dart';
 import '../../providers/habit_providers.dart';
 import '../common/empty_state_widget.dart';
 import '../common/loading_widget.dart';
@@ -72,11 +73,33 @@ class HabitListWidget extends ConsumerWidget {
       itemCount: filteredHabits.length,
       itemBuilder: (context, index) {
         final habit = filteredHabits[index];
-        return HabitCard(
-          habit: habit,
-          onTap: () => AppNavigation.toHabitDetail(context, habit.id),
-          onComplete: () => _handleHabitCompletion(ref, habit),
-          isCompleted: _isHabitCompletedToday(habit),
+        return Consumer(
+          builder: (context, ref, child) {
+            final isCompletedAsync = ref.watch(
+              isHabitCompletedTodayProvider(habit.id),
+            );
+
+            return isCompletedAsync.when(
+              data: (isCompleted) => HabitCard(
+                habit: habit,
+                onTap: () => AppNavigation.toHabitDetail(context, habit.id),
+                onComplete: () => _handleHabitCompletion(ref, habit),
+                isCompleted: isCompleted,
+              ),
+              loading: () => HabitCard(
+                habit: habit,
+                onTap: () => AppNavigation.toHabitDetail(context, habit.id),
+                onComplete: null, // Disable while loading
+                isCompleted: false,
+              ),
+              error: (_, __) => HabitCard(
+                habit: habit,
+                onTap: () => AppNavigation.toHabitDetail(context, habit.id),
+                onComplete: () => _handleHabitCompletion(ref, habit),
+                isCompleted: false,
+              ),
+            );
+          },
         );
       },
     );
@@ -145,16 +168,9 @@ class HabitListWidget extends ConsumerWidget {
     );
   }
 
-  void _handleHabitCompletion(WidgetRef ref, Habit habit) {
-    // TODO(enhancement): Implement habit completion tracking
-    // This will be implemented in the next phase
-    debugPrint('Habit completed: ${habit.name}');
-  }
-
-  bool _isHabitCompletedToday(Habit habit) {
-    // TODO(enhancement): Implement actual completion checking
-    // This will be implemented in the next phase
-    return false;
+  Future<void> _handleHabitCompletion(WidgetRef ref, Habit habit) async {
+    final notifier = ref.read(habitCompletionNotifierProvider.notifier);
+    await notifier.completeHabit(habit);
   }
 }
 
@@ -220,11 +236,36 @@ class CompactHabitListWidget extends ConsumerWidget {
         return Column(
           children: [
             ...displayHabits.map(
-              (habit) => HabitCard(
-                habit: habit,
-                onTap: () => AppNavigation.toHabitDetail(context, habit.id),
-                onComplete: () => _handleHabitCompletion(ref, habit),
-                isCompleted: _isHabitCompletedToday(habit),
+              (habit) => Consumer(
+                builder: (context, ref, child) {
+                  final isCompletedAsync = ref.watch(
+                    isHabitCompletedTodayProvider(habit.id),
+                  );
+
+                  return isCompletedAsync.when(
+                    data: (isCompleted) => HabitCard(
+                      habit: habit,
+                      onTap: () =>
+                          AppNavigation.toHabitDetail(context, habit.id),
+                      onComplete: () => _handleHabitCompletion(ref, habit),
+                      isCompleted: isCompleted,
+                    ),
+                    loading: () => HabitCard(
+                      habit: habit,
+                      onTap: () =>
+                          AppNavigation.toHabitDetail(context, habit.id),
+                      onComplete: null,
+                      isCompleted: false,
+                    ),
+                    error: (_, __) => HabitCard(
+                      habit: habit,
+                      onTap: () =>
+                          AppNavigation.toHabitDetail(context, habit.id),
+                      onComplete: () => _handleHabitCompletion(ref, habit),
+                      isCompleted: false,
+                    ),
+                  );
+                },
               ),
             ),
 
@@ -246,13 +287,8 @@ class CompactHabitListWidget extends ConsumerWidget {
     );
   }
 
-  void _handleHabitCompletion(WidgetRef ref, Habit habit) {
-    // TODO(enhancement): Implement habit completion tracking
-    debugPrint('Habit completed: ${habit.name}');
-  }
-
-  bool _isHabitCompletedToday(Habit habit) {
-    // TODO(enhancement): Implement actual completion checking
-    return false;
+  Future<void> _handleHabitCompletion(WidgetRef ref, Habit habit) async {
+    final notifier = ref.read(habitCompletionNotifierProvider.notifier);
+    await notifier.completeHabit(habit);
   }
 }
