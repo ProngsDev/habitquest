@@ -28,7 +28,7 @@ class HabitCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final categoryColor = Color(habit.colorValue);
     final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
-    
+
     return CustomCard(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       onTap: onTap ?? () => AppNavigation.toHabitDetail(context, habit.id),
@@ -37,12 +37,10 @@ class HabitCard extends ConsumerWidget {
           // Category color indicator and completion button
           _buildLeadingSection(categoryColor),
           const SizedBox(width: 16),
-          
+
           // Habit content
-          Expanded(
-            child: _buildContentSection(context, isDarkMode),
-          ),
-          
+          Expanded(child: _buildContentSection(context, isDarkMode)),
+
           // Trailing section with difficulty and frequency
           _buildTrailingSection(context, isDarkMode),
         ],
@@ -62,10 +60,7 @@ class HabitCard extends ConsumerWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isCompleted ? categoryColor : CupertinoColors.systemGrey5,
-              border: Border.all(
-                color: categoryColor,
-                width: 2,
-              ),
+              border: Border.all(color: categoryColor, width: 2),
             ),
             child: isCompleted
                 ? const Icon(
@@ -77,7 +72,7 @@ class HabitCard extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 8),
-        
+
         // Category color indicator
         Container(
           width: 4,
@@ -101,38 +96,38 @@ class HabitCard extends ConsumerWidget {
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w600,
-            color: isCompleted 
-                ? CupertinoColors.systemGrey 
+            color: isCompleted
+                ? CupertinoColors.systemGrey
                 : CupertinoColors.label,
             decoration: isCompleted ? TextDecoration.lineThrough : null,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        
+
         if (habit.description.isNotEmpty) ...[
           const SizedBox(height: 4),
           Text(
             habit.description,
             style: TextStyle(
               fontSize: 14,
-              color: isCompleted 
-                  ? CupertinoColors.systemGrey2 
+              color: isCompleted
+                  ? CupertinoColors.systemGrey2
                   : CupertinoColors.secondaryLabel,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ],
-        
+
         const SizedBox(height: 8),
-        
+
         // Target and category info
         Row(
           children: [
             _buildInfoChip(
               '${habit.targetCount}${habit.unit != null ? ' ${habit.unit}' : ''}',
-              CupertinoIcons.target,
+              CupertinoIcons.flag_fill,
               CupertinoColors.systemBlue,
             ),
             const SizedBox(width: 8),
@@ -155,10 +150,10 @@ class HabitCard extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: CupertinoColors.systemYellow.withOpacity(0.1),
+            color: CupertinoColors.systemYellow.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: CupertinoColors.systemYellow.withOpacity(0.3),
+              color: CupertinoColors.systemYellow.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -182,14 +177,14 @@ class HabitCard extends ConsumerWidget {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         // Difficulty indicator
         _buildDifficultyIndicator(),
-        
+
         const SizedBox(height: 4),
-        
+
         // Frequency
         Text(
           habit.frequency.displayName,
@@ -199,7 +194,7 @@ class HabitCard extends ConsumerWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        
+
         if (habit.reminderTime != null) ...[
           const SizedBox(height: 4),
           Row(
@@ -229,21 +224,14 @@ class HabitCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            color: color,
-            size: 12,
-          ),
+          Icon(icon, color: color, size: 12),
           const SizedBox(width: 4),
           Text(
             text,
@@ -265,8 +253,8 @@ class HabitCard extends ConsumerWidget {
       children: List.generate(3, (index) {
         return Icon(
           index < stars ? CupertinoIcons.star_fill : CupertinoIcons.star,
-          color: index < stars 
-              ? CupertinoColors.systemYellow 
+          color: index < stars
+              ? CupertinoColors.systemYellow
               : CupertinoColors.systemGrey4,
           size: 12,
         );
@@ -290,8 +278,6 @@ class HabitCard extends ConsumerWidget {
         return CupertinoIcons.person_2_fill;
       case HabitCategory.creativity:
         return CupertinoIcons.paintbrush_fill;
-      case HabitCategory.finance:
-        return CupertinoIcons.money_dollar_circle_fill;
       case HabitCategory.other:
         return CupertinoIcons.circle_grid_3x3_fill;
     }
