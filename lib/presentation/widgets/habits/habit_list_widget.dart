@@ -5,6 +5,8 @@ import '../../../core/navigation/app_router.dart';
 import '../../../domain/entities/habit.dart';
 import '../../providers/habit_completion_providers.dart';
 import '../../providers/habit_providers.dart';
+import '../../providers/user_providers.dart';
+import '../animations/congratulatory_dialog.dart';
 import '../common/empty_state_widget.dart';
 import '../common/loading_widget.dart';
 import 'habit_card.dart';
@@ -83,7 +85,7 @@ class HabitListWidget extends ConsumerWidget {
               data: (isCompleted) => HabitCard(
                 habit: habit,
                 onTap: () => AppNavigation.toHabitDetail(context, habit.id),
-                onComplete: () => _handleHabitCompletion(ref, habit),
+                onComplete: () => _handleHabitCompletion(ref, habit, context),
                 isCompleted: isCompleted,
               ),
               loading: () => HabitCard(
@@ -95,7 +97,7 @@ class HabitListWidget extends ConsumerWidget {
               error: (_, __) => HabitCard(
                 habit: habit,
                 onTap: () => AppNavigation.toHabitDetail(context, habit.id),
-                onComplete: () => _handleHabitCompletion(ref, habit),
+                onComplete: () => _handleHabitCompletion(ref, habit, context),
                 isCompleted: false,
               ),
             );
@@ -168,9 +170,63 @@ class HabitListWidget extends ConsumerWidget {
     );
   }
 
-  Future<void> _handleHabitCompletion(WidgetRef ref, Habit habit) async {
+  Future<void> _handleHabitCompletion(
+    WidgetRef ref,
+    Habit habit,
+    BuildContext context,
+  ) async {
     final notifier = ref.read(habitCompletionNotifierProvider.notifier);
     await notifier.completeHabit(habit);
+
+    // Check if all habits are completed for today
+    await _checkForDailyCompletion(ref, context);
+  }
+
+  Future<void> _checkForDailyCompletion(
+    WidgetRef ref,
+    BuildContext context,
+  ) async {
+    try {
+      // Get all active habits
+      final activeHabitsAsync = ref.read(activeHabitsProvider);
+      final activeHabits = activeHabitsAsync.value ?? [];
+
+      if (activeHabits.isEmpty) return;
+
+      // Check if all active habits are completed today
+      bool allCompleted = true;
+      for (final habit in activeHabits) {
+        final isCompletedAsync = ref.read(
+          isHabitCompletedTodayProvider(habit.id),
+        );
+        final isCompleted = isCompletedAsync.value ?? false;
+        if (!isCompleted) {
+          allCompleted = false;
+          break;
+        }
+      }
+
+      // Show congratulatory dialog if all habits are completed
+      if (allCompleted && context.mounted) {
+        final totalXp = activeHabits.fold<int>(
+          0,
+          (sum, habit) => sum + 10, // Default XP per habit
+        );
+        final totalCoins = activeHabits.fold<int>(
+          0,
+          (sum, habit) => sum + 5, // Default coins per habit
+        );
+
+        CongratulatoryService.showDailyCompletion(
+          context,
+          xpEarned: totalXp,
+          coinsEarned: totalCoins,
+        );
+      }
+    } catch (e) {
+      // Silently handle errors to not disrupt the user experience
+      debugPrint('Error checking daily completion: $e');
+    }
   }
 }
 
@@ -182,8 +238,8 @@ class TodaysHabitsWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return const HabitListWidget(
       showActiveOnly: true,
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: false,
+      physics: AlwaysScrollableScrollPhysics(),
     );
   }
 }

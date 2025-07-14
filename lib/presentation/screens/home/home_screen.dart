@@ -78,144 +78,160 @@ class HabitsTab extends ConsumerWidget {
       ),
       child: SafeArea(
         child: ResponsiveContainer(
-          child: Column(
-            children: [
-              // Welcome section
-              Container(
-                width: double.infinity,
-                padding: ResponsiveUtils.getResponsivePadding(context),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      CupertinoColors.systemBlue,
-                      CupertinoColors.systemBlue,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                ),
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '🚀 Welcome to HabitQuest!',
-                      style: TextStyle(
-                        color: CupertinoColors.white,
-                        fontSize: ResponsiveUtils.getResponsiveFontSize(
-                          context,
-                          baseFontSize: 24,
+                    // Welcome section
+                    Container(
+                      width: double.infinity,
+                      padding: ResponsiveUtils.getResponsivePadding(context),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            CupertinoColors.systemBlue,
+                            CupertinoColors.systemBlue,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                        fontWeight: FontWeight.bold,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '🚀 Welcome to HabitQuest!',
+                            style: TextStyle(
+                              color: CupertinoColors.white,
+                              fontSize: ResponsiveUtils.getResponsiveFontSize(
+                                context,
+                                baseFontSize: 24,
+                              ),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Start your journey to better habits',
+                            style: TextStyle(
+                              color: CupertinoColors.white,
+                              fontSize: ResponsiveUtils.getResponsiveFontSize(
+                                context,
+                                baseFontSize: 16,
+                              ),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Start your journey to better habits',
-                      style: TextStyle(
-                        color: CupertinoColors.white,
-                        fontSize: ResponsiveUtils.getResponsiveFontSize(
-                          context,
-                          baseFontSize: 16,
+                    SizedBox(
+                      height:
+                          ResponsiveUtils.getResponsiveSpacing(context) * 1.5,
+                    ),
+
+                    // Quick stats
+                    statsAsync.when(
+                      data: (stats) => ResponsiveGrid(
+                        forceColumns: ResponsiveUtils.isMobile(context)
+                            ? 3
+                            : null,
+                        children: [
+                          _buildStatCard(
+                            'Level',
+                            '${stats['userLevel'] ?? 1}',
+                            XpCalculator.getLevelIcon(
+                              (stats['userLevel'] ?? 1) as int,
+                            ),
+                            CupertinoColors.systemYellow,
+                          ),
+                          _buildStatCard(
+                            'Streak',
+                            '${stats['currentStreak'] ?? 0}',
+                            CupertinoIcons.flame_fill,
+                            CupertinoColors.systemOrange,
+                          ),
+                          _buildStatCard(
+                            'XP',
+                            '${stats['userXp'] ?? 0}',
+                            CupertinoIcons.bolt_fill,
+                            CupertinoColors.systemPurple,
+                          ),
+                        ],
+                      ),
+                      loading: () => ResponsiveGrid(
+                        forceColumns: ResponsiveUtils.isMobile(context)
+                            ? 3
+                            : null,
+                        children: [
+                          _buildStatCard(
+                            'Level',
+                            '1',
+                            CupertinoIcons.star_fill,
+                            CupertinoColors.systemYellow,
+                          ),
+                          _buildStatCard(
+                            'Streak',
+                            '0',
+                            CupertinoIcons.flame_fill,
+                            CupertinoColors.systemOrange,
+                          ),
+                          _buildStatCard(
+                            'XP',
+                            '0',
+                            CupertinoIcons.bolt_fill,
+                            CupertinoColors.systemPurple,
+                          ),
+                        ],
+                      ),
+                      error: (_, __) => ResponsiveGrid(
+                        forceColumns: ResponsiveUtils.isMobile(context)
+                            ? 3
+                            : null,
+                        children: [
+                          _buildStatCard(
+                            'Level',
+                            '1',
+                            CupertinoIcons.star_fill,
+                            CupertinoColors.systemYellow,
+                          ),
+                          _buildStatCard(
+                            'Streak',
+                            '0',
+                            CupertinoIcons.flame_fill,
+                            CupertinoColors.systemOrange,
+                          ),
+                          _buildStatCard(
+                            'XP',
+                            '0',
+                            CupertinoIcons.bolt_fill,
+                            CupertinoColors.systemPurple,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Habits section header
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Today\'s Habits',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
-                        fontWeight: FontWeight.w400,
                       ),
                     ),
+                    const SizedBox(height: 16),
                   ],
                 ),
-              ),
-              SizedBox(
-                height: ResponsiveUtils.getResponsiveSpacing(context) * 1.5,
               ),
 
-              // Quick stats
-              statsAsync.when(
-                data: (stats) => ResponsiveGrid(
-                  forceColumns: ResponsiveUtils.isMobile(context) ? 3 : null,
-                  children: [
-                    _buildStatCard(
-                      'Level',
-                      '${stats['userLevel'] ?? 1}',
-                      XpCalculator.getLevelIcon(
-                        (stats['userLevel'] ?? 1) as int,
-                      ),
-                      CupertinoColors.systemYellow,
-                    ),
-                    _buildStatCard(
-                      'Streak',
-                      '${stats['currentStreak'] ?? 0}',
-                      CupertinoIcons.flame_fill,
-                      CupertinoColors.systemOrange,
-                    ),
-                    _buildStatCard(
-                      'XP',
-                      '${stats['userXp'] ?? 0}',
-                      CupertinoIcons.bolt_fill,
-                      CupertinoColors.systemPurple,
-                    ),
-                  ],
-                ),
-                loading: () => ResponsiveGrid(
-                  forceColumns: ResponsiveUtils.isMobile(context) ? 3 : null,
-                  children: [
-                    _buildStatCard(
-                      'Level',
-                      '1',
-                      CupertinoIcons.star_fill,
-                      CupertinoColors.systemYellow,
-                    ),
-                    _buildStatCard(
-                      'Streak',
-                      '0',
-                      CupertinoIcons.flame_fill,
-                      CupertinoColors.systemOrange,
-                    ),
-                    _buildStatCard(
-                      'XP',
-                      '0',
-                      CupertinoIcons.bolt_fill,
-                      CupertinoColors.systemPurple,
-                    ),
-                  ],
-                ),
-                error: (_, __) => ResponsiveGrid(
-                  forceColumns: ResponsiveUtils.isMobile(context) ? 3 : null,
-                  children: [
-                    _buildStatCard(
-                      'Level',
-                      '1',
-                      CupertinoIcons.star_fill,
-                      CupertinoColors.systemYellow,
-                    ),
-                    _buildStatCard(
-                      'Streak',
-                      '0',
-                      CupertinoIcons.flame_fill,
-                      CupertinoColors.systemOrange,
-                    ),
-                    _buildStatCard(
-                      'XP',
-                      '0',
-                      CupertinoIcons.bolt_fill,
-                      CupertinoColors.systemPurple,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Habits section
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Today\'s Habits',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Habits list - this replaces the static empty state
-              const Expanded(child: TodaysHabitsWidget()),
+              // Habits list - now properly scrollable
+              const SliverFillRemaining(child: TodaysHabitsWidget()),
             ],
           ),
         ),

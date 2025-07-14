@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/enums/habit_enums.dart';
 import '../../../core/navigation/app_router.dart';
 import '../../../domain/entities/habit.dart';
+import '../animations/completion_animation_widget.dart';
 import '../common/custom_card.dart';
 
 /// Elegant iOS-style card for displaying individual habits
@@ -28,21 +29,25 @@ class HabitCard extends ConsumerWidget {
     final categoryColor = Color(habit.colorValue);
     final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
 
-    return CustomCard(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      onTap: onTap ?? () => AppNavigation.toHabitDetail(context, habit.id),
-      child: Row(
-        children: [
-          // Category color indicator and completion button
-          _buildLeadingSection(categoryColor),
-          const SizedBox(width: 16),
+    return CompletionAnimationWidget(
+      isCompleted: isCompleted,
+      animationType: CompletionAnimationType.scale,
+      child: CustomCard(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        onTap: onTap ?? () => AppNavigation.toHabitDetail(context, habit.id),
+        child: Row(
+          children: [
+            // Category color indicator and completion button
+            _buildLeadingSection(categoryColor),
+            const SizedBox(width: 16),
 
-          // Habit content
-          Expanded(child: _buildContentSection(context, isDarkMode)),
+            // Habit content
+            Expanded(child: _buildContentSection(context, isDarkMode)),
 
-          // Trailing section with difficulty and frequency
-          _buildTrailingSection(context, isDarkMode),
-        ],
+            // Trailing section with difficulty and frequency
+            _buildTrailingSection(context, isDarkMode),
+          ],
+        ),
       ),
     );
   }
