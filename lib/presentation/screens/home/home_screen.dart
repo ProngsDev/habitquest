@@ -39,10 +39,7 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-      tabBuilder: (context, index) => CupertinoTabView(
-        onGenerateRoute: AppRouter.generateRoute,
-        builder: (context) => _getTabScreen(index),
-      ),
+      tabBuilder: (context, index) => _getTabScreen(index),
     );
   }
 

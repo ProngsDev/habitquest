@@ -12,6 +12,7 @@ import 'data/models/habit_completion_model.dart';
 import 'data/models/habit_model.dart';
 import 'data/models/user_model.dart';
 import 'presentation/providers/theme_providers.dart';
+import 'presentation/screens/home/home_screen.dart';
 
 void main() async {
   // Ensure Flutter is initialized
@@ -55,11 +56,9 @@ class HabitQuestApp extends ConsumerWidget {
     return CupertinoApp(
       title: 'HabitQuest',
       theme: currentTheme,
-      initialRoute: AppRoutes.home,
-      onGenerateRoute: AppRouter.generateRoute,
       debugShowCheckedModeBanner: false,
       home: appInitialization.when(
-        data: (_) => null, // Let the router handle navigation
+        data: (_) => const HomeScreen(),
         loading: () => const CupertinoPageScaffold(
           child: Center(child: CupertinoActivityIndicator(radius: 20)),
         ),
@@ -74,12 +73,9 @@ class HabitQuestApp extends ConsumerWidget {
                   color: CupertinoColors.systemRed,
                 ),
                 const SizedBox(height: 16),
-                Text(
+                const Text(
                   'Failed to initialize app',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 8),
                 Text(
