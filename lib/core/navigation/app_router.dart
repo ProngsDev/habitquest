@@ -39,7 +39,13 @@ class AppRouter {
         );
 
       case AppRoutes.habitDetail:
-        final habitId = settings.arguments! as String;
+        final habitId = settings.arguments as String?;
+        if (habitId == null) {
+          return CupertinoPageRoute<void>(
+            builder: (_) => const _NotFoundScreen(),
+            settings: settings,
+          );
+        }
         return CupertinoPageRoute<void>(
           builder: (_) => HabitDetailScreen(habitId: habitId),
           settings: settings,
