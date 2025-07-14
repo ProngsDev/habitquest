@@ -254,13 +254,13 @@ class AchievementRepositoryImpl implements AchievementRepository {
   ) {
     switch (achievement.type) {
       case AchievementType.streak:
-        return userStats['longestStreak'] ?? 0;
+        return (userStats['longestStreak'] as int?) ?? 0;
       case AchievementType.totalHabits:
-        return userStats['totalHabitsCompleted'] ?? 0;
+        return (userStats['totalHabitsCompleted'] as int?) ?? 0;
       case AchievementType.totalXp:
-        return userStats['totalXp'] ?? 0;
+        return (userStats['totalXp'] as int?) ?? 0;
       case AchievementType.level:
-        return userStats['level'] ?? 1;
+        return (userStats['level'] as int?) ?? 1;
       case AchievementType.consistency:
       case AchievementType.category:
       case AchievementType.special:

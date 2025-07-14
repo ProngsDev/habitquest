@@ -135,6 +135,14 @@ class HiveDataSource {
     await _achievementsBox.put(achievement.id, achievement);
   }
 
+  Future<AchievementModel?> getAchievementById(String id) async {
+    return _achievementsBox.get(id);
+  }
+
+  Future<void> deleteAchievement(String id) async {
+    await _achievementsBox.delete(id);
+  }
+
   // Utility methods
   Future<void> clearAllData() async {
     await _userBox.clear();

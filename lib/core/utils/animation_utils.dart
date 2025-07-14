@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:confetti/confetti.dart';
 
 /// Animation constants and utilities for consistent animations throughout the app
 class AnimationUtils {
@@ -68,9 +67,10 @@ class AnimationUtils {
     Curve curve = defaultCurve,
   }) {
     return SlideTransition(
-      position: Tween<Offset>(begin: begin, end: end).animate(
-        CurvedAnimation(parent: animation, curve: curve),
-      ),
+      position: Tween<Offset>(
+        begin: begin,
+        end: end,
+      ).animate(CurvedAnimation(parent: animation, curve: curve)),
       child: child,
     );
   }
@@ -86,9 +86,10 @@ class AnimationUtils {
     return FadeTransition(
       opacity: CurvedAnimation(parent: animation, curve: curve),
       child: ScaleTransition(
-        scale: Tween<double>(begin: scaleBegin, end: scaleEnd).animate(
-          CurvedAnimation(parent: animation, curve: curve),
-        ),
+        scale: Tween<double>(
+          begin: scaleBegin,
+          end: scaleEnd,
+        ).animate(CurvedAnimation(parent: animation, curve: curve)),
         child: child,
       ),
     );
@@ -105,9 +106,10 @@ class AnimationUtils {
     return FadeTransition(
       opacity: CurvedAnimation(parent: animation, curve: curve),
       child: SlideTransition(
-        position: Tween<Offset>(begin: begin, end: end).animate(
-          CurvedAnimation(parent: animation, curve: curve),
-        ),
+        position: Tween<Offset>(
+          begin: begin,
+          end: end,
+        ).animate(CurvedAnimation(parent: animation, curve: curve)),
         child: child,
       ),
     );
@@ -222,10 +224,7 @@ class AnimationUtils {
       builder: (context, value, child) {
         return Transform.translate(
           offset: Offset.lerp(slideBegin, Offset.zero, value)!,
-          child: Opacity(
-            opacity: value,
-            child: child,
-          ),
+          child: Opacity(opacity: value, child: child),
         );
       },
       child: child,
@@ -244,10 +243,7 @@ class AnimationUtils {
       duration: duration,
       curve: Curves.easeInOut,
       builder: (context, scale, child) {
-        return Transform.scale(
-          scale: scale,
-          child: child,
-        );
+        return Transform.scale(scale: scale, child: child);
       },
       onEnd: () {
         // This would need to be implemented with a proper AnimationController
@@ -263,9 +259,10 @@ class AnimationUtils {
     required AnimationController controller,
     double intensity = 5.0,
   }) {
-    final animation = Tween<double>(begin: -intensity, end: intensity).animate(
-      CurvedAnimation(parent: controller, curve: Curves.elasticIn),
-    );
+    final animation = Tween<double>(
+      begin: -intensity,
+      end: intensity,
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.elasticIn));
 
     return AnimatedBuilder(
       animation: animation,
@@ -279,35 +276,35 @@ class AnimationUtils {
     );
   }
 
-  /// Create confetti animation for celebrations
-  static Widget confettiAnimation({
-    required ConfettiController controller,
+  /// Create celebration animation placeholder
+  /// Note: Confetti animations can be added when the confetti package is properly configured
+  static Widget celebrationAnimation({
     required Widget child,
-    BlastDirection blastDirection = BlastDirection.explosive,
-    int numberOfParticles = 50,
-    double gravity = 0.1,
-    Color? color,
+    bool showCelebration = false,
   }) {
     return Stack(
       children: [
         child,
-        Align(
-          alignment: Alignment.topCenter,
-          child: ConfettiWidget(
-            confettiController: controller,
-            blastDirection: blastDirection,
-            numberOfParticles: numberOfParticles,
-            gravity: gravity,
-            colors: color != null ? [color] : [
-              CupertinoColors.systemBlue,
-              CupertinoColors.systemGreen,
-              CupertinoColors.systemYellow,
-              CupertinoColors.systemOrange,
-              CupertinoColors.systemPink,
-              CupertinoColors.systemPurple,
-            ],
+        if (showCelebration)
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  colors: [
+                    CupertinoColors.systemYellow.withValues(alpha: 0.3),
+                    CupertinoColors.transparent,
+                  ],
+                ),
+              ),
+              child: const Center(
+                child: Icon(
+                  CupertinoIcons.star_fill,
+                  size: 100,
+                  color: CupertinoColors.systemYellow,
+                ),
+              ),
+            ),
           ),
-        ),
       ],
     );
   }
@@ -320,9 +317,7 @@ class AnimationUtils {
     return SizedBox(
       width: size,
       height: size,
-      child: CupertinoActivityIndicator(
-        color: color,
-      ),
+      child: CupertinoActivityIndicator(color: color),
     );
   }
 
