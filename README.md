@@ -22,16 +22,22 @@ HabitQuest is a gamified habit tracker that turns your personal development jour
 ## 📱 Screenshots
 
 <div align="center">
-  <img src="habit/Simulator Screenshot - iPhone 16 Plus - 2025-07-14 at 09.05.29.png" width="200" alt="Splash Screen" />
-  <img src="habit/Simulator Screenshot - iPhone 16 Plus - 2025-07-14 at 09.24.57.png" width="200" alt="Home Dashboard" />
-  <img src="habit/Simulator Screenshot - iPhone 16 Plus - 2025-07-14 at 09.25.05.png" width="200" alt="Habit List" />
-  <img src="habit/Simulator Screenshot - iPhone 16 Plus - 2025-07-14 at 09.25.12.png" width="200" alt="Habit Details" />
+  <img src="screenshots/mockups_thumbnail.png" width="600" alt="HabitQuest App Mockups Overview" />
+</div>
+
+### Individual Screenshots
+
+<div align="center">
+  <img src="screenshots/splash_screen.png" width="200" alt="Splash Screen" />
+  <img src="screenshots/home_dashboard.png" width="200" alt="Home Dashboard" />
+  <img src="screenshots/habit_list.png" width="200" alt="Habit List" />
+  <img src="screenshots/habit_details.png" width="200" alt="Habit Details" />
 </div>
 
 <div align="center">
-  <img src="habit/Simulator Screenshot - iPhone 16 Plus - 2025-07-14 at 09.25.22.png" width="200" alt="Progress Analytics" />
-  <img src="habit/Simulator Screenshot - iPhone 16 Plus - 2025-07-14 at 09.25.30.png" width="200" alt="Profile & Achievements" />
-  <img src="habit/Simulator Screenshot - iPhone 16 Plus - 2025-07-14 at 09.25.47.png" width="200" alt="Settings" />
+  <img src="screenshots/progress_analytics.png" width="200" alt="Progress Analytics" />
+  <img src="screenshots/profile_achievements.png" width="200" alt="Profile & Achievements" />
+  <img src="screenshots/settings.png" width="200" alt="Settings" />
 </div>
 
 *Experience the elegant, iOS-like interface with smooth animations and modern design patterns*
