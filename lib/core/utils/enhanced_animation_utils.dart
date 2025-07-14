@@ -101,10 +101,7 @@ class EnhancedAnimationUtils {
 
     return ScaleTransition(
       scale: scaleAnimation,
-      child: FadeTransition(
-        opacity: fadeAnimation,
-        child: child,
-      ),
+      child: FadeTransition(opacity: fadeAnimation, child: child),
     );
   }
 
@@ -117,10 +114,7 @@ class EnhancedAnimationUtils {
     final animation = Tween<double>(
       begin: 1.0,
       end: 1.0 + intensity,
-    ).animate(CurvedAnimation(
-      parent: controller,
-      curve: Curves.elasticOut,
-    ));
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.elasticOut));
 
     return ScaleTransition(scale: animation, child: child);
   }
@@ -134,10 +128,7 @@ class EnhancedAnimationUtils {
     final animation = Tween<double>(
       begin: -intensity,
       end: intensity,
-    ).animate(CurvedAnimation(
-      parent: controller,
-      curve: Curves.elasticIn,
-    ));
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.elasticIn));
 
     return AnimatedBuilder(
       animation: animation,
@@ -161,10 +152,7 @@ class EnhancedAnimationUtils {
     final animation = Tween<double>(
       begin: minScale,
       end: maxScale,
-    ).animate(CurvedAnimation(
-      parent: controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
 
     return ScaleTransition(scale: animation, child: child);
   }
@@ -174,17 +162,19 @@ class EnhancedAnimationUtils {
     required Widget child,
     required int index,
     required AnimationController controller,
+    required TickerProvider vsync,
     Duration staggerDelay = const Duration(milliseconds: 100),
     Curve curve = defaultCurve,
   }) {
     final delayedController = AnimationController(
       duration: controller.duration,
-      vsync: controller,
+      vsync: vsync,
     );
 
     // Start the animation with a delay based on index
     Future.delayed(staggerDelay * index, () {
-      if (delayedController.isCompleted || delayedController.isAnimating) return;
+      if (delayedController.isCompleted || delayedController.isAnimating)
+        return;
       delayedController.forward();
     });
 
@@ -282,10 +272,7 @@ class EnhancedAnimationUtils {
         final visibleCharacters = (text.length * progress).round();
         final visibleText = text.substring(0, visibleCharacters);
 
-        return Text(
-          visibleText,
-          style: style,
-        );
+        return Text(visibleText, style: style);
       },
     );
   }

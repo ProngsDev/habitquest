@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' show Colors, Tooltip;
 
 import '../../../core/utils/enhanced_animation_utils.dart';
 
@@ -50,21 +51,17 @@ class _ModernHeaderState extends State<ModernHeader>
       vsync: this,
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -0.5),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, -0.5), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
   }
 
   void _animateIn() {
@@ -86,7 +83,9 @@ class _ModernHeaderState extends State<ModernHeader>
     Widget content = Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       decoration: BoxDecoration(
-        color: widget.backgroundColor ?? CupertinoTheme.of(context).scaffoldBackgroundColor,
+        color:
+            widget.backgroundColor ??
+            CupertinoTheme.of(context).scaffoldBackgroundColor,
         border: Border(
           bottom: BorderSide(
             color: CupertinoColors.systemGrey.withOpacity(0.1),
@@ -129,10 +128,7 @@ class _ModernHeaderState extends State<ModernHeader>
             ),
             if (widget.actions != null) ...[
               const SizedBox(width: 16),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: widget.actions!,
-              ),
+              Row(mainAxisSize: MainAxisSize.min, children: widget.actions!),
             ],
           ],
         ),
@@ -145,10 +141,7 @@ class _ModernHeaderState extends State<ModernHeader>
         builder: (context, child) {
           return SlideTransition(
             position: _slideAnimation,
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: child,
-            ),
+            child: FadeTransition(opacity: _fadeAnimation, child: child),
           );
         },
         child: content,
@@ -225,10 +218,7 @@ class ModernSectionHeader extends StatelessWidget {
               ],
             ),
           ),
-          if (trailing != null) ...[
-            const SizedBox(width: 16),
-            trailing!,
-          ],
+          if (trailing != null) ...[const SizedBox(width: 16), trailing!],
         ],
       ),
     );
@@ -271,13 +261,9 @@ class _ModernActionButtonState extends State<ModernActionButton>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.9,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -322,10 +308,7 @@ class _ModernActionButtonState extends State<ModernActionButton>
     );
 
     if (widget.tooltip != null) {
-      button = Tooltip(
-        message: widget.tooltip!,
-        child: button,
-      );
+      button = Tooltip(message: widget.tooltip!, child: button);
     }
 
     return button;
@@ -396,7 +379,9 @@ class ModernTabBar extends StatelessWidget {
                       duration: EnhancedAnimationUtils.fastDuration,
                       style: TextStyle(
                         fontSize: 10,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
                         color: isSelected
                             ? CupertinoColors.systemBlue
                             : CupertinoColors.systemGrey,
