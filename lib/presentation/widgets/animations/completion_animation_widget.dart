@@ -20,7 +20,8 @@ class CompletionAnimationWidget extends StatefulWidget {
   });
 
   @override
-  State<CompletionAnimationWidget> createState() => _CompletionAnimationWidgetState();
+  State<CompletionAnimationWidget> createState() =>
+      _CompletionAnimationWidgetState();
 }
 
 class _CompletionAnimationWidgetState extends State<CompletionAnimationWidget>
@@ -48,21 +49,13 @@ class _CompletionAnimationWidgetState extends State<CompletionAnimationWidget>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
+    );
 
-    _checkmarkAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _checkmarkController,
-      curve: Curves.elasticOut,
-    ));
+    _checkmarkAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _checkmarkController, curve: Curves.elasticOut),
+    );
 
     _checkmarkController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -113,16 +106,13 @@ class _CompletionAnimationWidgetState extends State<CompletionAnimationWidget>
     return AnimatedBuilder(
       animation: Listenable.merge([_scaleController, _checkmarkController]),
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              widget.child,
-              if (widget.isCompleted && _checkmarkAnimation.value > 0)
-                _buildCheckmarkOverlay(),
-            ],
-          ),
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            Transform.scale(scale: _scaleAnimation.value, child: widget.child),
+            if (widget.isCompleted && _checkmarkAnimation.value > 0)
+              _buildCheckmarkOverlay(),
+          ],
         );
       },
     );
@@ -130,18 +120,20 @@ class _CompletionAnimationWidgetState extends State<CompletionAnimationWidget>
 
   Widget _buildCheckmarkOverlay() {
     return Positioned.fill(
-      child: Container(
-        decoration: BoxDecoration(
-          color: CupertinoColors.systemGreen.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Center(
-          child: Transform.scale(
-            scale: _checkmarkAnimation.value,
-            child: const Icon(
-              CupertinoIcons.checkmark_circle_fill,
-              size: 40,
-              color: CupertinoColors.systemGreen,
+      child: IgnorePointer(
+        child: Container(
+          decoration: BoxDecoration(
+            color: CupertinoColors.systemGreen.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Transform.scale(
+              scale: _checkmarkAnimation.value,
+              child: const Icon(
+                CupertinoIcons.checkmark_circle_fill,
+                size: 40,
+                color: CupertinoColors.systemGreen,
+              ),
             ),
           ),
         ),
@@ -151,11 +143,7 @@ class _CompletionAnimationWidgetState extends State<CompletionAnimationWidget>
 }
 
 /// Types of completion animations
-enum CompletionAnimationType {
-  scale,
-  checkmark,
-  bounce,
-}
+enum CompletionAnimationType { scale, checkmark, bounce }
 
 /// Confetti animation widget for celebrations
 class ConfettiAnimationWidget extends StatefulWidget {
@@ -171,7 +159,8 @@ class ConfettiAnimationWidget extends StatefulWidget {
   });
 
   @override
-  State<ConfettiAnimationWidget> createState() => _ConfettiAnimationWidgetState();
+  State<ConfettiAnimationWidget> createState() =>
+      _ConfettiAnimationWidgetState();
 }
 
 class _ConfettiAnimationWidgetState extends State<ConfettiAnimationWidget> {
@@ -180,7 +169,9 @@ class _ConfettiAnimationWidgetState extends State<ConfettiAnimationWidget> {
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
   }
 
   @override
@@ -246,7 +237,8 @@ class CelebrationLottieWidget extends StatefulWidget {
   });
 
   @override
-  State<CelebrationLottieWidget> createState() => _CelebrationLottieWidgetState();
+  State<CelebrationLottieWidget> createState() =>
+      _CelebrationLottieWidgetState();
 }
 
 class _CelebrationLottieWidgetState extends State<CelebrationLottieWidget>

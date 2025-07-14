@@ -29,12 +29,11 @@ class HabitCard extends ConsumerWidget {
     final categoryColor = Color(habit.colorValue);
     final isDarkMode = CupertinoTheme.of(context).brightness == Brightness.dark;
 
-    return CompletionAnimationWidget(
-      isCompleted: isCompleted,
-      animationType: CompletionAnimationType.scale,
-      child: CustomCard(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        onTap: onTap ?? () => AppNavigation.toHabitDetail(context, habit.id),
+    return CustomCard(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      onTap: onTap ?? () => AppNavigation.toHabitDetail(context, habit.id),
+      child: CompletionAnimationWidget(
+        isCompleted: isCompleted,
         child: Row(
           children: [
             // Category color indicator and completion button
