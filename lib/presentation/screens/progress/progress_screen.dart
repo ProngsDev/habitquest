@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/utils/responsive_utils.dart';
 import '../../providers/habit_completion_providers.dart';
+import '../../providers/habit_providers.dart';
 import '../../providers/user_providers.dart';
 import '../../widgets/common/error_widgets.dart';
 import '../../widgets/common/loading_widget.dart';
-
+import '../../widgets/progress/empty_progress_widget.dart';
 import '../../widgets/progress/level_progress_widget.dart';
 import '../../widgets/progress/progress_charts_widget.dart';
 import '../../widgets/progress/streak_calendar_widget.dart';
@@ -18,48 +19,70 @@ class ProgressScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userStats = ref.watch(userStatisticsProvider);
+
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(middle: Text('Progress')),
       child: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            CupertinoSliverRefreshControl(
-              onRefresh: () async {
-                // Refresh all progress data
-                ref
-                  ..invalidate(userStatisticsProvider)
-                  ..invalidate(totalXpProvider)
-                  ..invalidate(todaysCompletionsProvider);
-              },
+        child: userStats.when(
+          data: (stats) => _buildProgressContent(context, ref, stats),
+          loading: () =>
+              const Center(child: CupertinoActivityIndicator(radius: 20)),
+          error: (error, _) => Center(
+            child: AnimatedErrorWidget(
+              message: 'Failed to load progress data',
+              onRetry: () => ref
+                ..invalidate(userStatisticsProvider)
+                ..invalidate(todaysCompletionsProvider),
             ),
-            SliverPadding(
-              padding: ResponsiveUtils.getResponsivePadding(context),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  // Level and XP Progress Section
-                  _buildLevelProgressSection(ref),
-                  const SizedBox(height: 24),
-
-                  // Weekly Overview Section
-                  _buildWeeklyOverviewSection(ref),
-                  const SizedBox(height: 24),
-
-                  // Charts Section
-                  _buildChartsSection(ref),
-                  const SizedBox(height: 24),
-
-                  // Streak Calendar Section
-                  _buildStreakCalendarSection(ref),
-                  const SizedBox(height: 24),
-
-                  // Additional spacing for bottom
-                  const SizedBox(height: 32),
-                ]),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildProgressContent(
+    BuildContext context,
+    WidgetRef ref,
+    Map<String, dynamic> stats,
+  ) {
+    final hasProgress = stats['totalHabitsCompleted'] as int > 0;
+
+    return CustomScrollView(
+      slivers: [
+        CupertinoSliverRefreshControl(
+          onRefresh: () async {
+            // Refresh all progress data
+            ref
+              ..invalidate(userStatisticsProvider)
+              ..invalidate(totalXpProvider)
+              ..invalidate(todaysCompletionsProvider);
+          },
+        ),
+        SliverPadding(
+          padding: ResponsiveUtils.getResponsivePadding(context),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate([
+              if (!hasProgress) ...[
+                // Show empty state
+                const EmptyProgressWidget(),
+                const SizedBox(height: 24),
+                const SampleProgressWidget(),
+              ] else ...[
+                // Show actual progress data
+                _buildLevelProgressSection(ref),
+                const SizedBox(height: 24),
+                _buildWeeklyOverviewSection(ref),
+                const SizedBox(height: 24),
+                _buildChartsSection(ref),
+                const SizedBox(height: 24),
+                _buildStreakCalendarSection(ref),
+              ],
+              const SizedBox(height: 32),
+            ]),
+          ),
+        ),
+      ],
     );
   }
 

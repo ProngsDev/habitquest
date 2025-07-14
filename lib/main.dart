@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'core/constants/app_constants.dart';
 import 'core/enums/habit_enums.dart';
 import 'core/navigation/app_router.dart';
+import 'core/services/app_initialization_service.dart';
 import 'core/services/notification_service.dart';
 import 'data/models/achievement_model.dart';
 import 'data/models/habit_completion_model.dart';
@@ -49,6 +50,7 @@ class HabitQuestApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentTheme = ref.watch(currentThemeProvider);
+    final appInitialization = ref.watch(appInitializationProvider);
 
     return CupertinoApp(
       title: 'HabitQuest',
@@ -56,6 +58,43 @@ class HabitQuestApp extends ConsumerWidget {
       initialRoute: AppRoutes.home,
       onGenerateRoute: AppRouter.generateRoute,
       debugShowCheckedModeBanner: false,
+      home: appInitialization.when(
+        data: (_) => null, // Let the router handle navigation
+        loading: () => const CupertinoPageScaffold(
+          child: Center(child: CupertinoActivityIndicator(radius: 20)),
+        ),
+        error: (error, _) => CupertinoPageScaffold(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  CupertinoIcons.exclamationmark_triangle,
+                  size: 48,
+                  color: CupertinoColors.systemRed,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Failed to initialize app',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  error.toString(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: CupertinoColors.secondaryLabel,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
