@@ -2,17 +2,17 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../core/utils/chart_data_processor.dart';
+import '../../../core/utils/enhanced_animation_utils.dart';
 import '../../../domain/entities/habit_completion.dart';
 import '../common/custom_card.dart';
+import '../common/modern_card.dart';
+import '../common/modern_header.dart';
 
 /// Widget for displaying progress charts and analytics
 class ProgressChartsWidget extends StatefulWidget {
   final List<HabitCompletion> completions;
 
-  const ProgressChartsWidget({
-    super.key,
-    required this.completions,
-  });
+  const ProgressChartsWidget({super.key, required this.completions});
 
   @override
   State<ProgressChartsWidget> createState() => _ProgressChartsWidgetState();
@@ -73,10 +73,7 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
           const SizedBox(height: 20),
 
           // Chart content
-          SizedBox(
-            height: 250,
-            child: _buildSelectedChart(),
-          ),
+          SizedBox(height: 250, child: _buildSelectedChart()),
         ],
       ),
     );
@@ -110,12 +107,17 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
           show: true,
           drawVerticalLine: false,
           horizontalInterval: 1,
-          getDrawingHorizontalLine: (value) => ChartDataProcessor.getChartGridLine(),
+          getDrawingHorizontalLine: (value) =>
+              ChartDataProcessor.getChartGridLine(),
         ),
         titlesData: FlTitlesData(
           show: true,
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -151,18 +153,24 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
         minX: 0,
         maxX: 6,
         minY: 0,
-        maxY: weeklyData.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) + 1,
+        maxY:
+            weeklyData.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) +
+            1,
         lineBarsData: [
           LineChartBarData(
             spots: weeklyData,
             isCurved: true,
-            gradient: ChartDataProcessor.getChartGradient(CupertinoColors.systemBlue),
+            gradient: ChartDataProcessor.getChartGradient(
+              CupertinoColors.systemBlue,
+            ),
             barWidth: 3,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: true),
             belowBarData: BarAreaData(
               show: true,
-              gradient: ChartDataProcessor.getChartGradient(CupertinoColors.systemBlue),
+              gradient: ChartDataProcessor.getChartGradient(
+                CupertinoColors.systemBlue,
+              ),
             ),
           ),
         ],
@@ -185,12 +193,17 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
           show: true,
           drawVerticalLine: false,
           horizontalInterval: 1,
-          getDrawingHorizontalLine: (value) => ChartDataProcessor.getChartGridLine(),
+          getDrawingHorizontalLine: (value) =>
+              ChartDataProcessor.getChartGridLine(),
         ),
         titlesData: FlTitlesData(
           show: true,
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -222,18 +235,24 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
         minX: 1,
         maxX: monthlyData.length.toDouble(),
         minY: 0,
-        maxY: monthlyData.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) + 1,
+        maxY:
+            monthlyData.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) +
+            1,
         lineBarsData: [
           LineChartBarData(
             spots: monthlyData,
             isCurved: true,
-            gradient: ChartDataProcessor.getChartGradient(CupertinoColors.systemGreen),
+            gradient: ChartDataProcessor.getChartGradient(
+              CupertinoColors.systemGreen,
+            ),
             barWidth: 3,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              gradient: ChartDataProcessor.getChartGradient(CupertinoColors.systemGreen),
+              gradient: ChartDataProcessor.getChartGradient(
+                CupertinoColors.systemGreen,
+              ),
             ),
           ),
         ],
@@ -257,12 +276,17 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
           show: true,
           drawVerticalLine: false,
           horizontalInterval: 100,
-          getDrawingHorizontalLine: (value) => ChartDataProcessor.getChartGridLine(),
+          getDrawingHorizontalLine: (value) =>
+              ChartDataProcessor.getChartGridLine(),
         ),
         titlesData: FlTitlesData(
           show: true,
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -294,18 +318,23 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
         minX: 0,
         maxX: 29,
         minY: 0,
-        maxY: xpData.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) + 100,
+        maxY:
+            xpData.map((spot) => spot.y).reduce((a, b) => a > b ? a : b) + 100,
         lineBarsData: [
           LineChartBarData(
             spots: xpData,
             isCurved: true,
-            gradient: ChartDataProcessor.getChartGradient(CupertinoColors.systemPurple),
+            gradient: ChartDataProcessor.getChartGradient(
+              CupertinoColors.systemPurple,
+            ),
             barWidth: 3,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(
               show: true,
-              gradient: ChartDataProcessor.getChartGradient(CupertinoColors.systemPurple),
+              gradient: ChartDataProcessor.getChartGradient(
+                CupertinoColors.systemPurple,
+              ),
             ),
           ),
         ],

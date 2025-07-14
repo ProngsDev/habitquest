@@ -10,6 +10,7 @@ import '../../widgets/common/loading_widget.dart';
 import '../../widgets/common/modern_header.dart';
 import '../../widgets/common/modern_stat_card.dart';
 import '../../widgets/progress/empty_progress_widget.dart';
+import '../../widgets/progress/enhanced_progress_charts_widget.dart';
 import '../../widgets/progress/level_progress_widget.dart';
 import '../../widgets/progress/progress_charts_widget.dart';
 import '../../widgets/progress/streak_calendar_widget.dart';
@@ -166,7 +167,8 @@ class ProgressScreen extends ConsumerWidget {
     final todaysCompletions = ref.watch(todaysCompletionsProvider);
 
     return todaysCompletions.when(
-      data: (completions) => ProgressChartsWidget(completions: completions),
+      data: (completions) =>
+          EnhancedProgressChartsWidget(completions: completions),
       loading: () => const CardLoadingWidget(message: 'Loading charts...'),
       error: (error, _) => AnimatedErrorWidget(
         message: 'Failed to load progress charts',
