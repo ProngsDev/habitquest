@@ -27,12 +27,11 @@ class CustomCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
-    final defaultBackgroundColor = backgroundColor ?? 
-        (isDark ? Colors.grey[850] : Colors.white);
-    
-    final defaultBorderRadius = borderRadius ?? 
-        BorderRadius.circular(12.0);
+
+    final defaultBackgroundColor =
+        backgroundColor ?? (isDark ? Colors.grey[850] : Colors.white);
+
+    final defaultBorderRadius = borderRadius ?? BorderRadius.circular(12.0);
 
     Widget cardContent = Container(
       padding: padding ?? const EdgeInsets.all(16.0),
@@ -40,20 +39,21 @@ class CustomCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: defaultBackgroundColor,
         borderRadius: defaultBorderRadius,
-        boxShadow: showShadow ? [
-          BoxShadow(
-            color: isDark 
-                ? Colors.black.withOpacity(0.3)
-                : Colors.grey.withOpacity(0.1),
-            spreadRadius: 0,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ] : null,
-        border: isDark ? Border.all(
-          color: Colors.grey[700]!,
-          width: 0.5,
-        ) : null,
+        boxShadow: showShadow
+            ? [
+                BoxShadow(
+                  color: isDark
+                      ? Colors.black.withOpacity(0.3)
+                      : Colors.grey.withOpacity(0.1),
+                  spreadRadius: 0,
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
+        border: isDark
+            ? Border.all(color: Colors.grey[700]!, width: 0.5)
+            : null,
       ),
       child: child,
     );
@@ -125,27 +125,18 @@ class CustomListCard extends StatelessWidget {
       onTap: onTap,
       child: Row(
         children: [
-          if (leading != null) ...[
-            leading!,
-            const SizedBox(width: 12),
-          ],
+          if (leading != null) ...[leading!, const SizedBox(width: 12)],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 title,
-                if (subtitle != null) ...[
-                  const SizedBox(height: 4),
-                  subtitle!,
-                ],
+                if (subtitle != null) ...[const SizedBox(height: 4), subtitle!],
               ],
             ),
           ),
-          if (trailing != null) ...[
-            const SizedBox(width: 12),
-            trailing!,
-          ],
+          if (trailing != null) ...[const SizedBox(width: 12), trailing!],
         ],
       ),
     );

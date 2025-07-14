@@ -9,9 +9,8 @@ import '../common/modern_header.dart';
 
 /// Enhanced widget for displaying progress charts with animations
 class EnhancedProgressChartsWidget extends StatefulWidget {
-  final List<HabitCompletion> completions;
-
   const EnhancedProgressChartsWidget({super.key, required this.completions});
+  final List<HabitCompletion> completions;
 
   @override
   State<EnhancedProgressChartsWidget> createState() =>
@@ -44,14 +43,14 @@ class _EnhancedProgressChartsWidgetState
       vsync: this,
     );
 
-    _chartAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _chartAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _chartAnimationController,
         curve: Curves.easeOutCubic,
       ),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
 
@@ -67,87 +66,82 @@ class _EnhancedProgressChartsWidgetState
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const ModernSectionHeader(
-          title: 'Progress Charts',
-          subtitle: 'Visualize your habit completion trends',
-        ),
-        CustomCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Chart selector with animation
-              AnimatedBuilder(
-                animation: _fadeAnimation,
-                builder: (context, child) {
-                  return Opacity(
-                    opacity: _fadeAnimation.value,
-                    child: Center(
-                      child: CupertinoSlidingSegmentedControl<int>(
-                        groupValue: _selectedChartIndex,
-                        onValueChanged: (value) {
-                          if (value != null) {
-                            _animateChartChange(value);
-                          }
-                        },
-                        children: const {
-                          0: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            child: Text('Week'),
+  Widget build(BuildContext context) => Column(
+    children: [
+      const ModernSectionHeader(
+        title: 'Progress Charts',
+        subtitle: 'Visualize your habit completion trends',
+      ),
+      CustomCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Chart selector with animation
+            AnimatedBuilder(
+              animation: _fadeAnimation,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: _fadeAnimation.value,
+                  child: Center(
+                    child: CupertinoSlidingSegmentedControl<int>(
+                      groupValue: _selectedChartIndex,
+                      onValueChanged: (value) {
+                        if (value != null) {
+                          _animateChartChange(value);
+                        }
+                      },
+                      children: const {
+                        0: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
                           ),
-                          1: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            child: Text('Month'),
+                          child: Text('Week'),
+                        ),
+                        1: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
                           ),
-                          2: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            child: Text('XP'),
+                          child: Text('Month'),
+                        ),
+                        2: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
                           ),
-                        },
-                      ),
+                          child: Text('XP'),
+                        ),
+                      },
                     ),
-                  );
-                },
-              ),
-              const SizedBox(height: 24),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 24),
 
-              // Chart content with animation
-              AnimatedBuilder(
-                animation: _chartAnimation,
-                builder: (context, child) {
-                  return Transform.scale(
-                    scale: _chartAnimation.value,
-                    child: Opacity(
-                      opacity: _chartAnimation.value,
-                      child: SizedBox(
-                        height: 300,
-                        child: _buildSelectedChart(),
-                      ),
-                    ),
-                  );
-                },
-              ),
+            // Chart content with animation
+            AnimatedBuilder(
+              animation: _chartAnimation,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: _chartAnimation.value,
+                  child: Opacity(
+                    opacity: _chartAnimation.value,
+                    child: SizedBox(height: 300, child: _buildSelectedChart()),
+                  ),
+                );
+              },
+            ),
 
-              // Chart legend
-              const SizedBox(height: 16),
-              _buildChartLegend(),
-            ],
-          ),
+            // Chart legend
+            const SizedBox(height: 16),
+            _buildChartLegend(),
+          ],
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 
   void _animateChartChange(int newIndex) {
     _fadeController.reverse().then((_) {
@@ -185,20 +179,14 @@ class _EnhancedProgressChartsWidgetState
     return LineChart(
       LineChartData(
         gridData: FlGridData(
-          show: true,
           drawVerticalLine: false,
           horizontalInterval: 1,
           getDrawingHorizontalLine: (value) =>
               ChartDataProcessor.getChartGridLine(),
         ),
         titlesData: FlTitlesData(
-          show: true,
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
+          rightTitles: const AxisTitles(),
+          topTitles: const AxisTitles(),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -221,12 +209,10 @@ class _EnhancedProgressChartsWidgetState
               showTitles: true,
               interval: 1,
               reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                return Text(
-                  ChartDataProcessor.formatChartValue(value),
-                  style: ChartDataProcessor.getChartAxisLabelStyle(),
-                );
-              },
+              getTitlesWidget: (value, meta) => Text(
+                ChartDataProcessor.formatChartValue(value),
+                style: ChartDataProcessor.getChartAxisLabelStyle(),
+              ),
             ),
           ),
         ),
@@ -247,15 +233,13 @@ class _EnhancedProgressChartsWidgetState
             barWidth: 4,
             isStrokeCapRound: true,
             dotData: FlDotData(
-              show: true,
-              getDotPainter: (spot, percent, barData, index) {
-                return FlDotCirclePainter(
-                  radius: 6,
-                  color: CupertinoColors.systemBlue,
-                  strokeWidth: 2,
-                  strokeColor: CupertinoColors.white,
-                );
-              },
+              getDotPainter: (spot, percent, barData, index) =>
+                  FlDotCirclePainter(
+                    radius: 6,
+                    color: CupertinoColors.systemBlue,
+                    strokeWidth: 2,
+                    strokeColor: CupertinoColors.white,
+                  ),
             ),
             belowBarData: BarAreaData(
               show: true,
@@ -286,31 +270,23 @@ class _EnhancedProgressChartsWidgetState
     return LineChart(
       LineChartData(
         gridData: FlGridData(
-          show: true,
           drawVerticalLine: false,
           horizontalInterval: 1,
           getDrawingHorizontalLine: (value) =>
               ChartDataProcessor.getChartGridLine(),
         ),
         titlesData: FlTitlesData(
-          show: true,
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
+          rightTitles: const AxisTitles(),
+          topTitles: const AxisTitles(),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 30,
               interval: 5,
-              getTitlesWidget: (value, meta) {
-                return Text(
-                  value.toInt().toString(),
-                  style: ChartDataProcessor.getChartAxisLabelStyle(),
-                );
-              },
+              getTitlesWidget: (value, meta) => Text(
+                value.toInt().toString(),
+                style: ChartDataProcessor.getChartAxisLabelStyle(),
+              ),
             ),
           ),
           leftTitles: AxisTitles(
@@ -318,12 +294,10 @@ class _EnhancedProgressChartsWidgetState
               showTitles: true,
               interval: 1,
               reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                return Text(
-                  ChartDataProcessor.formatChartValue(value),
-                  style: ChartDataProcessor.getChartAxisLabelStyle(),
-                );
-              },
+              getTitlesWidget: (value, meta) => Text(
+                ChartDataProcessor.formatChartValue(value),
+                style: ChartDataProcessor.getChartAxisLabelStyle(),
+              ),
             ),
           ),
         ),
@@ -374,31 +348,23 @@ class _EnhancedProgressChartsWidgetState
     return LineChart(
       LineChartData(
         gridData: FlGridData(
-          show: true,
           drawVerticalLine: false,
           horizontalInterval: 100,
           getDrawingHorizontalLine: (value) =>
               ChartDataProcessor.getChartGridLine(),
         ),
         titlesData: FlTitlesData(
-          show: true,
-          rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
+          rightTitles: const AxisTitles(),
+          topTitles: const AxisTitles(),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 30,
               interval: 5,
-              getTitlesWidget: (value, meta) {
-                return Text(
-                  '${value.toInt()}d',
-                  style: ChartDataProcessor.getChartAxisLabelStyle(),
-                );
-              },
+              getTitlesWidget: (value, meta) => Text(
+                '${value.toInt()}d',
+                style: ChartDataProcessor.getChartAxisLabelStyle(),
+              ),
             ),
           ),
           leftTitles: AxisTitles(
@@ -406,12 +372,10 @@ class _EnhancedProgressChartsWidgetState
               showTitles: true,
               interval: 100,
               reservedSize: 50,
-              getTitlesWidget: (value, meta) {
-                return Text(
-                  ChartDataProcessor.formatChartValue(value),
-                  style: ChartDataProcessor.getChartAxisLabelStyle(),
-                );
-              },
+              getTitlesWidget: (value, meta) => Text(
+                ChartDataProcessor.formatChartValue(value),
+                style: ChartDataProcessor.getChartAxisLabelStyle(),
+              ),
             ),
           ),
         ),
@@ -448,45 +412,43 @@ class _EnhancedProgressChartsWidgetState
     );
   }
 
-  Widget _buildEmptyChart(String message) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: CupertinoColors.systemGrey6,
-              border: Border.all(color: CupertinoColors.systemGrey4, width: 2),
-            ),
-            child: const Icon(
-              CupertinoIcons.chart_bar,
-              size: 32,
-              color: CupertinoColors.systemGrey3,
-            ),
+  Widget _buildEmptyChart(String message) => Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: CupertinoColors.systemGrey6,
+            border: Border.all(color: CupertinoColors.systemGrey4, width: 2),
           ),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: CupertinoColors.systemGrey,
-            ),
-            textAlign: TextAlign.center,
+          child: const Icon(
+            CupertinoIcons.chart_bar,
+            size: 32,
+            color: CupertinoColors.systemGrey3,
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Complete some habits to see your progress!',
-            style: TextStyle(fontSize: 14, color: CupertinoColors.systemGrey2),
-            textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 16),
+        Text(
+          message,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: CupertinoColors.systemGrey,
           ),
-        ],
-      ),
-    );
-  }
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Complete some habits to see your progress!',
+          style: TextStyle(fontSize: 14, color: CupertinoColors.systemGrey2),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ),
+  );
 
   Widget _buildChartLegend() {
     final legendItems = _getLegendItems();
@@ -557,40 +519,38 @@ class _EnhancedProgressChartsWidgetState
     required Color color,
     required String label,
     required String value,
-  }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(6),
+  }) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Container(
+        width: 12,
+        height: 12,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(6),
+        ),
+      ),
+      const SizedBox(width: 8),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: CupertinoColors.secondaryLabel,
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 12,
-                color: CupertinoColors.secondaryLabel,
-              ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: CupertinoColors.label,
             ),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: CupertinoColors.label,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+          ),
+        ],
+      ),
+    ],
+  );
 }

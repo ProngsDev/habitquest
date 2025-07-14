@@ -12,7 +12,7 @@ import 'data/models/habit_completion_model.dart';
 import 'data/models/habit_model.dart';
 import 'data/models/user_model.dart';
 import 'presentation/providers/theme_providers.dart';
-import 'presentation/screens/home/home_screen.dart';
+import 'presentation/screens/splash/splash_screen.dart';
 
 void main() async {
   // Ensure Flutter is initialized
@@ -57,11 +57,10 @@ class HabitQuestApp extends ConsumerWidget {
       title: 'HabitQuest',
       theme: currentTheme,
       debugShowCheckedModeBanner: false,
+      onGenerateRoute: AppRouter.generateRoute,
       home: appInitialization.when(
-        data: (_) => const HomeScreen(),
-        loading: () => const CupertinoPageScaffold(
-          child: Center(child: CupertinoActivityIndicator(radius: 20)),
-        ),
+        data: (_) => const SplashScreen(),
+        loading: () => const SplashScreen(),
         error: (error, _) => CupertinoPageScaffold(
           child: Center(
             child: Column(

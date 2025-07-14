@@ -2,8 +2,6 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../../core/utils/animation_utils.dart';
-
 /// Widget for displaying task completion animations
 class CompletionAnimationWidget extends StatefulWidget {
   final Widget child;
@@ -27,9 +25,7 @@ class CompletionAnimationWidget extends StatefulWidget {
 class _CompletionAnimationWidgetState extends State<CompletionAnimationWidget>
     with TickerProviderStateMixin {
   late AnimationController _scaleController;
-  late AnimationController _checkmarkController;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _checkmarkAnimation;
   bool _hasAnimated = false;
 
   @override
@@ -40,56 +36,62 @@ class _CompletionAnimationWidgetState extends State<CompletionAnimationWidget>
 
   void _setupAnimations() {
     _scaleController = AnimationController(
-      duration: AnimationUtils.normalDuration,
+      duration: const Duration(
+        milliseconds: 200,
+      ), // Optimized for iOS-like responsiveness
       vsync: this,
     );
 
-    _checkmarkController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
-    );
-
-    _checkmarkAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _checkmarkController, curve: Curves.elasticOut),
-    );
-
-    _checkmarkController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        widget.onAnimationComplete?.call();
-      }
-    });
+    // Create smooth scale animation: 1.0 → 1.05 → 1.0
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(
+          begin: 1.0,
+          end: 1.05,
+        ).chain(CurveTween(curve: Curves.easeOut)),
+        weight: 40, // 40% of animation (80ms) - quick scale up
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(
+          begin: 1.05,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeOutCubic)),
+        weight: 60, // 60% of animation (120ms) - smooth scale down
+      ),
+    ]).animate(_scaleController);
   }
 
   @override
   void didUpdateWidget(CompletionAnimationWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.isCompleted && !oldWidget.isCompleted && !_hasAnimated) {
+    if (widget.isCompleted && !oldWidget.isCompleted) {
       _triggerAnimation();
+    } else if (!widget.isCompleted && oldWidget.isCompleted) {
+      // Reset animation state when habit is uncompleted
+      _hasAnimated = false;
+      _scaleController.reset();
     }
   }
 
   void _triggerAnimation() {
-    if (_hasAnimated) return;
+    if (_hasAnimated || _scaleController.isAnimating) return;
     _hasAnimated = true;
 
     switch (widget.animationType) {
       case CompletionAnimationType.scale:
+      case CompletionAnimationType.bounce:
+        // Single smooth animation cycle: 1.0 → 1.05 → 1.0
         _scaleController.forward().then((_) {
-          _scaleController.reverse();
-          _checkmarkController.forward();
+          if (mounted) {
+            widget.onAnimationComplete?.call();
+            // Reset for potential future use
+            _scaleController.reset();
+          }
         });
         break;
       case CompletionAnimationType.checkmark:
-        _checkmarkController.forward();
-        break;
-      case CompletionAnimationType.bounce:
-        _scaleController.forward().then((_) {
-          _scaleController.reverse();
-        });
+        // Checkmark overlay removed - just call completion callback
+        widget.onAnimationComplete?.call();
         break;
     }
   }
@@ -97,46 +99,20 @@ class _CompletionAnimationWidgetState extends State<CompletionAnimationWidget>
   @override
   void dispose() {
     _scaleController.dispose();
-    _checkmarkController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: Listenable.merge([_scaleController, _checkmarkController]),
-      builder: (context, child) {
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            Transform.scale(scale: _scaleAnimation.value, child: widget.child),
-            if (widget.isCompleted && _checkmarkAnimation.value > 0)
-              _buildCheckmarkOverlay(),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildCheckmarkOverlay() {
-    return Positioned.fill(
-      child: IgnorePointer(
-        child: Container(
-          decoration: BoxDecoration(
-            color: CupertinoColors.systemGreen.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Center(
-            child: Transform.scale(
-              scale: _checkmarkAnimation.value,
-              child: const Icon(
-                CupertinoIcons.checkmark_circle_fill,
-                size: 40,
-                color: CupertinoColors.systemGreen,
-              ),
-            ),
-          ),
-        ),
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _scaleController,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: widget.child,
+          );
+        },
       ),
     );
   }

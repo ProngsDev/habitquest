@@ -11,8 +11,6 @@ import '../../widgets/common/modern_header.dart';
 import '../../widgets/common/modern_stat_card.dart';
 import '../../widgets/progress/empty_progress_widget.dart';
 import '../../widgets/progress/enhanced_progress_charts_widget.dart';
-import '../../widgets/progress/level_progress_widget.dart';
-import '../../widgets/progress/progress_charts_widget.dart';
 import '../../widgets/progress/streak_calendar_widget.dart';
 import '../../widgets/progress/weekly_overview_widget.dart';
 
@@ -67,7 +65,8 @@ class ProgressScreen extends ConsumerWidget {
     ref
       ..invalidate(userStatisticsProvider)
       ..invalidate(todaysCompletionsProvider)
-      ..invalidate(currentUserProvider);
+      ..invalidate(currentUserProvider)
+      ..invalidate(activeHabitsProvider);
   }
 
   Widget _buildProgressContent(
@@ -75,7 +74,13 @@ class ProgressScreen extends ConsumerWidget {
     WidgetRef ref,
     Map<String, dynamic> stats,
   ) {
-    final hasProgress = stats['totalHabitsCompleted'] as int > 0;
+    // Check if user has any active habits to show progress
+    final activeHabits = ref.watch(activeHabitsProvider);
+    final hasProgress = activeHabits.when(
+      data: (habits) => habits.isNotEmpty,
+      loading: () => false,
+      error: (_, __) => false,
+    );
     final user = ref.watch(currentUserProvider);
 
     return CustomScrollView(
@@ -121,26 +126,6 @@ class ProgressScreen extends ConsumerWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildLevelProgressSection(WidgetRef ref) {
-    final userLevelProgress = ref.watch(userLevelProgressProvider);
-
-    return userLevelProgress.when(
-      data: (progress) => LevelProgressWidget(
-        currentLevel: progress['currentLevel'] as int,
-        totalXp: progress['totalXp'] as int,
-        xpInCurrentLevel: progress['xpInCurrentLevel'] as int,
-        xpRequiredForNextLevel: progress['xpRequiredForNextLevel'] as int,
-        progressPercentage: progress['progressPercentage'] as double,
-      ),
-      loading: () =>
-          const CardLoadingWidget(message: 'Loading level progress...'),
-      error: (error, _) => AnimatedErrorWidget(
-        message: 'Failed to load level progress',
-        onRetry: () => ref.invalidate(userLevelProgressProvider),
-      ),
     );
   }
 
@@ -190,69 +175,65 @@ class ProgressScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuickStatsSection(WidgetRef ref, Map<String, dynamic> stats) {
-    return Column(
-      children: [
-        const ModernSectionHeader(
-          title: 'Quick Stats',
-          subtitle: 'Your progress at a glance',
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: ModernStatCard(
-                title: 'Total Habits',
-                value: '${stats['totalHabitsCompleted'] ?? 0}',
-                subtitle: 'Completed',
-                icon: CupertinoIcons.checkmark_circle_fill,
-                iconColor: CupertinoColors.systemGreen,
-                animateOnAppear: true,
+  Widget _buildQuickStatsSection(WidgetRef ref, Map<String, dynamic> stats) =>
+      Column(
+        children: [
+          const ModernSectionHeader(
+            title: 'Quick Stats',
+            subtitle: 'Your progress at a glance',
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: ModernStatCard(
+                  title: 'Total Habits',
+                  value: '${stats['totalHabitsCompleted'] ?? 0}',
+                  subtitle: 'Completed',
+                  icon: CupertinoIcons.checkmark_circle_fill,
+                  iconColor: CupertinoColors.systemGreen,
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: ModernStatCard(
-                title: 'Current Streak',
-                value: '${stats['currentStreak'] ?? 0}',
-                subtitle: 'Days',
-                icon: CupertinoIcons.flame_fill,
-                iconColor: CupertinoColors.systemOrange,
-                animateOnAppear: true,
+              const SizedBox(width: 16),
+              Expanded(
+                child: ModernStatCard(
+                  title: 'Current Streak',
+                  value: '${stats['currentStreak'] ?? 0}',
+                  subtitle: 'Days',
+                  icon: CupertinoIcons.flame_fill,
+                  iconColor: CupertinoColors.systemOrange,
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: ModernStatCard(
-                title: 'This Week',
-                value: '${stats['weeklyCompletions'] ?? 0}',
-                subtitle: 'Completed',
-                icon: CupertinoIcons.calendar,
-                iconColor: CupertinoColors.systemBlue,
-                showTrend: true,
-                trendValue: (stats['weeklyTrend'] as double?) ?? 0.0,
-                animateOnAppear: true,
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ModernStatCard(
+                  title: 'This Week',
+                  value: '${stats['weeklyCompletions'] ?? 0}',
+                  subtitle: 'Completed',
+                  icon: CupertinoIcons.calendar,
+                  iconColor: CupertinoColors.systemBlue,
+                  showTrend: true,
+                  trendValue: (stats['weeklyTrend'] as double?) ?? 0.0,
+                ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: ModernStatCard(
-                title: 'Success Rate',
-                value: '${((stats['successRate'] as double?) ?? 0.0).round()}%',
-                subtitle: 'Overall',
-                icon: CupertinoIcons.star_fill,
-                iconColor: CupertinoColors.systemYellow,
-                animateOnAppear: true,
+              const SizedBox(width: 16),
+              Expanded(
+                child: ModernStatCard(
+                  title: 'Success Rate',
+                  value:
+                      '${((stats['successRate'] as double?) ?? 0.0).round()}%',
+                  subtitle: 'Overall',
+                  icon: CupertinoIcons.star_fill,
+                  iconColor: CupertinoColors.systemYellow,
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+            ],
+          ),
+        ],
+      );
 
   Widget _buildModernLevelSection(dynamic userData) {
     // Calculate level progress
@@ -279,7 +260,6 @@ class ProgressScreen extends ConsumerWidget {
           xpInCurrentLevel: xpInCurrentLevel,
           xpRequiredForNextLevel: xpRequiredForNextLevel - xpInCurrentLevel,
           progressPercentage: progressPercentage.clamp(0.0, 1.0),
-          animateProgress: true,
         ),
       ],
     );

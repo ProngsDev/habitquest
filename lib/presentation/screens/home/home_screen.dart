@@ -74,6 +74,8 @@ class HabitsTab extends ConsumerWidget {
         ),
       ),
       child: SafeArea(
+        top:
+            false, // Don't add top safe area since CupertinoPageScaffold handles it
         child: ResponsiveContainer(
           child: CustomScrollView(
             slivers: [
