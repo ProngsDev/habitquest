@@ -5,18 +5,9 @@ import '../../../core/utils/enhanced_animation_utils.dart';
 
 /// Modern header widget with iOS-like design
 class ModernHeader extends StatefulWidget {
-  final String title;
-  final String? subtitle;
-  final Widget? leading;
-  final List<Widget>? actions;
-  final bool showBackButton;
-  final VoidCallback? onBackPressed;
-  final Color? backgroundColor;
-  final bool animateOnAppear;
 
   const ModernHeader({
-    super.key,
-    required this.title,
+    required this.title, super.key,
     this.subtitle,
     this.leading,
     this.actions,
@@ -25,6 +16,14 @@ class ModernHeader extends StatefulWidget {
     this.backgroundColor,
     this.animateOnAppear = true,
   });
+  final String title;
+  final String? subtitle;
+  final Widget? leading;
+  final List<Widget>? actions;
+  final bool showBackButton;
+  final VoidCallback? onBackPressed;
+  final Color? backgroundColor;
+  final bool animateOnAppear;
 
   @override
   State<ModernHeader> createState() => _ModernHeaderState();
@@ -59,7 +58,7 @@ class _ModernHeaderState extends State<ModernHeader>
           ),
         );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
   }
@@ -138,12 +137,10 @@ class _ModernHeaderState extends State<ModernHeader>
     if (widget.animateOnAppear) {
       content = AnimatedBuilder(
         animation: _animationController,
-        builder: (context, child) {
-          return SlideTransition(
+        builder: (context, child) => SlideTransition(
             position: _slideAnimation,
             child: FadeTransition(opacity: _fadeAnimation, child: child),
-          );
-        },
+          ),
         child: content,
       );
     }
@@ -151,8 +148,7 @@ class _ModernHeaderState extends State<ModernHeader>
     return content;
   }
 
-  Widget _buildBackButton() {
-    return CupertinoButton(
+  Widget _buildBackButton() => CupertinoButton(
       padding: EdgeInsets.zero,
       onPressed: widget.onBackPressed ?? () => Navigator.of(context).pop(),
       child: Container(
@@ -169,27 +165,24 @@ class _ModernHeaderState extends State<ModernHeader>
         ),
       ),
     );
-  }
 }
 
 /// Modern section header
 class ModernSectionHeader extends StatelessWidget {
+
+  const ModernSectionHeader({
+    required this.title, super.key,
+    this.subtitle,
+    this.trailing,
+    this.padding,
+  });
   final String title;
   final String? subtitle;
   final Widget? trailing;
   final EdgeInsetsGeometry? padding;
 
-  const ModernSectionHeader({
-    super.key,
-    required this.title,
-    this.subtitle,
-    this.trailing,
-    this.padding,
-  });
-
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: padding ?? const EdgeInsets.fromLTRB(20, 24, 20, 12),
       child: Row(
         children: [
@@ -222,27 +215,25 @@ class ModernSectionHeader extends StatelessWidget {
         ],
       ),
     );
-  }
 }
 
 /// Modern action button for headers
 class ModernActionButton extends StatefulWidget {
-  final IconData icon;
-  final VoidCallback? onPressed;
-  final Color? backgroundColor;
-  final Color? iconColor;
-  final String? tooltip;
-  final bool isLoading;
 
   const ModernActionButton({
-    super.key,
-    required this.icon,
+    required this.icon, super.key,
     this.onPressed,
     this.backgroundColor,
     this.iconColor,
     this.tooltip,
     this.isLoading = false,
   });
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final Color? backgroundColor;
+  final Color? iconColor;
+  final String? tooltip;
+  final bool isLoading;
 
   @override
   State<ModernActionButton> createState() => _ModernActionButtonState();
@@ -261,7 +252,7 @@ class _ModernActionButtonState extends State<ModernActionButton>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.9).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
   }
@@ -308,7 +299,7 @@ class _ModernActionButtonState extends State<ModernActionButton>
     );
 
     if (widget.tooltip != null) {
-      button = Tooltip(message: widget.tooltip!, child: button);
+      button = Tooltip(message: widget.tooltip, child: button);
     }
 
     return button;
@@ -317,20 +308,16 @@ class _ModernActionButtonState extends State<ModernActionButton>
 
 /// Modern tab bar for bottom navigation
 class ModernTabBar extends StatelessWidget {
+
+  const ModernTabBar({
+    required this.currentIndex, required this.onTap, required this.items, super.key,
+  });
   final int currentIndex;
   final ValueChanged<int> onTap;
   final List<ModernTabItem> items;
 
-  const ModernTabBar({
-    super.key,
-    required this.currentIndex,
-    required this.onTap,
-    required this.items,
-  });
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       height: 80,
       decoration: BoxDecoration(
         color: CupertinoTheme.of(context).scaffoldBackgroundColor,
@@ -396,17 +383,16 @@ class ModernTabBar extends StatelessWidget {
         ),
       ),
     );
-  }
 }
 
 class ModernTabItem {
-  final IconData icon;
-  final IconData activeIcon;
-  final String label;
 
   const ModernTabItem({
     required this.icon,
     required this.activeIcon,
     required this.label,
   });
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
 }

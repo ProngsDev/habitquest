@@ -4,20 +4,19 @@ import '../../../core/utils/responsive_utils.dart';
 
 /// Responsive grid widget that adapts to screen size
 class ResponsiveGrid extends StatelessWidget {
-  final List<Widget> children;
-  final double spacing;
-  final double runSpacing;
-  final int? forceColumns;
-  final EdgeInsets? padding;
 
   const ResponsiveGrid({
-    super.key,
-    required this.children,
+    required this.children, super.key,
     this.spacing = 16,
     this.runSpacing = 16,
     this.forceColumns,
     this.padding,
   });
+  final List<Widget> children;
+  final double spacing;
+  final double runSpacing;
+  final int? forceColumns;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +42,10 @@ class ResponsiveGrid extends StatelessWidget {
     }
 
     final rows = <Widget>[];
-    for (int i = 0; i < children.length; i += columns) {
+    for (var i = 0; i < children.length; i += columns) {
       final rowChildren = <Widget>[];
       
-      for (int j = 0; j < columns; j++) {
+      for (var j = 0; j < columns; j++) {
         if (i + j < children.length) {
           rowChildren.add(
             Expanded(
@@ -79,18 +78,17 @@ class ResponsiveGrid extends StatelessWidget {
 
 /// Responsive staggered grid for cards of different heights
 class ResponsiveStaggeredGrid extends StatelessWidget {
-  final List<Widget> children;
-  final double spacing;
-  final int? forceColumns;
-  final EdgeInsets? padding;
 
   const ResponsiveStaggeredGrid({
-    super.key,
-    required this.children,
+    required this.children, super.key,
     this.spacing = 16,
     this.forceColumns,
     this.padding,
   });
+  final List<Widget> children;
+  final double spacing;
+  final int? forceColumns;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +119,7 @@ class ResponsiveStaggeredGrid extends StatelessWidget {
     final columnChildren = List.generate(columns, (index) => <Widget>[]);
     
     // Distribute children across columns
-    for (int i = 0; i < children.length; i++) {
+    for (var i = 0; i < children.length; i++) {
       final columnIndex = i % columns;
       columnChildren[columnIndex].add(
         Padding(
@@ -151,20 +149,19 @@ class ResponsiveStaggeredGrid extends StatelessWidget {
 
 /// Responsive wrap widget that adapts spacing to screen size
 class ResponsiveWrap extends StatelessWidget {
-  final List<Widget> children;
-  final Axis direction;
-  final WrapAlignment alignment;
-  final WrapCrossAlignment crossAxisAlignment;
-  final EdgeInsets? padding;
 
   const ResponsiveWrap({
-    super.key,
-    required this.children,
+    required this.children, super.key,
     this.direction = Axis.horizontal,
     this.alignment = WrapAlignment.start,
     this.crossAxisAlignment = WrapCrossAlignment.start,
     this.padding,
   });
+  final List<Widget> children;
+  final Axis direction;
+  final WrapAlignment alignment;
+  final WrapCrossAlignment crossAxisAlignment;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -187,18 +184,17 @@ class ResponsiveWrap extends StatelessWidget {
 
 /// Responsive list view with adaptive spacing
 class ResponsiveListView extends StatelessWidget {
-  final List<Widget> children;
-  final ScrollPhysics? physics;
-  final bool shrinkWrap;
-  final EdgeInsets? padding;
 
   const ResponsiveListView({
-    super.key,
-    required this.children,
+    required this.children, super.key,
     this.physics,
     this.shrinkWrap = false,
     this.padding,
   });
+  final List<Widget> children;
+  final ScrollPhysics? physics;
+  final bool shrinkWrap;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -218,20 +214,19 @@ class ResponsiveListView extends StatelessWidget {
 
 /// Responsive card that adapts its width to screen size
 class ResponsiveCard extends StatelessWidget {
-  final Widget child;
-  final EdgeInsets? padding;
-  final EdgeInsets? margin;
-  final Color? backgroundColor;
-  final VoidCallback? onTap;
 
   const ResponsiveCard({
-    super.key,
-    required this.child,
+    required this.child, super.key,
     this.padding,
     this.margin,
     this.backgroundColor,
     this.onTap,
   });
+  final Widget child;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
+  final Color? backgroundColor;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

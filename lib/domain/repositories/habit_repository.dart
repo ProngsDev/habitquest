@@ -1,44 +1,48 @@
-import '../entities/habit.dart';
 import '../../core/enums/habit_enums.dart';
+import '../../core/result/result.dart';
+import '../entities/habit.dart';
 
 /// Abstract repository interface for habit operations
 abstract class HabitRepository {
   /// Get all habits
-  Future<List<Habit>> getAllHabits();
+  Future<Result<List<Habit>>> getAllHabits();
 
   /// Get active habits only
-  Future<List<Habit>> getActiveHabits();
+  Future<Result<List<Habit>>> getActiveHabits();
 
   /// Get habits by category
-  Future<List<Habit>> getHabitsByCategory(HabitCategory category);
+  Future<Result<List<Habit>>> getHabitsByCategory(HabitCategory category);
 
   /// Get habit by ID
-  Future<Habit?> getHabitById(String id);
+  Future<Result<Habit?>> getHabitById(String id);
 
   /// Create a new habit
-  Future<void> createHabit(Habit habit);
+  Future<Result<void>> createHabit(Habit habit);
 
   /// Update an existing habit
-  Future<void> updateHabit(Habit habit);
+  Future<Result<void>> updateHabit(Habit habit);
 
   /// Delete a habit
-  Future<void> deleteHabit(String id);
+  Future<Result<void>> deleteHabit(String id);
 
   /// Archive/deactivate a habit
-  Future<void> archiveHabit(String id);
+  Future<Result<void>> archiveHabit(String id);
 
   /// Restore an archived habit
-  Future<void> restoreHabit(String id);
+  Future<Result<void>> restoreHabit(String id);
 
   /// Search habits by name or description
-  Future<List<Habit>> searchHabits(String query);
+  Future<Result<List<Habit>>> searchHabits(String query);
 
   /// Get habits with reminders
-  Future<List<Habit>> getHabitsWithReminders();
+  Future<Result<List<Habit>>> getHabitsWithReminders();
 
   /// Get habits count by category
-  Future<Map<HabitCategory, int>> getHabitsCountByCategory();
+  Future<Result<Map<HabitCategory, int>>> getHabitsCountByCategory();
 
   /// Get habits created in date range
-  Future<List<Habit>> getHabitsCreatedInRange(DateTime start, DateTime end);
+  Future<Result<List<Habit>>> getHabitsCreatedInRange(
+    DateTime start,
+    DateTime end,
+  );
 }

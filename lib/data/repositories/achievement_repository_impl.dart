@@ -5,9 +5,9 @@ import '../models/achievement_model.dart' as model;
 
 /// Implementation of AchievementRepository using Hive local storage
 class AchievementRepositoryImpl implements AchievementRepository {
-  final HiveDataSource _dataSource;
 
   const AchievementRepositoryImpl(this._dataSource);
+  final HiveDataSource _dataSource;
 
   @override
   Future<List<Achievement>> getAllAchievements() async {
@@ -215,8 +215,8 @@ class AchievementRepositoryImpl implements AchievementRepository {
         )
         .toList()
       ..sort(
-        (a, b) => (b['unlockedAt'] as DateTime).compareTo(
-          a['unlockedAt'] as DateTime,
+        (a, b) => (b['unlockedAt']! as DateTime).compareTo(
+          a['unlockedAt']! as DateTime,
         ),
       );
   }
@@ -231,7 +231,7 @@ class AchievementRepositoryImpl implements AchievementRepository {
     for (final achievement in allAchievements) {
       if (achievement.isUnlocked) continue;
 
-      int newProgress = _calculateProgressForAchievement(
+      final newProgress = _calculateProgressForAchievement(
         achievement,
         userStats,
       );
@@ -270,8 +270,7 @@ class AchievementRepositoryImpl implements AchievementRepository {
   }
 
   /// Map AchievementModel to Achievement entity
-  Achievement _mapToEntity(model.AchievementModel achievementModel) {
-    return Achievement(
+  Achievement _mapToEntity(model.AchievementModel achievementModel) => Achievement(
       id: achievementModel.id,
       name: achievementModel.name,
       description: achievementModel.description,
@@ -284,11 +283,9 @@ class AchievementRepositoryImpl implements AchievementRepository {
       unlockedAt: achievementModel.unlockedAt,
       currentProgress: achievementModel.currentProgress,
     );
-  }
 
   /// Map Achievement entity to AchievementModel
-  model.AchievementModel _mapToModel(Achievement entity) {
-    return model.AchievementModel(
+  model.AchievementModel _mapToModel(Achievement entity) => model.AchievementModel(
       id: entity.id,
       name: entity.name,
       description: entity.description,
@@ -301,7 +298,6 @@ class AchievementRepositoryImpl implements AchievementRepository {
       unlockedAt: entity.unlockedAt,
       currentProgress: entity.currentProgress,
     );
-  }
 
   /// Map model AchievementType to entity AchievementType
   AchievementType _mapAchievementTypeToEntity(model.AchievementType modelType) {
@@ -344,10 +340,9 @@ class AchievementRepositoryImpl implements AchievementRepository {
   }
 
   /// Get default achievements to initialize the app
-  List<Achievement> _getDefaultAchievements() {
-    return [
+  List<Achievement> _getDefaultAchievements() => [
       // Streak achievements
-      Achievement(
+      const Achievement(
         id: 'streak_3',
         name: 'Getting Started',
         description: 'Complete habits for 3 days in a row',
@@ -357,7 +352,7 @@ class AchievementRepositoryImpl implements AchievementRepository {
         type: AchievementType.streak,
         targetValue: 3,
       ),
-      Achievement(
+      const Achievement(
         id: 'streak_7',
         name: 'Week Warrior',
         description: 'Complete habits for 7 days in a row',
@@ -367,7 +362,7 @@ class AchievementRepositoryImpl implements AchievementRepository {
         type: AchievementType.streak,
         targetValue: 7,
       ),
-      Achievement(
+      const Achievement(
         id: 'streak_30',
         name: 'Monthly Master',
         description: 'Complete habits for 30 days in a row',
@@ -379,29 +374,27 @@ class AchievementRepositoryImpl implements AchievementRepository {
       ),
 
       // Level achievements
-      Achievement(
+      const Achievement(
         id: 'level_5',
         name: 'Rising Star',
         description: 'Reach level 5',
         iconName: 'star',
         coinsReward: 20,
-        xpReward: 0,
         type: AchievementType.level,
         targetValue: 5,
       ),
-      Achievement(
+      const Achievement(
         id: 'level_10',
         name: 'Habit Hero',
         description: 'Reach level 10',
         iconName: 'star_circle',
         coinsReward: 50,
-        xpReward: 0,
         type: AchievementType.level,
         targetValue: 10,
       ),
 
       // Total habits achievements
-      Achievement(
+      const Achievement(
         id: 'habits_10',
         name: 'Habit Collector',
         description: 'Complete 10 habits',
@@ -411,7 +404,7 @@ class AchievementRepositoryImpl implements AchievementRepository {
         type: AchievementType.totalHabits,
         targetValue: 10,
       ),
-      Achievement(
+      const Achievement(
         id: 'habits_50',
         name: 'Habit Master',
         description: 'Complete 50 habits',
@@ -423,26 +416,23 @@ class AchievementRepositoryImpl implements AchievementRepository {
       ),
 
       // XP achievements
-      Achievement(
+      const Achievement(
         id: 'xp_500',
         name: 'XP Collector',
         description: 'Earn 500 XP',
         iconName: 'bolt',
         coinsReward: 30,
-        xpReward: 0,
         type: AchievementType.totalXp,
         targetValue: 500,
       ),
-      Achievement(
+      const Achievement(
         id: 'xp_2000',
         name: 'XP Master',
         description: 'Earn 2000 XP',
         iconName: 'bolt_fill',
         coinsReward: 100,
-        xpReward: 0,
         type: AchievementType.totalXp,
         targetValue: 2000,
       ),
     ];
-  }
 }

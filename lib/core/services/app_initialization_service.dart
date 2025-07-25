@@ -7,13 +7,13 @@ import '../../presentation/providers/app_providers.dart';
 
 /// Service for initializing app data on first launch
 class AppInitializationService {
-  final UserRepository _userRepository;
-  final AchievementRepository _achievementRepository;
 
   const AppInitializationService(
     this._userRepository,
     this._achievementRepository,
   );
+  final UserRepository _userRepository;
+  final AchievementRepository _achievementRepository;
 
   /// Initialize app with default user and achievements if needed
   Future<void> initializeApp() async {
@@ -28,17 +28,8 @@ class AppInitializationService {
       final defaultUser = User(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: 'HabitQuest User',
-        email: null,
         createdAt: DateTime.now(),
         lastActiveAt: DateTime.now(),
-        totalXp: 0,
-        level: 1,
-        coins: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        totalHabitsCompleted: 0,
-        unlockedAchievements: [],
-        preferences: {},
       );
 
       await _userRepository.createUser(defaultUser);

@@ -114,8 +114,9 @@ class XpCalculator {
     if (level >= 40) return CupertinoIcons.bolt_fill; // Experienced level
     if (level >= 30) return CupertinoIcons.bolt; // Developing level
     if (level >= 20) return CupertinoIcons.flame; // Growing level
-    if (level >= 10)
+    if (level >= 10) {
       return CupertinoIcons.leaf_arrow_circlepath; // Learning level
+    }
     return CupertinoIcons.circle; // Beginner level
   }
 

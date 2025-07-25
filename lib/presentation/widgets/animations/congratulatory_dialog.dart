@@ -1,24 +1,21 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../../core/utils/animation_utils.dart';
 import 'completion_animation_widget.dart';
 
 /// Dialog shown when user completes all daily habits
 class CongratulatoryDialog extends StatefulWidget {
+
+  const CongratulatoryDialog({
+    required this.title, required this.message, super.key,
+    this.xpEarned = 0,
+    this.coinsEarned = 0,
+    this.onDismiss,
+  });
   final String title;
   final String message;
   final int xpEarned;
   final int coinsEarned;
   final VoidCallback? onDismiss;
-
-  const CongratulatoryDialog({
-    super.key,
-    required this.title,
-    required this.message,
-    this.xpEarned = 0,
-    this.coinsEarned = 0,
-    this.onDismiss,
-  });
 
   @override
   State<CongratulatoryDialog> createState() => _CongratulatoryDialogState();
@@ -59,8 +56,8 @@ class _CongratulatoryDialogState extends State<CongratulatoryDialog>
     ));
 
     _scaleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _scaleController,
       curve: Curves.elasticOut,
@@ -93,8 +90,7 @@ class _CongratulatoryDialogState extends State<CongratulatoryDialog>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ConfettiAnimationWidget(
+  Widget build(BuildContext context) => ConfettiAnimationWidget(
       shouldPlay: _showConfetti,
       child: SlideTransition(
         position: _slideAnimation,
@@ -139,10 +135,8 @@ class _CongratulatoryDialogState extends State<CongratulatoryDialog>
         ),
       ),
     );
-  }
 
-  Widget _buildRewardsSection() {
-    return Container(
+  Widget _buildRewardsSection() => Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: CupertinoColors.systemGrey6,
@@ -181,15 +175,13 @@ class _CongratulatoryDialogState extends State<CongratulatoryDialog>
         ],
       ),
     );
-  }
 
   Widget _buildRewardItem({
     required IconData icon,
     required String value,
     required String label,
     required Color color,
-  }) {
-    return Column(
+  }) => Column(
       children: [
         Icon(icon, color: color, size: 24),
         const SizedBox(height: 4),
@@ -210,7 +202,6 @@ class _CongratulatoryDialogState extends State<CongratulatoryDialog>
         ),
       ],
     );
-  }
 }
 
 /// Service for showing congratulatory dialogs
@@ -223,7 +214,6 @@ class CongratulatoryService {
   }) {
     showCupertinoDialog<void>(
       context: context,
-      barrierDismissible: false,
       builder: (context) => CongratulatoryDialog(
         title: 'Daily Goals Complete!',
         message: 'Congratulations! You\'ve completed all your habits for today. Keep up the amazing work!',
@@ -243,7 +233,6 @@ class CongratulatoryService {
   }) {
     showCupertinoDialog<void>(
       context: context,
-      barrierDismissible: false,
       builder: (context) => CongratulatoryDialog(
         title: 'Streak Milestone!',
         message: 'Amazing! You\'ve maintained your streak for $streakDays days in a row!',
@@ -263,7 +252,6 @@ class CongratulatoryService {
   }) {
     showCupertinoDialog<void>(
       context: context,
-      barrierDismissible: false,
       builder: (context) => CongratulatoryDialog(
         title: 'Level Up!',
         message: 'Congratulations! You\'ve reached level $newLevel! Your dedication is paying off!',
@@ -284,7 +272,6 @@ class CongratulatoryService {
   }) {
     showCupertinoDialog<void>(
       context: context,
-      barrierDismissible: false,
       builder: (context) => CongratulatoryDialog(
         title: 'Achievement Unlocked!',
         message: '$achievementName\n\n$achievementDescription',

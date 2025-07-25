@@ -6,6 +6,16 @@ import 'modern_card.dart';
 
 /// Modern achievement card with iOS-like design
 class ModernAchievementCard extends StatefulWidget {
+  const ModernAchievementCard({
+    required this.achievement,
+    required this.isUnlocked,
+    super.key,
+    this.onTap,
+    this.showProgress = false,
+    this.progress,
+    this.animateOnAppear = true,
+    this.animationDelay,
+  });
   final Achievement achievement;
   final bool isUnlocked;
   final VoidCallback? onTap;
@@ -13,17 +23,6 @@ class ModernAchievementCard extends StatefulWidget {
   final double? progress;
   final bool animateOnAppear;
   final int? animationDelay;
-
-  const ModernAchievementCard({
-    super.key,
-    required this.achievement,
-    required this.isUnlocked,
-    this.onTap,
-    this.showProgress = false,
-    this.progress,
-    this.animateOnAppear = true,
-    this.animationDelay,
-  });
 
   @override
   State<ModernAchievementCard> createState() => _ModernAchievementCardState();
@@ -50,21 +49,13 @@ class _ModernAchievementCardState extends State<ModernAchievementCard>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutBack,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
   }
 
   void _animateIn() {
@@ -95,9 +86,9 @@ class _ModernAchievementCardState extends State<ModernAchievementCard>
       case 'medal':
         return CupertinoIcons.star_circle_fill;
       case 'crown':
-        return CupertinoIcons.crown_fill;
+        return CupertinoIcons.star_circle_fill;
       case 'diamond':
-        return CupertinoIcons.diamond_fill;
+        return CupertinoIcons.star_fill;
       default:
         return CupertinoIcons.star_fill;
     }
@@ -111,6 +102,8 @@ class _ModernAchievementCardState extends State<ModernAchievementCard>
     switch (widget.achievement.rarity) {
       case AchievementRarity.common:
         return CupertinoColors.systemGreen;
+      case AchievementRarity.uncommon:
+        return CupertinoColors.systemOrange;
       case AchievementRarity.rare:
         return CupertinoColors.systemBlue;
       case AchievementRarity.epic:
@@ -128,9 +121,9 @@ class _ModernAchievementCardState extends State<ModernAchievementCard>
     Widget content = ModernCard(
       isInteractive: widget.onTap != null,
       onTap: widget.onTap,
-      backgroundColor: isLocked 
-          ? CupertinoColors.systemGrey6 
-          : achievementColor.withOpacity(0.05),
+      backgroundColor: isLocked
+          ? CupertinoColors.systemGrey6
+          : achievementColor.withValues(alpha: 0.05),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -138,23 +131,21 @@ class _ModernAchievementCardState extends State<ModernAchievementCard>
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: isLocked 
-                  ? CupertinoColors.systemGrey4 
-                  : achievementColor.withOpacity(0.1),
+              color: isLocked
+                  ? CupertinoColors.systemGrey4
+                  : achievementColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isLocked 
-                    ? CupertinoColors.systemGrey3 
-                    : achievementColor.withOpacity(0.3),
+                color: isLocked
+                    ? CupertinoColors.systemGrey3
+                    : achievementColor.withValues(alpha: 0.3),
                 width: 2,
               ),
             ),
             child: Icon(
               _getAchievementIcon(),
               size: 28,
-              color: isLocked 
-                  ? CupertinoColors.systemGrey 
-                  : achievementColor,
+              color: isLocked ? CupertinoColors.systemGrey : achievementColor,
             ),
           ),
           const SizedBox(height: 12),
@@ -163,8 +154,8 @@ class _ModernAchievementCardState extends State<ModernAchievementCard>
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: isLocked 
-                  ? CupertinoColors.systemGrey 
+              color: isLocked
+                  ? CupertinoColors.systemGrey
                   : CupertinoColors.label,
             ),
             textAlign: TextAlign.center,
@@ -176,8 +167,8 @@ class _ModernAchievementCardState extends State<ModernAchievementCard>
             widget.achievement.description,
             style: TextStyle(
               fontSize: 12,
-              color: isLocked 
-                  ? CupertinoColors.systemGrey2 
+              color: isLocked
+                  ? CupertinoColors.systemGrey2
                   : CupertinoColors.secondaryLabel,
             ),
             textAlign: TextAlign.center,
@@ -188,7 +179,8 @@ class _ModernAchievementCardState extends State<ModernAchievementCard>
             const SizedBox(height: 12),
             _buildProgressIndicator(),
           ],
-          if (widget.achievement.coinsReward > 0 || widget.achievement.xpReward > 0) ...[
+          if (widget.achievement.coinsReward > 0 ||
+              widget.achievement.xpReward > 0) ...[
             const SizedBox(height: 8),
             _buildRewards(),
           ],
@@ -199,15 +191,10 @@ class _ModernAchievementCardState extends State<ModernAchievementCard>
     if (widget.animateOnAppear) {
       content = AnimatedBuilder(
         animation: _animationController,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Opacity(
-              opacity: _fadeAnimation.value,
-              child: child,
-            ),
-          );
-        },
+        builder: (context, child) => Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Opacity(opacity: _fadeAnimation.value, child: child),
+        ),
         child: content,
       );
     }
@@ -251,116 +238,106 @@ class _ModernAchievementCardState extends State<ModernAchievementCard>
     );
   }
 
-  Widget _buildRewards() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (widget.achievement.xpReward > 0) ...[
-          Icon(
-            CupertinoIcons.bolt_fill,
-            size: 12,
+  Widget _buildRewards() => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      if (widget.achievement.xpReward > 0) ...[
+        const Icon(
+          CupertinoIcons.bolt_fill,
+          size: 12,
+          color: CupertinoColors.systemPurple,
+        ),
+        const SizedBox(width: 2),
+        Text(
+          '${widget.achievement.xpReward}',
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
             color: CupertinoColors.systemPurple,
           ),
-          const SizedBox(width: 2),
-          Text(
-            '${widget.achievement.xpReward}',
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: CupertinoColors.systemPurple,
-            ),
-          ),
-        ],
-        if (widget.achievement.xpReward > 0 && widget.achievement.coinsReward > 0)
-          const SizedBox(width: 8),
-        if (widget.achievement.coinsReward > 0) ...[
-          Icon(
-            CupertinoIcons.money_dollar_circle_fill,
-            size: 12,
+        ),
+      ],
+      if (widget.achievement.xpReward > 0 && widget.achievement.coinsReward > 0)
+        const SizedBox(width: 8),
+      if (widget.achievement.coinsReward > 0) ...[
+        const Icon(
+          CupertinoIcons.money_dollar_circle_fill,
+          size: 12,
+          color: CupertinoColors.systemYellow,
+        ),
+        const SizedBox(width: 2),
+        Text(
+          '${widget.achievement.coinsReward}',
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
             color: CupertinoColors.systemYellow,
           ),
-          const SizedBox(width: 2),
-          Text(
-            '${widget.achievement.coinsReward}',
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: CupertinoColors.systemYellow,
-            ),
-          ),
-        ],
+        ),
       ],
-    );
-  }
+    ],
+  );
 }
 
 /// Modern badge widget for displaying small achievements or status
 class ModernBadge extends StatelessWidget {
+  const ModernBadge({
+    required this.text,
+    required this.backgroundColor,
+    required this.textColor,
+    super.key,
+    this.icon,
+    this.isSmall = false,
+  });
   final String text;
   final Color backgroundColor;
   final Color textColor;
   final IconData? icon;
   final bool isSmall;
 
-  const ModernBadge({
-    super.key,
-    required this.text,
-    required this.backgroundColor,
-    required this.textColor,
-    this.icon,
-    this.isSmall = false,
-  });
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isSmall ? 8 : 12,
-        vertical: isSmall ? 4 : 6,
-      ),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(isSmall ? 8 : 12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[
-            Icon(
-              icon,
-              size: isSmall ? 12 : 16,
-              color: textColor,
-            ),
-            SizedBox(width: isSmall ? 4 : 6),
-          ],
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: isSmall ? 10 : 12,
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
-          ),
+  Widget build(BuildContext context) => Container(
+    padding: EdgeInsets.symmetric(
+      horizontal: isSmall ? 8 : 12,
+      vertical: isSmall ? 4 : 6,
+    ),
+    decoration: BoxDecoration(
+      color: backgroundColor,
+      borderRadius: BorderRadius.circular(isSmall ? 8 : 12),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (icon != null) ...[
+          Icon(icon, size: isSmall ? 12 : 16, color: textColor),
+          SizedBox(width: isSmall ? 4 : 6),
         ],
-      ),
-    );
-  }
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: isSmall ? 10 : 12,
+            fontWeight: FontWeight.w600,
+            color: textColor,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 /// Modern streak indicator
 class ModernStreakIndicator extends StatefulWidget {
+  const ModernStreakIndicator({
+    required this.streakDays,
+    required this.isActive,
+    super.key,
+    this.activeColor,
+    this.animateOnAppear = true,
+  });
   final int streakDays;
   final bool isActive;
   final Color? activeColor;
   final bool animateOnAppear;
-
-  const ModernStreakIndicator({
-    super.key,
-    required this.streakDays,
-    required this.isActive,
-    this.activeColor,
-    this.animateOnAppear = true,
-  });
 
   @override
   State<ModernStreakIndicator> createState() => _ModernStreakIndicatorState();
@@ -386,13 +363,9 @@ class _ModernStreakIndicatorState extends State<ModernStreakIndicator>
       vsync: this,
     );
 
-    _pulseAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.1,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _pulseAnimation = Tween<double>(begin: 1, end: 1.1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   void _startPulseAnimation() {
@@ -405,8 +378,9 @@ class _ModernStreakIndicatorState extends State<ModernStreakIndicator>
     if (widget.isActive && !oldWidget.isActive) {
       _startPulseAnimation();
     } else if (!widget.isActive && oldWidget.isActive) {
-      _animationController.stop();
-      _animationController.reset();
+      _animationController
+        ..stop()
+        ..reset();
     }
   }
 
@@ -423,13 +397,13 @@ class _ModernStreakIndicatorState extends State<ModernStreakIndicator>
     Widget content = Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: widget.isActive 
-            ? effectiveColor.withOpacity(0.1) 
+        color: widget.isActive
+            ? effectiveColor.withValues(alpha: 0.1)
             : CupertinoColors.systemGrey6,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: widget.isActive 
-              ? effectiveColor.withOpacity(0.3) 
+          color: widget.isActive
+              ? effectiveColor.withValues(alpha: 0.3)
               : CupertinoColors.systemGrey4,
           width: 1.5,
         ),
@@ -440,8 +414,8 @@ class _ModernStreakIndicatorState extends State<ModernStreakIndicator>
           Icon(
             CupertinoIcons.flame_fill,
             size: 20,
-            color: widget.isActive 
-                ? effectiveColor 
+            color: widget.isActive
+                ? effectiveColor
                 : CupertinoColors.systemGrey,
           ),
           const SizedBox(width: 8),
@@ -453,8 +427,8 @@ class _ModernStreakIndicatorState extends State<ModernStreakIndicator>
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: widget.isActive 
-                      ? effectiveColor 
+                  color: widget.isActive
+                      ? effectiveColor
                       : CupertinoColors.systemGrey,
                 ),
               ),
@@ -462,8 +436,8 @@ class _ModernStreakIndicatorState extends State<ModernStreakIndicator>
                 widget.streakDays == 1 ? 'day' : 'days',
                 style: TextStyle(
                   fontSize: 12,
-                  color: widget.isActive 
-                      ? effectiveColor 
+                  color: widget.isActive
+                      ? effectiveColor
                       : CupertinoColors.systemGrey2,
                 ),
               ),
@@ -476,12 +450,8 @@ class _ModernStreakIndicatorState extends State<ModernStreakIndicator>
     if (widget.isActive && widget.animateOnAppear) {
       content = AnimatedBuilder(
         animation: _pulseAnimation,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _pulseAnimation.value,
-            child: child,
-          );
-        },
+        builder: (context, child) =>
+            Transform.scale(scale: _pulseAnimation.value, child: child),
         child: content,
       );
     }

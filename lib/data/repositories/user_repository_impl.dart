@@ -5,9 +5,8 @@ import '../models/user_model.dart';
 
 /// Implementation of UserRepository using Hive local storage
 class UserRepositoryImpl implements UserRepository {
-  final HiveDataSource _dataSource;
-
   const UserRepositoryImpl(this._dataSource);
+  final HiveDataSource _dataSource;
 
   @override
   Future<User?> getCurrentUser() async {
@@ -64,8 +63,8 @@ class UserRepositoryImpl implements UserRepository {
 
     final updatedUser = currentUser.copyWith(
       currentStreak: newStreak,
-      longestStreak: newStreak > currentUser.longestStreak 
-          ? newStreak 
+      longestStreak: newStreak > currentUser.longestStreak
+          ? newStreak
           : currentUser.longestStreak,
       lastActiveAt: DateTime.now(),
     );
@@ -119,7 +118,11 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<User> updatePreference(String userId, String key, dynamic value) async {
+  Future<User> updatePreference(
+    String userId,
+    String key,
+    dynamic value,
+  ) async {
     final currentUser = await getCurrentUser();
     if (currentUser == null || currentUser.id != userId) {
       throw Exception('User not found');
@@ -167,58 +170,52 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getUserLevelHistory(String userId) async {
-    // This would require storing level history data
-    // For now, return empty list as this feature isn't implemented yet
-    return [];
-  }
+  Future<List<Map<String, dynamic>>> getUserLevelHistory(String userId) async =>
+      // This would require storing level history data
+      // For now, return empty list as this feature isn't implemented yet
+      [];
 
   @override
-  Future<List<Map<String, dynamic>>> getUserXpHistory(String userId) async {
-    // This would require storing XP history data
-    // For now, return empty list as this feature isn't implemented yet
-    return [];
-  }
+  Future<List<Map<String, dynamic>>> getUserXpHistory(String userId) async =>
+      // This would require storing XP history data
+      // For now, return empty list as this feature isn't implemented yet
+      [];
 
   /// Map UserModel to User entity
-  User _mapToEntity(UserModel model) {
-    return User(
-      id: model.id,
-      name: model.name,
-      email: model.email,
-      totalXp: model.totalXp,
-      level: model.level,
-      createdAt: model.createdAt,
-      lastActiveAt: model.lastActiveAt,
-      avatarPath: model.avatarPath,
-      coins: model.coins,
-      preferences: model.preferences,
-      unlockedAchievements: model.unlockedAchievements,
-      longestStreak: model.longestStreak,
-      currentStreak: model.currentStreak,
-      totalHabitsCompleted: model.totalHabitsCompleted,
-    );
-  }
+  User _mapToEntity(UserModel model) => User(
+    id: model.id,
+    name: model.name,
+    email: model.email,
+    totalXp: model.totalXp,
+    level: model.level,
+    createdAt: model.createdAt,
+    lastActiveAt: model.lastActiveAt,
+    avatarPath: model.avatarPath,
+    coins: model.coins,
+    preferences: model.preferences,
+    unlockedAchievements: model.unlockedAchievements,
+    longestStreak: model.longestStreak,
+    currentStreak: model.currentStreak,
+    totalHabitsCompleted: model.totalHabitsCompleted,
+  );
 
   /// Map User entity to UserModel
-  UserModel _mapToModel(User entity) {
-    return UserModel(
-      id: entity.id,
-      name: entity.name,
-      email: entity.email,
-      totalXp: entity.totalXp,
-      level: entity.level,
-      createdAt: entity.createdAt,
-      lastActiveAt: entity.lastActiveAt,
-      avatarPath: entity.avatarPath,
-      coins: entity.coins,
-      preferences: entity.preferences,
-      unlockedAchievements: entity.unlockedAchievements,
-      longestStreak: entity.longestStreak,
-      currentStreak: entity.currentStreak,
-      totalHabitsCompleted: entity.totalHabitsCompleted,
-    );
-  }
+  UserModel _mapToModel(User entity) => UserModel(
+    id: entity.id,
+    name: entity.name,
+    email: entity.email,
+    totalXp: entity.totalXp,
+    level: entity.level,
+    createdAt: entity.createdAt,
+    lastActiveAt: entity.lastActiveAt,
+    avatarPath: entity.avatarPath,
+    coins: entity.coins,
+    preferences: entity.preferences,
+    unlockedAchievements: entity.unlockedAchievements,
+    longestStreak: entity.longestStreak,
+    currentStreak: entity.currentStreak,
+    totalHabitsCompleted: entity.totalHabitsCompleted,
+  );
 
   /// Calculate level from total XP
   int _calculateLevel(int totalXp) {

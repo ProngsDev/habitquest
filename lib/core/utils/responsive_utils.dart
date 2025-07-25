@@ -202,12 +202,11 @@ class ResponsiveUtils {
 
 /// Responsive widget that builds different layouts based on screen size
 class ResponsiveBuilder extends StatelessWidget {
-  final Widget Function(BuildContext context, DeviceType deviceType) builder;
 
   const ResponsiveBuilder({
-    super.key,
-    required this.builder,
+    required this.builder, super.key,
   });
+  final Widget Function(BuildContext context, DeviceType deviceType) builder;
 
   @override
   Widget build(BuildContext context) {
@@ -218,16 +217,15 @@ class ResponsiveBuilder extends StatelessWidget {
 
 /// Responsive layout widget that provides different layouts for different screen sizes
 class ResponsiveLayout extends StatelessWidget {
-  final Widget mobile;
-  final Widget? tablet;
-  final Widget? desktop;
 
   const ResponsiveLayout({
-    super.key,
-    required this.mobile,
+    required this.mobile, super.key,
     this.tablet,
     this.desktop,
   });
+  final Widget mobile;
+  final Widget? tablet;
+  final Widget? desktop;
 
   @override
   Widget build(BuildContext context) {
@@ -246,14 +244,13 @@ class ResponsiveLayout extends StatelessWidget {
 
 /// Responsive container that centers content on large screens
 class ResponsiveContainer extends StatelessWidget {
-  final Widget child;
-  final EdgeInsets? padding;
 
   const ResponsiveContainer({
-    super.key,
-    required this.child,
+    required this.child, super.key,
     this.padding,
   });
+  final Widget child;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {

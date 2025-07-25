@@ -4,6 +4,18 @@ import '../../../core/utils/enhanced_animation_utils.dart';
 
 /// Modern iOS-like card widget with enhanced styling
 class ModernCard extends StatefulWidget {
+  const ModernCard({
+    required this.child,
+    super.key,
+    this.padding,
+    this.margin,
+    this.backgroundColor,
+    this.borderRadius = 16.0,
+    this.hasShadow = true,
+    this.isInteractive = false,
+    this.onTap,
+    this.animateOnTap = true,
+  });
   final Widget child;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
@@ -14,19 +26,6 @@ class ModernCard extends StatefulWidget {
   final VoidCallback? onTap;
   final bool animateOnTap;
 
-  const ModernCard({
-    super.key,
-    required this.child,
-    this.padding,
-    this.margin,
-    this.backgroundColor,
-    this.borderRadius = 16.0,
-    this.hasShadow = true,
-    this.isInteractive = false,
-    this.onTap,
-    this.animateOnTap = true,
-  });
-
   @override
   State<ModernCard> createState() => _ModernCardState();
 }
@@ -35,7 +34,6 @@ class _ModernCardState extends State<ModernCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -45,13 +43,9 @@ class _ModernCardState extends State<ModernCard>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -62,38 +56,32 @@ class _ModernCardState extends State<ModernCard>
 
   void _handleTapDown(TapDownDetails details) {
     if (widget.isInteractive && widget.animateOnTap) {
-      setState(() {
-        _isPressed = true;
-      });
       _animationController.forward();
     }
   }
 
   void _handleTapUp(TapUpDetails details) {
     if (widget.isInteractive && widget.animateOnTap) {
-      setState(() {
-        _isPressed = false;
-      });
       _animationController.reverse();
     }
   }
 
   void _handleTapCancel() {
     if (widget.isInteractive && widget.animateOnTap) {
-      setState(() {
-        _isPressed = false;
-      });
       _animationController.reverse();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final effectiveBackgroundColor = widget.backgroundColor ??
+    final effectiveBackgroundColor =
+        widget.backgroundColor ??
         CupertinoTheme.of(context).scaffoldBackgroundColor;
 
     Widget card = Container(
-      margin: widget.margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin:
+          widget.margin ??
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: widget.padding ?? const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: effectiveBackgroundColor,
@@ -130,10 +118,7 @@ class _ModernCardState extends State<ModernCard>
       );
 
       if (widget.animateOnTap) {
-        card = ScaleTransition(
-          scale: _scaleAnimation,
-          child: card,
-        );
+        card = ScaleTransition(scale: _scaleAnimation, child: card);
       }
     }
 
@@ -143,19 +128,9 @@ class _ModernCardState extends State<ModernCard>
 
 /// Modern button with iOS-like styling
 class ModernButton extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onPressed;
-  final Color? backgroundColor;
-  final Color? foregroundColor;
-  final EdgeInsetsGeometry? padding;
-  final double borderRadius;
-  final bool isLoading;
-  final bool isDisabled;
-  final ModernButtonStyle style;
-
   const ModernButton({
-    super.key,
     required this.child,
+    super.key,
     this.onPressed,
     this.backgroundColor,
     this.foregroundColor,
@@ -165,6 +140,15 @@ class ModernButton extends StatefulWidget {
     this.isDisabled = false,
     this.style = ModernButtonStyle.filled,
   });
+  final Widget child;
+  final VoidCallback? onPressed;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final EdgeInsetsGeometry? padding;
+  final double borderRadius;
+  final bool isLoading;
+  final bool isDisabled;
+  final ModernButtonStyle style;
 
   @override
   State<ModernButton> createState() => _ModernButtonState();
@@ -183,13 +167,9 @@ class _ModernButtonState extends State<ModernButton>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -228,64 +208,67 @@ class _ModernButtonState extends State<ModernButton>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ScaleTransition(
-      scale: _scaleAnimation,
-      child: GestureDetector(
-        onTapDown: widget.isDisabled || widget.isLoading
-            ? null
-            : (_) => _animationController.forward(),
-        onTapUp: widget.isDisabled || widget.isLoading
-            ? null
-            : (_) => _animationController.reverse(),
-        onTapCancel: widget.isDisabled || widget.isLoading
-            ? null
-            : () => _animationController.reverse(),
-        onTap: widget.isDisabled || widget.isLoading ? null : widget.onPressed,
-        child: Container(
-          padding: widget.padding ??
-              const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          decoration: BoxDecoration(
-            color: _effectiveBackgroundColor,
-            borderRadius: BorderRadius.circular(widget.borderRadius),
-            border: widget.style == ModernButtonStyle.outlined
-                ? Border.all(
-                    color: _effectiveForegroundColor.withOpacity(0.3),
-                    width: 1.5,
-                  )
-                : null,
-          ),
-          child: widget.isLoading
-              ? SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CupertinoActivityIndicator(
-                    color: _effectiveForegroundColor,
-                    radius: 10,
-                  ),
+  Widget build(BuildContext context) => ScaleTransition(
+    scale: _scaleAnimation,
+    child: GestureDetector(
+      onTapDown: widget.isDisabled || widget.isLoading
+          ? null
+          : (_) => _animationController.forward(),
+      onTapUp: widget.isDisabled || widget.isLoading
+          ? null
+          : (_) => _animationController.reverse(),
+      onTapCancel: widget.isDisabled || widget.isLoading
+          ? null
+          : () => _animationController.reverse(),
+      onTap: widget.isDisabled || widget.isLoading ? null : widget.onPressed,
+      child: Container(
+        padding:
+            widget.padding ??
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        decoration: BoxDecoration(
+          color: _effectiveBackgroundColor,
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          border: widget.style == ModernButtonStyle.outlined
+              ? Border.all(
+                  color: _effectiveForegroundColor.withValues(alpha: 0.3),
+                  width: 1.5,
                 )
-              : DefaultTextStyle(
-                  style: TextStyle(
-                    color: _effectiveForegroundColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  child: widget.child,
-                ),
+              : null,
         ),
+        child: widget.isLoading
+            ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CupertinoActivityIndicator(
+                  color: _effectiveForegroundColor,
+                ),
+              )
+            : DefaultTextStyle(
+                style: TextStyle(
+                  color: _effectiveForegroundColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                child: widget.child,
+              ),
       ),
-    );
-  }
+    ),
+  );
 }
 
-enum ModernButtonStyle {
-  filled,
-  outlined,
-  text,
-}
+enum ModernButtonStyle { filled, outlined, text }
 
 /// Modern progress indicator
 class ModernProgressIndicator extends StatefulWidget {
+  const ModernProgressIndicator({
+    required this.progress,
+    super.key,
+    this.progressColor,
+    this.backgroundColor,
+    this.height = 8.0,
+    this.showPercentage = false,
+    this.animated = true,
+  });
   final double progress;
   final Color? progressColor;
   final Color? backgroundColor;
@@ -293,18 +276,9 @@ class ModernProgressIndicator extends StatefulWidget {
   final bool showPercentage;
   final bool animated;
 
-  const ModernProgressIndicator({
-    super.key,
-    required this.progress,
-    this.progressColor,
-    this.backgroundColor,
-    this.height = 8.0,
-    this.showPercentage = false,
-    this.animated = true,
-  });
-
   @override
-  State<ModernProgressIndicator> createState() => _ModernProgressIndicatorState();
+  State<ModernProgressIndicator> createState() =>
+      _ModernProgressIndicatorState();
 }
 
 class _ModernProgressIndicatorState extends State<ModernProgressIndicator>
@@ -320,13 +294,9 @@ class _ModernProgressIndicatorState extends State<ModernProgressIndicator>
       vsync: this,
     );
 
-    _progressAnimation = Tween<double>(
-      begin: 0.0,
-      end: widget.progress,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _progressAnimation = Tween<double>(begin: 0, end: widget.progress).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
     if (widget.animated) {
       _animationController.forward();
@@ -337,17 +307,21 @@ class _ModernProgressIndicatorState extends State<ModernProgressIndicator>
   void didUpdateWidget(ModernProgressIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.progress != oldWidget.progress) {
-      _progressAnimation = Tween<double>(
-        begin: oldWidget.progress,
-        end: widget.progress,
-      ).animate(CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ));
+      _progressAnimation =
+          Tween<double>(
+            begin: oldWidget.progress,
+            end: widget.progress,
+          ).animate(
+            CurvedAnimation(
+              parent: _animationController,
+              curve: Curves.easeInOut,
+            ),
+          );
 
       if (widget.animated) {
-        _animationController.reset();
-        _animationController.forward();
+        _animationController
+          ..reset()
+          ..forward();
       }
     }
   }
@@ -360,8 +334,10 @@ class _ModernProgressIndicatorState extends State<ModernProgressIndicator>
 
   @override
   Widget build(BuildContext context) {
-    final effectiveProgressColor = widget.progressColor ?? CupertinoColors.systemBlue;
-    final effectiveBackgroundColor = widget.backgroundColor ?? CupertinoColors.systemGrey5;
+    final effectiveProgressColor =
+        widget.progressColor ?? CupertinoColors.systemBlue;
+    final effectiveBackgroundColor =
+        widget.backgroundColor ?? CupertinoColors.systemGrey5;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,9 +349,13 @@ class _ModernProgressIndicatorState extends State<ModernProgressIndicator>
             borderRadius: BorderRadius.circular(widget.height / 2),
           ),
           child: AnimatedBuilder(
-            animation: widget.animated ? _progressAnimation : AlwaysStoppedAnimation(widget.progress),
+            animation: widget.animated
+                ? _progressAnimation
+                : AlwaysStoppedAnimation(widget.progress),
             builder: (context, child) {
-              final currentProgress = widget.animated ? _progressAnimation.value : widget.progress;
+              final currentProgress = widget.animated
+                  ? _progressAnimation.value
+                  : widget.progress;
               return FractionallySizedBox(
                 alignment: Alignment.centerLeft,
                 widthFactor: currentProgress.clamp(0.0, 1.0),
@@ -392,9 +372,13 @@ class _ModernProgressIndicatorState extends State<ModernProgressIndicator>
         if (widget.showPercentage) ...[
           const SizedBox(height: 8),
           AnimatedBuilder(
-            animation: widget.animated ? _progressAnimation : AlwaysStoppedAnimation(widget.progress),
+            animation: widget.animated
+                ? _progressAnimation
+                : AlwaysStoppedAnimation(widget.progress),
             builder: (context, child) {
-              final currentProgress = widget.animated ? _progressAnimation.value : widget.progress;
+              final currentProgress = widget.animated
+                  ? _progressAnimation.value
+                  : widget.progress;
               return Text(
                 '${(currentProgress * 100).round()}%',
                 style: const TextStyle(

@@ -17,8 +17,7 @@ class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return CupertinoPageScaffold(
+  Widget build(BuildContext context, WidgetRef ref) => CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: const Text('Profile'),
         trailing: CupertinoButton(
@@ -68,7 +67,6 @@ class ProfileScreen extends ConsumerWidget {
         ),
       ),
     );
-  }
 
   Widget _buildProfileHeaderSection(WidgetRef ref) {
     final currentUser = ref.watch(currentUserProvider);
@@ -138,7 +136,5 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSettingsSection(WidgetRef ref) {
-    return const SettingsSectionWidget();
-  }
+  Widget _buildSettingsSection(WidgetRef ref) => const SettingsSectionWidget();
 }

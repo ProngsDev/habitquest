@@ -6,9 +6,9 @@ import '../models/habit_completion_model.dart';
 
 /// Implementation of HabitCompletionRepository using Hive local storage
 class HabitCompletionRepositoryImpl implements HabitCompletionRepository {
-  final HiveDataSource _dataSource;
 
   const HabitCompletionRepositoryImpl(this._dataSource);
+  final HiveDataSource _dataSource;
 
   @override
   Future<void> recordCompletion(HabitCompletion completion) async {
@@ -96,7 +96,7 @@ class HabitCompletionRepositoryImpl implements HabitCompletionRepository {
   Future<Map<String, HabitStats>> getMultipleHabitStats(
     List<String> habitIds,
   ) async {
-    final Map<String, HabitStats> stats = {};
+    final stats = <String, HabitStats>{};
     for (final habitId in habitIds) {
       stats[habitId] = await getHabitStats(habitId);
     }
@@ -114,8 +114,8 @@ class HabitCompletionRepositoryImpl implements HabitCompletionRepository {
 
     if (completedCompletions.isEmpty) return 0;
 
-    int streak = 0;
-    DateTime currentDate = DateTime.now();
+    var streak = 0;
+    var currentDate = DateTime.now();
 
     for (final completion in completedCompletions) {
       final completionDate = DateTime(
@@ -152,8 +152,8 @@ class HabitCompletionRepositoryImpl implements HabitCompletionRepository {
 
     if (completedCompletions.isEmpty) return 0;
 
-    int longestStreak = 0;
-    int currentStreak = 1;
+    var longestStreak = 0;
+    var currentStreak = 1;
     DateTime? lastDate;
 
     for (final completion in completedCompletions) {
@@ -239,7 +239,7 @@ class HabitCompletionRepositoryImpl implements HabitCompletionRepository {
       startDate,
       endDate,
     );
-    final Map<DateTime, List<HabitCompletion>> calendar = {};
+    final calendar = <DateTime, List<HabitCompletion>>{};
 
     for (final completion in completions) {
       final date = DateTime(
@@ -287,8 +287,7 @@ class HabitCompletionRepositoryImpl implements HabitCompletionRepository {
   }
 
   // Helper methods for mapping between domain entities and data models
-  HabitCompletion _mapToEntity(HabitCompletionModel model) {
-    return HabitCompletion(
+  HabitCompletion _mapToEntity(HabitCompletionModel model) => HabitCompletion(
       id: model.id,
       habitId: model.habitId,
       completedAt: model.completedAt,
@@ -297,10 +296,8 @@ class HabitCompletionRepositoryImpl implements HabitCompletionRepository {
       notes: model.notes,
       actualCount: model.completedCount,
     );
-  }
 
-  HabitCompletionModel _mapToModel(HabitCompletion entity) {
-    return HabitCompletionModel(
+  HabitCompletionModel _mapToModel(HabitCompletion entity) => HabitCompletionModel(
       id: entity.id,
       habitId: entity.habitId,
       completedAt: entity.completedAt,
@@ -309,7 +306,5 @@ class HabitCompletionRepositoryImpl implements HabitCompletionRepository {
       streakCount: 0, // Will be calculated separately
       notes: entity.notes,
       completedCount: entity.actualCount ?? 1,
-      targetCount: 1, // Default target
     );
-  }
 }

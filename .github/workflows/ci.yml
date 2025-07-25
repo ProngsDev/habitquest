@@ -1,0 +1,175 @@
+name: HabitQuest CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.8.1'
+        channel: 'stable'
+        cache: true
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Generate code
+      run: flutter packages pub run build_runner build --delete-conflicting-outputs
+      
+    - name: Verify formatting
+      run: dart format --set-exit-if-changed .
+      
+    - name: Analyze code
+      run: flutter analyze --fatal-infos
+      
+    - name: Run unit tests
+      run: flutter test test/unit/ --coverage
+
+    - name: Run widget tests
+      run: flutter test test/widget/ --coverage
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: coverage/lcov.info
+        fail_ci_if_error: false
+        
+  integration_test:
+    name: Integration Tests
+    runs-on: macos-latest
+    needs: [test]
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        device:
+          - "iPhone 15 Simulator (17.0)"
+          - "iPad Pro (12.9-inch) (6th generation) Simulator (17.0)"
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.8.1'
+        channel: 'stable'
+        cache: true
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Generate code
+      run: flutter packages pub run build_runner build --delete-conflicting-outputs
+      
+    - name: List available simulators
+      run: xcrun simctl list devices available
+
+    - name: Start iOS Simulator
+      run: |
+        # Extract device name and iOS version from matrix device string
+        DEVICE_NAME=$(echo "${{ matrix.device }}" | sed 's/ Simulator.*//')
+        echo "Starting simulator: $DEVICE_NAME"
+        xcrun simctl boot "${{ matrix.device }}" || true
+        sleep 10
+
+    - name: Wait for simulator to boot
+      run: |
+        # Wait for simulator to be fully booted
+        timeout 60 bash -c 'until xcrun simctl list devices | grep "${{ matrix.device }}" | grep -q "Booted"; do sleep 2; done'
+
+    - name: Run integration tests
+      run: |
+        flutter test integration_test/app_test.dart -d "${{ matrix.device }}"
+      timeout-minutes: 15
+      continue-on-error: false
+
+    - name: Upload test results on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: integration-test-results-${{ matrix.device }}
+        path: |
+          test/reports/
+          integration_test/screenshots/
+        retention-days: 3
+        
+  build:
+    name: Build Apps
+    runs-on: ubuntu-latest
+    needs: [test]
+    timeout-minutes: 30
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.8.1'
+        channel: 'stable'
+        cache: true
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Generate code
+      run: flutter packages pub run build_runner build --delete-conflicting-outputs
+      
+    - name: Build Android APK
+      run: flutter build apk --debug
+      
+    - name: Upload Android APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk
+        path: build/app/outputs/flutter-apk/app-debug.apk
+        retention-days: 7
+        
+  build_ios:
+    name: Build iOS
+    runs-on: macos-latest
+    needs: [test]
+    timeout-minutes: 45
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.8.1'
+        channel: 'stable'
+        cache: true
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Generate code
+      run: flutter packages pub run build_runner build --delete-conflicting-outputs
+      
+    - name: Build iOS
+      run: flutter build ios --debug --no-codesign
+      
+    - name: Upload iOS build
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-build
+        path: build/ios/iphoneos/Runner.app
+        retention-days: 7

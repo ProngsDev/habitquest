@@ -11,7 +11,6 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
-    final isDarkMode = ref.watch(isDarkModeProvider);
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -49,9 +48,9 @@ class SettingsScreen extends ConsumerWidget {
                   title: 'Habit Reminders',
                   subtitle: 'Get notified about your habits',
                   trailing: CupertinoSwitch(
-                    value: true, // TODO: Connect to actual setting
+                    value: true, // TODO(dev): Connect to actual setting
                     onChanged: (value) {
-                      // TODO: Handle notification toggle
+                      // TODO(dev): Handle notification toggle
                     },
                   ),
                 ),
@@ -66,7 +65,7 @@ class SettingsScreen extends ConsumerWidget {
                   title: 'Export Data',
                   subtitle: 'Export your habits and progress',
                   onTap: () {
-                    // TODO: Implement data export
+                    // TODO(dev): Implement data export
                   },
                 ),
                 _buildSettingsTile(
@@ -86,13 +85,13 @@ class SettingsScreen extends ConsumerWidget {
                 _buildSettingsTile(
                   title: 'Privacy Policy',
                   onTap: () {
-                    // TODO: Show privacy policy
+                    // TODO(dev): Show privacy policy
                   },
                 ),
                 _buildSettingsTile(
                   title: 'Terms of Service',
                   onTap: () {
-                    // TODO: Show terms of service
+                    // TODO(dev): Show terms of service
                   },
                 ),
               ],
@@ -223,7 +222,7 @@ class SettingsScreen extends ConsumerWidget {
           CupertinoDialogAction(
             isDestructiveAction: true,
             onPressed: () {
-              // TODO: Implement clear data
+              // TODO(dev): Implement clear data
               Navigator.pop(context);
             },
             child: const Text('Clear Data'),

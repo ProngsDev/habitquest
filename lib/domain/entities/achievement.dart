@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-import '../../core/enums/habit_enums.dart';
 
 /// Achievement types
 enum AchievementType {
@@ -35,6 +34,18 @@ enum AchievementType {
 /// Domain entity representing an achievement
 @immutable
 class Achievement {
+
+  const Achievement({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.iconName,
+    required this.type, required this.targetValue, this.coinsReward = 0,
+    this.xpReward = 0,
+    this.isUnlocked = false,
+    this.unlockedAt,
+    this.currentProgress = 0,
+  });
   final String id;
   final String name;
   final String description;
@@ -46,20 +57,6 @@ class Achievement {
   final bool isUnlocked;
   final DateTime? unlockedAt;
   final int currentProgress;
-
-  const Achievement({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.iconName,
-    this.coinsReward = 0,
-    this.xpReward = 0,
-    required this.type,
-    required this.targetValue,
-    this.isUnlocked = false,
-    this.unlockedAt,
-    this.currentProgress = 0,
-  });
 
   /// Create a copy with updated values
   Achievement copyWith({
@@ -73,8 +70,7 @@ class Achievement {
     bool? isUnlocked,
     DateTime? unlockedAt,
     int? currentProgress,
-  }) {
-    return Achievement(
+  }) => Achievement(
       id: id,
       name: name ?? this.name,
       description: description ?? this.description,
@@ -87,11 +83,10 @@ class Achievement {
       unlockedAt: unlockedAt ?? this.unlockedAt,
       currentProgress: currentProgress ?? this.currentProgress,
     );
-  }
 
   /// Get progress percentage (0.0 to 1.0)
   double get progressPercentage {
-    if (targetValue <= 0) return 0.0;
+    if (targetValue <= 0) return 0;
     return (currentProgress / targetValue).clamp(0.0, 1.0);
   }
 
@@ -149,9 +144,7 @@ class Achievement {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() {
-    return 'Achievement(id: $id, name: $name, type: $type, progress: $currentProgress/$targetValue)';
-  }
+  String toString() => 'Achievement(id: $id, name: $name, type: $type, progress: $currentProgress/$targetValue)';
 }
 
 /// Achievement rarity levels

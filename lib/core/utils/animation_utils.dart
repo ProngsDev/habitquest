@@ -15,21 +15,21 @@ class AnimationUtils {
   static const Curve sharpCurve = Curves.easeInCubic;
 
   // Scale animation values
-  static const double scaleStart = 0.0;
-  static const double scaleNormal = 1.0;
+  static const double scaleStart = 0;
+  static const double scaleNormal = 1;
   static const double scalePressed = 0.95;
   static const double scaleExpanded = 1.05;
 
   // Opacity values
-  static const double opacityHidden = 0.0;
-  static const double opacityVisible = 1.0;
+  static const double opacityHidden = 0;
+  static const double opacityVisible = 1;
   static const double opacityDisabled = 0.5;
 
   // Slide animation offsets
-  static const Offset slideFromLeft = Offset(-1.0, 0.0);
-  static const Offset slideFromRight = Offset(1.0, 0.0);
-  static const Offset slideFromTop = Offset(0.0, -1.0);
-  static const Offset slideFromBottom = Offset(0.0, 1.0);
+  static const Offset slideFromLeft = Offset(-1, 0);
+  static const Offset slideFromRight = Offset(1, 0);
+  static const Offset slideFromTop = Offset(0, -1);
+  static const Offset slideFromBottom = Offset(0, 1);
   static const Offset slideCenter = Offset.zero;
 
   /// Create a fade transition
@@ -37,12 +37,10 @@ class AnimationUtils {
     required Animation<double> animation,
     required Widget child,
     Curve curve = defaultCurve,
-  }) {
-    return FadeTransition(
+  }) => FadeTransition(
       opacity: CurvedAnimation(parent: animation, curve: curve),
       child: child,
     );
-  }
 
   /// Create a scale transition
   static Widget scaleTransition({
@@ -50,13 +48,11 @@ class AnimationUtils {
     required Widget child,
     Curve curve = defaultCurve,
     Alignment alignment = Alignment.center,
-  }) {
-    return ScaleTransition(
+  }) => ScaleTransition(
       scale: CurvedAnimation(parent: animation, curve: curve),
       alignment: alignment,
       child: child,
     );
-  }
 
   /// Create a slide transition
   static Widget slideTransition({
@@ -65,15 +61,13 @@ class AnimationUtils {
     required Offset begin,
     Offset end = slideCenter,
     Curve curve = defaultCurve,
-  }) {
-    return SlideTransition(
+  }) => SlideTransition(
       position: Tween<Offset>(
         begin: begin,
         end: end,
       ).animate(CurvedAnimation(parent: animation, curve: curve)),
       child: child,
     );
-  }
 
   /// Create a combined fade and scale transition
   static Widget fadeScaleTransition({
@@ -82,8 +76,7 @@ class AnimationUtils {
     Curve curve = defaultCurve,
     double scaleBegin = scaleStart,
     double scaleEnd = scaleNormal,
-  }) {
-    return FadeTransition(
+  }) => FadeTransition(
       opacity: CurvedAnimation(parent: animation, curve: curve),
       child: ScaleTransition(
         scale: Tween<double>(
@@ -93,7 +86,6 @@ class AnimationUtils {
         child: child,
       ),
     );
-  }
 
   /// Create a combined fade and slide transition
   static Widget fadeSlideTransition({
@@ -102,8 +94,7 @@ class AnimationUtils {
     required Offset begin,
     Offset end = slideCenter,
     Curve curve = defaultCurve,
-  }) {
-    return FadeTransition(
+  }) => FadeTransition(
       opacity: CurvedAnimation(parent: animation, curve: curve),
       child: SlideTransition(
         position: Tween<Offset>(
@@ -113,7 +104,6 @@ class AnimationUtils {
         child: child,
       ),
     );
-  }
 
   /// Create a rotation transition
   static Widget rotationTransition({
@@ -121,13 +111,11 @@ class AnimationUtils {
     required Widget child,
     Curve curve = defaultCurve,
     Alignment alignment = Alignment.center,
-  }) {
-    return RotationTransition(
+  }) => RotationTransition(
       turns: CurvedAnimation(parent: animation, curve: curve),
       alignment: alignment,
       child: child,
     );
-  }
 
   /// Create a size transition
   static Widget sizeTransition({
@@ -135,13 +123,11 @@ class AnimationUtils {
     required Widget child,
     Curve curve = defaultCurve,
     Axis axis = Axis.vertical,
-  }) {
-    return SizeTransition(
+  }) => SizeTransition(
       sizeFactor: CurvedAnimation(parent: animation, curve: curve),
       axis: axis,
       child: child,
     );
-  }
 
   /// Create an animated container with smooth transitions
   static Widget animatedContainer({
@@ -154,8 +140,7 @@ class AnimationUtils {
     EdgeInsetsGeometry? margin,
     Decoration? decoration,
     Curve curve = defaultCurve,
-  }) {
-    return AnimatedContainer(
+  }) => AnimatedContainer(
       duration: duration,
       curve: curve,
       color: color,
@@ -166,7 +151,6 @@ class AnimationUtils {
       decoration: decoration,
       child: child,
     );
-  }
 
   /// Create an animated opacity widget
   static Widget animatedOpacity({
@@ -174,14 +158,12 @@ class AnimationUtils {
     required double opacity,
     required Widget child,
     Curve curve = defaultCurve,
-  }) {
-    return AnimatedOpacity(
+  }) => AnimatedOpacity(
       duration: duration,
       opacity: opacity,
       curve: curve,
       child: child,
     );
-  }
 
   /// Create an animated positioned widget
   static Widget animatedPositioned({
@@ -194,8 +176,7 @@ class AnimationUtils {
     double? width,
     double? height,
     Curve curve = defaultCurve,
-  }) {
-    return AnimatedPositioned(
+  }) => AnimatedPositioned(
       duration: duration,
       curve: curve,
       left: left,
@@ -206,7 +187,6 @@ class AnimationUtils {
       height: height,
       child: child,
     );
-  }
 
   /// Create a staggered animation for lists
   static Widget staggeredListAnimation({
@@ -216,20 +196,16 @@ class AnimationUtils {
     Duration duration = normalDuration,
     Curve curve = defaultCurve,
     Offset slideBegin = slideFromBottom,
-  }) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: 1.0),
+  }) => TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
       duration: duration + Duration(milliseconds: delay.inMilliseconds * index),
       curve: curve,
-      builder: (context, value, child) {
-        return Transform.translate(
+      builder: (context, value, child) => Transform.translate(
           offset: Offset.lerp(slideBegin, Offset.zero, value)!,
           child: Opacity(opacity: value, child: child),
-        );
-      },
+        ),
       child: child,
     );
-  }
 
   /// Create a pulse animation
   static Widget pulseAnimation({
@@ -237,21 +213,17 @@ class AnimationUtils {
     Duration duration = const Duration(milliseconds: 1000),
     double minScale = 0.95,
     double maxScale = 1.05,
-  }) {
-    return TweenAnimationBuilder<double>(
+  }) => TweenAnimationBuilder<double>(
       tween: Tween(begin: minScale, end: maxScale),
       duration: duration,
       curve: Curves.easeInOut,
-      builder: (context, scale, child) {
-        return Transform.scale(scale: scale, child: child);
-      },
+      builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
       onEnd: () {
         // This would need to be implemented with a proper AnimationController
         // for continuous pulsing
       },
       child: child,
     );
-  }
 
   /// Create a shake animation
   static Widget shakeAnimation({
@@ -266,12 +238,10 @@ class AnimationUtils {
 
     return AnimatedBuilder(
       animation: animation,
-      builder: (context, child) {
-        return Transform.translate(
+      builder: (context, child) => Transform.translate(
           offset: Offset(animation.value, 0),
           child: child,
-        );
-      },
+        ),
       child: child,
     );
   }
@@ -281,13 +251,12 @@ class AnimationUtils {
   static Widget celebrationAnimation({
     required Widget child,
     bool showCelebration = false,
-  }) {
-    return Stack(
+  }) => Stack(
       children: [
         child,
         if (showCelebration)
           Positioned.fill(
-            child: Container(
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: RadialGradient(
                   colors: [
@@ -307,27 +276,23 @@ class AnimationUtils {
           ),
       ],
     );
-  }
 
   /// Create a loading animation
   static Widget loadingAnimation({
     double size = 20.0,
     Color color = CupertinoColors.systemBlue,
-  }) {
-    return SizedBox(
+  }) => SizedBox(
       width: size,
       height: size,
       child: CupertinoActivityIndicator(color: color),
     );
-  }
 
   /// Create a custom page transition
   static PageRouteBuilder<T> createPageTransition<T>({
     required Widget page,
     Duration duration = normalDuration,
     PageTransitionType type = PageTransitionType.slideFromRight,
-  }) {
-    return PageRouteBuilder<T>(
+  }) => PageRouteBuilder<T>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionDuration: duration,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -363,7 +328,6 @@ class AnimationUtils {
         }
       },
     );
-  }
 }
 
 /// Page transition types

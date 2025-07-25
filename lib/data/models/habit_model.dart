@@ -6,6 +6,47 @@ part 'habit_model.g.dart';
 
 @HiveType(typeId: 0)
 class HabitModel extends HiveObject {
+  HabitModel({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.category,
+    required this.difficulty,
+    required this.frequency,
+    required this.createdAt,
+    required this.colorValue,
+    this.reminderTime,
+    this.isActive = true,
+    this.iconName,
+    this.targetCount = 1,
+    this.unit,
+  });
+
+  factory HabitModel.create({
+    required String name,
+    required String description,
+    required HabitCategory category,
+    required HabitDifficulty difficulty,
+    required HabitFrequency frequency,
+    required int colorValue,
+    DateTime? reminderTime,
+    String? iconName,
+    int targetCount = 1,
+    String? unit,
+  }) => HabitModel(
+    id: const Uuid().v4(),
+    name: name,
+    description: description,
+    category: category,
+    difficulty: difficulty,
+    frequency: frequency,
+    createdAt: DateTime.now(),
+    reminderTime: reminderTime,
+    iconName: iconName,
+    colorValue: colorValue,
+    targetCount: targetCount,
+    unit: unit,
+  );
   @HiveField(0)
   final String id;
 
@@ -45,50 +86,6 @@ class HabitModel extends HiveObject {
   @HiveField(12)
   final String? unit;
 
-  HabitModel({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.category,
-    required this.difficulty,
-    required this.frequency,
-    required this.createdAt,
-    this.reminderTime,
-    this.isActive = true,
-    this.iconName,
-    required this.colorValue,
-    this.targetCount = 1,
-    this.unit,
-  });
-
-  factory HabitModel.create({
-    required String name,
-    required String description,
-    required HabitCategory category,
-    required HabitDifficulty difficulty,
-    required HabitFrequency frequency,
-    DateTime? reminderTime,
-    String? iconName,
-    required int colorValue,
-    int targetCount = 1,
-    String? unit,
-  }) {
-    return HabitModel(
-      id: const Uuid().v4(),
-      name: name,
-      description: description,
-      category: category,
-      difficulty: difficulty,
-      frequency: frequency,
-      createdAt: DateTime.now(),
-      reminderTime: reminderTime,
-      iconName: iconName,
-      colorValue: colorValue,
-      targetCount: targetCount,
-      unit: unit,
-    );
-  }
-
   HabitModel copyWith({
     String? name,
     String? description,
@@ -101,35 +98,23 @@ class HabitModel extends HiveObject {
     int? colorValue,
     int? targetCount,
     String? unit,
-  }) {
-    return HabitModel(
-      id: id,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      category: category ?? this.category,
-      difficulty: difficulty ?? this.difficulty,
-      frequency: frequency ?? this.frequency,
-      createdAt: createdAt,
-      reminderTime: reminderTime ?? this.reminderTime,
-      isActive: isActive ?? this.isActive,
-      iconName: iconName ?? this.iconName,
-      colorValue: colorValue ?? this.colorValue,
-      targetCount: targetCount ?? this.targetCount,
-      unit: unit ?? this.unit,
-    );
-  }
+  }) => HabitModel(
+    id: id,
+    name: name ?? this.name,
+    description: description ?? this.description,
+    category: category ?? this.category,
+    difficulty: difficulty ?? this.difficulty,
+    frequency: frequency ?? this.frequency,
+    createdAt: createdAt,
+    reminderTime: reminderTime ?? this.reminderTime,
+    isActive: isActive ?? this.isActive,
+    iconName: iconName ?? this.iconName,
+    colorValue: colorValue ?? this.colorValue,
+    targetCount: targetCount ?? this.targetCount,
+    unit: unit ?? this.unit,
+  );
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is HabitModel && other.id == id;
-  }
-
-  @override
-  int get hashCode => id.hashCode;
-
-  @override
-  String toString() {
-    return 'HabitModel(id: $id, name: $name, category: $category, difficulty: $difficulty)';
-  }
+  String toString() =>
+      'HabitModel(id: $id, name: $name, category: $category, difficulty: $difficulty)';
 }

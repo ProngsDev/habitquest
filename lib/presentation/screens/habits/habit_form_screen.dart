@@ -13,10 +13,9 @@ import '../../widgets/common/custom_text_field.dart';
 
 /// Screen for creating and editing habits
 class HabitFormScreen extends ConsumerStatefulWidget {
+  const HabitFormScreen({super.key, this.habitId, this.isEditing = false});
   final String? habitId;
   final bool isEditing;
-
-  const HabitFormScreen({super.key, this.habitId, this.isEditing = false});
 
   @override
   ConsumerState<HabitFormScreen> createState() => _HabitFormScreenState();
@@ -82,7 +81,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
           _hasReminder = habit.reminderTime != null;
         });
       }
-    } catch (e) {
+    } on Exception {
       if (mounted) {
         _showErrorDialog('Failed to load habit data');
       }
@@ -94,7 +93,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
   }
 
   bool _validateForm() {
-    bool isValid = true;
+    var isValid = true;
 
     setState(() {
       _nameError = null;
@@ -182,7 +181,9 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
             difficulty: _selectedDifficulty,
             frequency: _selectedFrequency,
             reminderTime: _hasReminder ? _reminderTime : null,
-            colorValue: AppTheme.getCategoryColor(_selectedCategory.name).value,
+            colorValue: AppTheme.getCategoryColor(
+              _selectedCategory.name,
+            ).toARGB32(),
             targetCount: targetCount,
             unit: unit,
           );
@@ -200,7 +201,9 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
           frequency: _selectedFrequency,
           createdAt: DateTime.now(),
           reminderTime: _hasReminder ? _reminderTime : null,
-          colorValue: AppTheme.getCategoryColor(_selectedCategory.name).value,
+          colorValue: AppTheme.getCategoryColor(
+            _selectedCategory.name,
+          ).toARGB32(),
           targetCount: targetCount,
           unit: unit,
         );
@@ -231,7 +234,7 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
       if (mounted) {
         Navigator.pop(context);
       }
-    } catch (e) {
+    } on Exception {
       if (mounted) {
         _showErrorDialog('Failed to save habit. Please try again.');
       }
@@ -356,7 +359,6 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
                 placeholder: 'Describe your habit and why it matters to you...',
                 controller: _descriptionController,
                 errorText: _descriptionError,
-                minLines: 3,
                 maxLines: 5,
               ),
               const SizedBox(height: 24),
@@ -418,208 +420,200 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: CupertinoColors.label,
-      ),
-    );
-  }
+  Widget _buildSectionHeader(String title) => Text(
+    title,
+    style: const TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+      color: CupertinoColors.label,
+    ),
+  );
 
-  Widget _buildCategoryPicker() {
-    return Container(
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: CupertinoColors.systemGrey4),
-      ),
-      child: Column(
-        children: HabitCategory.values.map((category) {
-          final isSelected = _selectedCategory == category;
-          return GestureDetector(
-            onTap: () => setState(() => _selectedCategory = category),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? CupertinoColors.systemBlue.withValues(alpha: 0.1)
-                    : null,
-                border: category != HabitCategory.values.last
-                    ? const Border(
-                        bottom: BorderSide(color: CupertinoColors.systemGrey5),
-                      )
-                    : null,
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    category.icon,
-                    size: 24,
-                    color: isSelected
-                        ? CupertinoColors.systemBlue
-                        : CupertinoColors.systemGrey,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      category.displayName,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                        color: isSelected
-                            ? CupertinoColors.systemBlue
-                            : CupertinoColors.label,
-                      ),
-                    ),
-                  ),
-                  if (isSelected)
-                    const Icon(
-                      CupertinoIcons.checkmark,
-                      color: CupertinoColors.systemBlue,
-                      size: 20,
-                    ),
-                ],
-              ),
+  Widget _buildCategoryPicker() => DecoratedBox(
+    decoration: BoxDecoration(
+      color: CupertinoColors.systemBackground,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: CupertinoColors.systemGrey4),
+    ),
+    child: Column(
+      children: HabitCategory.values.map((category) {
+        final isSelected = _selectedCategory == category;
+        return GestureDetector(
+          onTap: () => setState(() => _selectedCategory = category),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? CupertinoColors.systemBlue.withValues(alpha: 0.1)
+                  : null,
+              border: category != HabitCategory.values.last
+                  ? const Border(
+                      bottom: BorderSide(color: CupertinoColors.systemGrey5),
+                    )
+                  : null,
             ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildDifficultyPicker() {
-    return Container(
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: CupertinoColors.systemGrey4),
-      ),
-      child: Column(
-        children: HabitDifficulty.values.map((difficulty) {
-          final isSelected = _selectedDifficulty == difficulty;
-          final color = AppTheme.getDifficultyColor(difficulty.name);
-          return GestureDetector(
-            onTap: () => setState(() => _selectedDifficulty = difficulty),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: isSelected ? color.withOpacity(0.1) : null,
-                border: difficulty != HabitDifficulty.values.last
-                    ? const Border(
-                        bottom: BorderSide(color: CupertinoColors.systemGrey5),
-                      )
-                    : null,
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      difficulty.displayName,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                        color: isSelected ? color : CupertinoColors.label,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '${difficulty.xpMultiplier}x XP',
+            child: Row(
+              children: [
+                Icon(
+                  category.icon,
+                  size: 24,
+                  color: isSelected
+                      ? CupertinoColors.systemBlue
+                      : CupertinoColors.systemGrey,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    category.displayName,
                     style: TextStyle(
-                      fontSize: 14,
-                      color: CupertinoColors.systemGrey,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                      color: isSelected
+                          ? CupertinoColors.systemBlue
+                          : CupertinoColors.label,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  if (isSelected)
-                    Icon(CupertinoIcons.checkmark, color: color, size: 20),
-                ],
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildFrequencyPicker() {
-    return Container(
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: CupertinoColors.systemGrey4),
-      ),
-      child: Column(
-        children: HabitFrequency.values.map((frequency) {
-          final isSelected = _selectedFrequency == frequency;
-          return GestureDetector(
-            onTap: () => setState(() => _selectedFrequency = frequency),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? CupertinoColors.systemBlue.withOpacity(0.1)
-                    : null,
-                border: frequency != HabitFrequency.values.last
-                    ? const Border(
-                        bottom: BorderSide(color: CupertinoColors.systemGrey5),
-                      )
-                    : null,
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    _getFrequencyIcon(frequency),
-                    color: isSelected
-                        ? CupertinoColors.systemBlue
-                        : CupertinoColors.systemGrey,
+                ),
+                if (isSelected)
+                  const Icon(
+                    CupertinoIcons.checkmark,
+                    color: CupertinoColors.systemBlue,
                     size: 20,
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      frequency.displayName,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                        color: isSelected
-                            ? CupertinoColors.systemBlue
-                            : CupertinoColors.label,
-                      ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    ),
+  );
+
+  Widget _buildDifficultyPicker() => DecoratedBox(
+    decoration: BoxDecoration(
+      color: CupertinoColors.systemBackground,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: CupertinoColors.systemGrey4),
+    ),
+    child: Column(
+      children: HabitDifficulty.values.map((difficulty) {
+        final isSelected = _selectedDifficulty == difficulty;
+        final color = AppTheme.getDifficultyColor(difficulty.name);
+        return GestureDetector(
+          onTap: () => setState(() => _selectedDifficulty = difficulty),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isSelected ? color.withValues(alpha: 0.1) : null,
+              border: difficulty != HabitDifficulty.values.last
+                  ? const Border(
+                      bottom: BorderSide(color: CupertinoColors.systemGrey5),
+                    )
+                  : null,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    difficulty.displayName,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                      color: isSelected ? color : CupertinoColors.label,
                     ),
                   ),
-                  if (isSelected)
-                    const Icon(
-                      CupertinoIcons.checkmark,
-                      color: CupertinoColors.systemBlue,
-                      size: 20,
-                    ),
-                ],
-              ),
+                ),
+                Text(
+                  '${difficulty.xpMultiplier}x XP',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: CupertinoColors.systemGrey,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                if (isSelected)
+                  Icon(CupertinoIcons.checkmark, color: color, size: 20),
+              ],
             ),
-          );
-        }).toList(),
-      ),
-    );
-  }
+          ),
+        );
+      }).toList(),
+    ),
+  );
+
+  Widget _buildFrequencyPicker() => DecoratedBox(
+    decoration: BoxDecoration(
+      color: CupertinoColors.systemBackground,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: CupertinoColors.systemGrey4),
+    ),
+    child: Column(
+      children: HabitFrequency.values.map((frequency) {
+        final isSelected = _selectedFrequency == frequency;
+        return GestureDetector(
+          onTap: () => setState(() => _selectedFrequency = frequency),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? CupertinoColors.systemBlue.withOpacity(0.1)
+                  : null,
+              border: frequency != HabitFrequency.values.last
+                  ? const Border(
+                      bottom: BorderSide(color: CupertinoColors.systemGrey5),
+                    )
+                  : null,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  _getFrequencyIcon(frequency),
+                  color: isSelected
+                      ? CupertinoColors.systemBlue
+                      : CupertinoColors.systemGrey,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    frequency.displayName,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                      color: isSelected
+                          ? CupertinoColors.systemBlue
+                          : CupertinoColors.label,
+                    ),
+                  ),
+                ),
+                if (isSelected)
+                  const Icon(
+                    CupertinoIcons.checkmark,
+                    color: CupertinoColors.systemBlue,
+                    size: 20,
+                  ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    ),
+  );
 
   IconData _getFrequencyIcon(HabitFrequency frequency) {
     switch (frequency) {
@@ -632,89 +626,81 @@ class _HabitFormScreenState extends ConsumerState<HabitFormScreen> {
     }
   }
 
-  Widget _buildReminderSection() {
-    return Container(
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: CupertinoColors.systemGrey4),
-      ),
-      child: Column(
-        children: [
-          // Enable reminder toggle
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                const Icon(
-                  CupertinoIcons.bell,
-                  color: CupertinoColors.systemGrey,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Text(
-                    'Enable Reminder',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-                CupertinoSwitch(
-                  value: _hasReminder,
-                  onChanged: (value) => setState(() {
-                    _hasReminder = value;
-                    if (!value) _reminderTime = null;
-                  }),
-                ),
-              ],
-            ),
+  Widget _buildReminderSection() => DecoratedBox(
+    decoration: BoxDecoration(
+      color: CupertinoColors.systemBackground,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: CupertinoColors.systemGrey4),
+    ),
+    child: Column(
+      children: [
+        // Enable reminder toggle
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              const Icon(
+                CupertinoIcons.bell,
+                color: CupertinoColors.systemGrey,
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text('Enable Reminder', style: TextStyle(fontSize: 16)),
+              ),
+              CupertinoSwitch(
+                value: _hasReminder,
+                onChanged: (value) => setState(() {
+                  _hasReminder = value;
+                  if (!value) _reminderTime = null;
+                }),
+              ),
+            ],
           ),
+        ),
 
-          // Time picker (shown when reminder is enabled)
-          if (_hasReminder) ...[
-            Container(height: 1, color: CupertinoColors.systemGrey5),
-            GestureDetector(
-              onTap: _selectReminderTime,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      CupertinoIcons.time,
-                      color: CupertinoColors.systemGrey,
-                      size: 20,
+        // Time picker (shown when reminder is enabled)
+        if (_hasReminder) ...[
+          Container(height: 1, color: CupertinoColors.systemGrey5),
+          GestureDetector(
+            onTap: _selectReminderTime,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  const Icon(
+                    CupertinoIcons.time,
+                    color: CupertinoColors.systemGrey,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      'Reminder Time',
+                      style: TextStyle(fontSize: 16),
                     ),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Text(
-                        'Reminder Time',
-                        style: TextStyle(fontSize: 16),
-                      ),
+                  ),
+                  Text(
+                    _reminderTime != null
+                        ? '${_reminderTime!.hour.toString().padLeft(2, '0')}:${_reminderTime!.minute.toString().padLeft(2, '0')}'
+                        : 'Select Time',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: CupertinoColors.systemBlue,
                     ),
-                    Text(
-                      _reminderTime != null
-                          ? '${_reminderTime!.hour.toString().padLeft(2, '0')}:${_reminderTime!.minute.toString().padLeft(2, '0')}'
-                          : 'Select Time',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: CupertinoColors.systemBlue,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(
-                      CupertinoIcons.chevron_right,
-                      color: CupertinoColors.systemGrey3,
-                      size: 16,
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(
+                    CupertinoIcons.chevron_right,
+                    color: CupertinoColors.systemGrey3,
+                    size: 16,
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ],
-      ),
-    );
-  }
+      ],
+    ),
+  );
 }

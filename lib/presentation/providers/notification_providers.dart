@@ -4,9 +4,9 @@ import '../../core/services/notification_service.dart';
 import '../../domain/entities/habit.dart';
 
 /// Provider for the notification service
-final notificationServiceProvider = Provider<NotificationService>((ref) {
-  return NotificationService();
-});
+final notificationServiceProvider = Provider<NotificationService>(
+  (ref) => NotificationService(),
+);
 
 /// Provider for notification permissions status
 final notificationPermissionsProvider = FutureProvider<bool>((ref) async {
@@ -15,63 +15,61 @@ final notificationPermissionsProvider = FutureProvider<bool>((ref) async {
 });
 
 /// Provider for managing habit notifications
-final habitNotificationProvider = StateNotifierProvider<HabitNotificationNotifier, HabitNotificationState>((ref) {
-  final notificationService = ref.watch(notificationServiceProvider);
-  return HabitNotificationNotifier(notificationService);
-});
+final habitNotificationProvider =
+    StateNotifierProvider<HabitNotificationNotifier, HabitNotificationState>((
+      ref,
+    ) {
+      final notificationService = ref.watch(notificationServiceProvider);
+      return HabitNotificationNotifier(notificationService);
+    });
 
 /// State for habit notifications
 class HabitNotificationState {
-  final bool isInitialized;
-  final bool hasPermissions;
-  final Map<String, int> habitNotificationIds;
-  final String? error;
-
   const HabitNotificationState({
     this.isInitialized = false,
     this.hasPermissions = false,
     this.habitNotificationIds = const {},
     this.error,
   });
+  final bool isInitialized;
+  final bool hasPermissions;
+  final Map<String, int> habitNotificationIds;
+  final String? error;
 
   HabitNotificationState copyWith({
     bool? isInitialized,
     bool? hasPermissions,
     Map<String, int>? habitNotificationIds,
     String? error,
-  }) {
-    return HabitNotificationState(
-      isInitialized: isInitialized ?? this.isInitialized,
-      hasPermissions: hasPermissions ?? this.hasPermissions,
-      habitNotificationIds: habitNotificationIds ?? this.habitNotificationIds,
-      error: error,
-    );
-  }
+  }) => HabitNotificationState(
+    isInitialized: isInitialized ?? this.isInitialized,
+    hasPermissions: hasPermissions ?? this.hasPermissions,
+    habitNotificationIds: habitNotificationIds ?? this.habitNotificationIds,
+    error: error,
+  );
 }
 
 /// Notifier for managing habit notifications
 class HabitNotificationNotifier extends StateNotifier<HabitNotificationState> {
-  final NotificationService _notificationService;
-
-  HabitNotificationNotifier(this._notificationService) : super(const HabitNotificationState()) {
+  HabitNotificationNotifier(this._notificationService)
+    : super(const HabitNotificationState()) {
     _initialize();
   }
+  final NotificationService _notificationService;
 
   /// Initialize the notification service
   Future<void> _initialize() async {
     try {
       final isInitialized = await _notificationService.initialize();
-      final hasPermissions = await _notificationService.areNotificationsEnabled();
-      
+      final hasPermissions = await _notificationService
+          .areNotificationsEnabled();
+
       state = state.copyWith(
         isInitialized: isInitialized,
         hasPermissions: hasPermissions,
-        error: null,
       );
-    } catch (e) {
-      state = state.copyWith(
-        error: 'Failed to initialize notifications: $e',
-      );
+    } on Exception catch (e) {
+      state = state.copyWith(error: 'Failed to initialize notifications: $e');
     }
   }
 
@@ -79,15 +77,10 @@ class HabitNotificationNotifier extends StateNotifier<HabitNotificationState> {
   Future<bool> requestPermissions() async {
     try {
       final granted = await _notificationService.requestPermissions();
-      state = state.copyWith(
-        hasPermissions: granted,
-        error: null,
-      );
+      state = state.copyWith(hasPermissions: granted);
       return granted;
-    } catch (e) {
-      state = state.copyWith(
-        error: 'Failed to request permissions: $e',
-      );
+    } on Exception catch (e) {
+      state = state.copyWith(error: 'Failed to request permissions: $e');
       return false;
     }
   }
@@ -107,12 +100,12 @@ class HabitNotificationNotifier extends StateNotifier<HabitNotificationState> {
     try {
       // Generate unique notification ID based on habit ID
       final notificationId = habit.id.hashCode.abs();
-      
+
       // Calculate next reminder time
       final now = DateTime.now();
       final reminderTime = habit.reminderTime!;
-      
-      DateTime nextReminder = DateTime(
+
+      var nextReminder = DateTime(
         now.year,
         now.month,
         now.day,
@@ -135,15 +128,10 @@ class HabitNotificationNotifier extends StateNotifier<HabitNotificationState> {
       // Update state with new notification ID
       final updatedIds = Map<String, int>.from(state.habitNotificationIds);
       updatedIds[habit.id] = notificationId;
-      
-      state = state.copyWith(
-        habitNotificationIds: updatedIds,
-        error: null,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        error: 'Failed to schedule notification: $e',
-      );
+
+      state = state.copyWith(habitNotificationIds: updatedIds);
+    } on Exception catch (e) {
+      state = state.copyWith(error: 'Failed to schedule notification: $e');
     }
   }
 
@@ -154,19 +142,14 @@ class HabitNotificationNotifier extends StateNotifier<HabitNotificationState> {
 
     try {
       await _notificationService.cancelNotification(notificationId);
-      
+
       // Remove from state
-      final updatedIds = Map<String, int>.from(state.habitNotificationIds);
-      updatedIds.remove(habitId);
-      
-      state = state.copyWith(
-        habitNotificationIds: updatedIds,
-        error: null,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        error: 'Failed to cancel notification: $e',
-      );
+      final updatedIds = Map<String, int>.from(state.habitNotificationIds)
+        ..remove(habitId);
+
+      state = state.copyWith(habitNotificationIds: updatedIds);
+    } on Exception catch (e) {
+      state = state.copyWith(error: 'Failed to cancel notification: $e');
     }
   }
 
@@ -174,7 +157,7 @@ class HabitNotificationNotifier extends StateNotifier<HabitNotificationState> {
   Future<void> updateHabitNotification(Habit habit) async {
     // Cancel existing notification
     await cancelHabitNotification(habit.id);
-    
+
     // Schedule new notification if reminder is set
     if (habit.reminderTime != null) {
       await scheduleHabitNotification(habit);
@@ -185,14 +168,9 @@ class HabitNotificationNotifier extends StateNotifier<HabitNotificationState> {
   Future<void> cancelAllNotifications() async {
     try {
       await _notificationService.cancelAllNotifications();
-      state = state.copyWith(
-        habitNotificationIds: {},
-        error: null,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        error: 'Failed to cancel all notifications: $e',
-      );
+      state = state.copyWith(habitNotificationIds: {});
+    } on Exception catch (e) {
+      state = state.copyWith(error: 'Failed to cancel all notifications: $e');
     }
   }
 
@@ -201,7 +179,7 @@ class HabitNotificationNotifier extends StateNotifier<HabitNotificationState> {
     try {
       final pending = await _notificationService.getPendingNotifications();
       return pending.length;
-    } catch (e) {
+    } on Exception {
       return 0;
     }
   }
@@ -223,10 +201,8 @@ class HabitNotificationNotifier extends StateNotifier<HabitNotificationState> {
         body: 'Notifications are working correctly!',
         payload: 'test_notification',
       );
-    } catch (e) {
-      state = state.copyWith(
-        error: 'Failed to show test notification: $e',
-      );
+    } on Exception catch (e) {
+      state = state.copyWith(error: 'Failed to show test notification: $e');
     }
   }
 }

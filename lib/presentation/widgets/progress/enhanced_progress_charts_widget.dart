@@ -9,7 +9,7 @@ import '../common/modern_header.dart';
 
 /// Enhanced widget for displaying progress charts with animations
 class EnhancedProgressChartsWidget extends StatefulWidget {
-  const EnhancedProgressChartsWidget({super.key, required this.completions});
+  const EnhancedProgressChartsWidget({required this.completions, super.key});
   final List<HabitCompletion> completions;
 
   @override
@@ -79,59 +79,55 @@ class _EnhancedProgressChartsWidgetState
             // Chart selector with animation
             AnimatedBuilder(
               animation: _fadeAnimation,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _fadeAnimation.value,
-                  child: Center(
-                    child: CupertinoSlidingSegmentedControl<int>(
-                      groupValue: _selectedChartIndex,
-                      onValueChanged: (value) {
-                        if (value != null) {
-                          _animateChartChange(value);
-                        }
-                      },
-                      children: const {
-                        0: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: Text('Week'),
+              builder: (context, child) => Opacity(
+                opacity: _fadeAnimation.value,
+                child: Center(
+                  child: CupertinoSlidingSegmentedControl<int>(
+                    groupValue: _selectedChartIndex,
+                    onValueChanged: (value) {
+                      if (value != null) {
+                        _animateChartChange(value);
+                      }
+                    },
+                    children: const {
+                      0: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
                         ),
-                        1: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: Text('Month'),
+                        child: Text('Week'),
+                      ),
+                      1: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
                         ),
-                        2: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: Text('XP'),
+                        child: Text('Month'),
+                      ),
+                      2: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
                         ),
-                      },
-                    ),
+                        child: Text('XP'),
+                      ),
+                    },
                   ),
-                );
-              },
+                ),
+              ),
             ),
             const SizedBox(height: 24),
 
             // Chart content with animation
             AnimatedBuilder(
               animation: _chartAnimation,
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: _chartAnimation.value,
-                  child: Opacity(
-                    opacity: _chartAnimation.value,
-                    child: SizedBox(height: 300, child: _buildSelectedChart()),
-                  ),
-                );
-              },
+              builder: (context, child) => Transform.scale(
+                scale: _chartAnimation.value,
+                child: Opacity(
+                  opacity: _chartAnimation.value,
+                  child: SizedBox(height: 300, child: _buildSelectedChart()),
+                ),
+              ),
             ),
 
             // Chart legend
@@ -148,8 +144,9 @@ class _EnhancedProgressChartsWidgetState
       setState(() {
         _selectedChartIndex = newIndex;
       });
-      _chartAnimationController.reset();
-      _chartAnimationController.forward();
+      _chartAnimationController
+        ..reset()
+        ..forward();
       _fadeController.forward();
     });
   }
@@ -501,7 +498,7 @@ class _EnhancedProgressChartsWidgetState
       case 2:
         final totalXp = widget.completions.fold<int>(
           0,
-          (sum, completion) => sum + (completion.xpEarned ?? 0),
+          (sum, completion) => sum + completion.xpEarned,
         );
         return [
           {

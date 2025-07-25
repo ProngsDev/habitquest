@@ -4,15 +4,7 @@ import '../../core/enums/habit_enums.dart';
 
 /// Domain entity representing a habit completion record
 @immutable
-class HabitCompletion {
-  final String id;
-  final String habitId;
-  final DateTime completedAt;
-  final CompletionStatus status;
-  final int xpEarned;
-  final String? notes;
-  final int? actualCount; // For habits with target counts
-  final Duration? duration; // For time-based habits
+class HabitCompletion { // For time-based habits
 
   const HabitCompletion({
     required this.id,
@@ -24,6 +16,14 @@ class HabitCompletion {
     this.actualCount,
     this.duration,
   });
+  final String id;
+  final String habitId;
+  final DateTime completedAt;
+  final CompletionStatus status;
+  final int xpEarned;
+  final String? notes;
+  final int? actualCount; // For habits with target counts
+  final Duration? duration;
 
   HabitCompletion copyWith({
     String? id,
@@ -84,14 +84,6 @@ class HabitCompletion {
 /// Statistics for a habit's completion history
 @immutable
 class HabitStats {
-  final String habitId;
-  final int totalCompletions;
-  final int currentStreak;
-  final int longestStreak;
-  final double completionRate;
-  final int totalXpEarned;
-  final DateTime? lastCompletedAt;
-  final List<HabitCompletion> recentCompletions;
 
   const HabitStats({
     required this.habitId,
@@ -103,6 +95,14 @@ class HabitStats {
     this.lastCompletedAt,
     this.recentCompletions = const [],
   });
+  final String habitId;
+  final int totalCompletions;
+  final int currentStreak;
+  final int longestStreak;
+  final double completionRate;
+  final int totalXpEarned;
+  final DateTime? lastCompletedAt;
+  final List<HabitCompletion> recentCompletions;
 
   HabitStats copyWith({
     String? habitId,

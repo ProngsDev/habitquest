@@ -18,9 +18,9 @@ import '../../widgets/common/progress_widgets.dart';
 
 /// Screen for viewing habit details and progress
 class HabitDetailScreen extends ConsumerWidget {
-  final String habitId;
 
-  const HabitDetailScreen({super.key, required this.habitId});
+  const HabitDetailScreen({required this.habitId, super.key});
+  final String habitId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,8 +57,7 @@ class HabitDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHabitDetails(BuildContext context, Habit habit) {
-    return SingleChildScrollView(
+  Widget _buildHabitDetails(BuildContext context, Habit habit) => SingleChildScrollView(
       padding: ResponsiveUtils.getResponsivePadding(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +84,6 @@ class HabitDetailScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
 
   Widget _buildHeaderSection(BuildContext context, Habit habit) {
     final categoryColor = AppTheme.getCategoryColor(habit.category.name);
@@ -185,8 +183,7 @@ class HabitDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProgressSection(BuildContext context, Habit habit) {
-    return Consumer(
+  Widget _buildProgressSection(BuildContext context, Habit habit) => Consumer(
       builder: (context, ref, child) {
         final statsAsync = ref.watch(completion.habitStatsProvider(habit.id));
 
@@ -201,14 +198,12 @@ class HabitDetailScreen extends ConsumerWidget {
         );
       },
     );
-  }
 
   Widget _buildProgressContent(
     BuildContext context,
     Habit habit,
     HabitStats stats,
-  ) {
-    return CustomCard(
+  ) => CustomCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -229,7 +224,6 @@ class HabitDetailScreen extends ConsumerWidget {
                   children: [
                     CircularProgressWidget(
                       progress: stats.completionRate,
-                      size: 80,
                       progressColor: AppTheme.getCategoryColor(
                         habit.category.name,
                       ),
@@ -278,15 +272,13 @@ class HabitDetailScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
 
   Widget _buildProgressStat(
     String label,
     String value,
     IconData icon,
     Color color,
-  ) {
-    return Row(
+  ) => Row(
       children: [
         Icon(icon, color: color, size: 20),
         const SizedBox(width: 8),
@@ -314,7 +306,6 @@ class HabitDetailScreen extends ConsumerWidget {
         ),
       ],
     );
-  }
 
   Widget _buildStatisticsSection(BuildContext context, Habit habit) {
     final createdDate = DateFormat('MMM dd, yyyy').format(habit.createdAt);
@@ -358,8 +349,7 @@ class HabitDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatRow(String label, String value) {
-    return Row(
+  Widget _buildStatRow(String label, String value) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
@@ -379,10 +369,8 @@ class HabitDetailScreen extends ConsumerWidget {
         ),
       ],
     );
-  }
 
-  Widget _buildDetailsSection(BuildContext context, Habit habit) {
-    return CustomCard(
+  Widget _buildDetailsSection(BuildContext context, Habit habit) => CustomCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -423,15 +411,13 @@ class HabitDetailScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
 
   Widget _buildDetailRow(
     String label,
     String value,
     IconData? icon,
     Color color,
-  ) {
-    return Row(
+  ) => Row(
       children: [
         if (icon != null) ...[
           Icon(icon, color: color, size: 20),
@@ -468,10 +454,8 @@ class HabitDetailScreen extends ConsumerWidget {
         ),
       ],
     );
-  }
 
-  Widget _buildActionButtons(BuildContext context, Habit habit) {
-    return Consumer(
+  Widget _buildActionButtons(BuildContext context, Habit habit) => Consumer(
       builder: (context, ref, child) {
         final isCompletedAsync = ref.watch(
           completion.isHabitCompletedTodayProvider(habit.id),
@@ -486,15 +470,15 @@ class HabitDetailScreen extends ConsumerWidget {
                     ? CupertinoButton(
                         onPressed: () => _undoCompletion(ref, habit.id),
                         color: CupertinoColors.systemGreen,
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               CupertinoIcons.checkmark_circle_fill,
                               color: CupertinoColors.white,
                             ),
-                            const SizedBox(width: 8),
-                            const Text(
+                            SizedBox(width: 8),
+                            Text(
                               'Completed Today',
                               style: TextStyle(color: CupertinoColors.white),
                             ),
@@ -503,15 +487,15 @@ class HabitDetailScreen extends ConsumerWidget {
                       )
                     : CupertinoButton.filled(
                         onPressed: () => _completeHabit(ref, habit),
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               CupertinoIcons.checkmark_circle,
                               color: CupertinoColors.white,
                             ),
-                            const SizedBox(width: 8),
-                            const Text(
+                            SizedBox(width: 8),
+                            Text(
                               'Mark as Complete',
                               style: TextStyle(color: CupertinoColors.white),
                             ),
@@ -562,16 +546,15 @@ class HabitDetailScreen extends ConsumerWidget {
         );
       },
     );
-  }
 
-  void _completeHabit(WidgetRef ref, Habit habit) async {
+  Future<void> _completeHabit(WidgetRef ref, Habit habit) async {
     final notifier = ref.read(
       completion.habitCompletionNotifierProvider.notifier,
     );
     await notifier.completeHabit(habit);
   }
 
-  void _undoCompletion(WidgetRef ref, String habitId) async {
+  Future<void> _undoCompletion(WidgetRef ref, String habitId) async {
     final notifier = ref.read(
       completion.habitCompletionNotifierProvider.notifier,
     );
@@ -672,8 +655,7 @@ class HabitDetailScreen extends ConsumerWidget {
     }
   }
 
-  Widget _buildNotFound(BuildContext context) {
-    return Center(
+  Widget _buildNotFound(BuildContext context) => Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -708,10 +690,8 @@ class HabitDetailScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
 
-  Widget _buildError(BuildContext context, String error) {
-    return Center(
+  Widget _buildError(BuildContext context, String error) => Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -746,5 +726,4 @@ class HabitDetailScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
 }

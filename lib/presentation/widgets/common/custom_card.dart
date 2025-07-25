@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 
 /// Custom card widget with iOS-style design
 class CustomCard extends StatelessWidget {
+  const CustomCard({
+    required this.child,
+    super.key,
+    this.padding,
+    this.margin,
+    this.backgroundColor,
+    this.elevation,
+    this.borderRadius,
+    this.onTap,
+    this.showShadow = true,
+  });
   final Widget child;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
@@ -11,18 +22,6 @@ class CustomCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool showShadow;
 
-  const CustomCard({
-    super.key,
-    required this.child,
-    this.padding,
-    this.margin,
-    this.backgroundColor,
-    this.elevation,
-    this.borderRadius,
-    this.onTap,
-    this.showShadow = true,
-  });
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -31,10 +30,10 @@ class CustomCard extends StatelessWidget {
     final defaultBackgroundColor =
         backgroundColor ?? (isDark ? Colors.grey[850] : Colors.white);
 
-    final defaultBorderRadius = borderRadius ?? BorderRadius.circular(12.0);
+    final defaultBorderRadius = borderRadius ?? BorderRadius.circular(12);
 
-    Widget cardContent = Container(
-      padding: padding ?? const EdgeInsets.all(16.0),
+    final Widget cardContent = Container(
+      padding: padding ?? const EdgeInsets.all(16),
       margin: margin,
       decoration: BoxDecoration(
         color: defaultBackgroundColor,
@@ -43,9 +42,8 @@ class CustomCard extends StatelessWidget {
             ? [
                 BoxShadow(
                   color: isDark
-                      ? Colors.black.withOpacity(0.3)
-                      : Colors.grey.withOpacity(0.1),
-                  spreadRadius: 0,
+                      ? Colors.black.withValues(alpha: 0.3)
+                      : Colors.grey.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -75,31 +73,37 @@ class CustomCard extends StatelessWidget {
 
 /// Compact card variant
 class CustomCardCompact extends StatelessWidget {
+  const CustomCardCompact({
+    required this.child,
+    super.key,
+    this.onTap,
+    this.backgroundColor,
+  });
   final Widget child;
   final VoidCallback? onTap;
   final Color? backgroundColor;
 
-  const CustomCardCompact({
-    super.key,
-    required this.child,
-    this.onTap,
-    this.backgroundColor,
-  });
-
   @override
-  Widget build(BuildContext context) {
-    return CustomCard(
-      padding: const EdgeInsets.all(12.0),
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
-      onTap: onTap,
-      backgroundColor: backgroundColor,
-      child: child,
-    );
-  }
+  Widget build(BuildContext context) => CustomCard(
+    padding: const EdgeInsets.all(12),
+    margin: const EdgeInsets.symmetric(vertical: 4),
+    onTap: onTap,
+    backgroundColor: backgroundColor,
+    child: child,
+  );
 }
 
 /// List tile style card
 class CustomListCard extends StatelessWidget {
+  const CustomListCard({
+    required this.title,
+    super.key,
+    this.leading,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+    this.padding,
+  });
   final Widget? leading;
   final Widget title;
   final Widget? subtitle;
@@ -107,38 +111,26 @@ class CustomListCard extends StatelessWidget {
   final VoidCallback? onTap;
   final EdgeInsetsGeometry? padding;
 
-  const CustomListCard({
-    super.key,
-    this.leading,
-    required this.title,
-    this.subtitle,
-    this.trailing,
-    this.onTap,
-    this.padding,
-  });
-
   @override
-  Widget build(BuildContext context) {
-    return CustomCard(
-      padding: padding ?? const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
-      onTap: onTap,
-      child: Row(
-        children: [
-          if (leading != null) ...[leading!, const SizedBox(width: 12)],
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                title,
-                if (subtitle != null) ...[const SizedBox(height: 4), subtitle!],
-              ],
-            ),
+  Widget build(BuildContext context) => CustomCard(
+    padding: padding ?? const EdgeInsets.all(16),
+    margin: const EdgeInsets.symmetric(vertical: 4),
+    onTap: onTap,
+    child: Row(
+      children: [
+        if (leading != null) ...[leading!, const SizedBox(width: 12)],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              title,
+              if (subtitle != null) ...[const SizedBox(height: 4), subtitle!],
+            ],
           ),
-          if (trailing != null) ...[const SizedBox(width: 12), trailing!],
-        ],
-      ),
-    );
-  }
+        ),
+        if (trailing != null) ...[const SizedBox(width: 12), trailing!],
+      ],
+    ),
+  );
 }

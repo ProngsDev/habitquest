@@ -6,7 +6,7 @@ import '../common/custom_card.dart';
 
 /// Widget for displaying streak calendar heatmap
 class StreakCalendarWidget extends StatelessWidget {
-  const StreakCalendarWidget({super.key, required this.completions});
+  const StreakCalendarWidget({required this.completions, super.key});
   final List<HabitCompletion> completions;
 
   @override

@@ -93,26 +93,22 @@ final achievementNotifierProvider =
       ref,
     ) {
       final repository = ref.watch(achievementRepositoryProvider);
-      final userNotifier = ref.watch(userNotifierProvider.notifier);
-      return AchievementNotifier(repository, userNotifier);
+      return AchievementNotifier(repository);
     });
 
 /// Achievement state notifier for managing achievement operations
 class AchievementNotifier extends StateNotifier<AsyncValue<List<Achievement>>> {
-  final AchievementRepository _repository;
-  final UserNotifier _userNotifier;
-
-  AchievementNotifier(this._repository, this._userNotifier)
-    : super(const AsyncValue.loading()) {
+  AchievementNotifier(this._repository) : super(const AsyncValue.loading()) {
     _loadAchievements();
   }
+  final AchievementRepository _repository;
 
   /// Load all achievements
   Future<void> _loadAchievements() async {
     try {
       final achievements = await _repository.getAllAchievements();
       state = AsyncValue.data(achievements);
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -122,7 +118,7 @@ class AchievementNotifier extends StateNotifier<AsyncValue<List<Achievement>>> {
     try {
       await _repository.initializeDefaultAchievements();
       await _loadAchievements();
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -140,7 +136,7 @@ class AchievementNotifier extends StateNotifier<AsyncValue<List<Achievement>>> {
 
       await _loadAchievements();
       return unlockedAchievement;
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
       return null;
     }
@@ -161,7 +157,7 @@ class AchievementNotifier extends StateNotifier<AsyncValue<List<Achievement>>> {
 
       await _loadAchievements();
       return updatedAchievement;
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
       return null;
     }
@@ -189,7 +185,7 @@ class AchievementNotifier extends StateNotifier<AsyncValue<List<Achievement>>> {
       }
 
       return newlyUnlocked;
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
       return [];
     }
@@ -200,7 +196,7 @@ class AchievementNotifier extends StateNotifier<AsyncValue<List<Achievement>>> {
     try {
       await _repository.createAchievement(achievement);
       await _loadAchievements();
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -210,7 +206,7 @@ class AchievementNotifier extends StateNotifier<AsyncValue<List<Achievement>>> {
     try {
       await _repository.updateAchievement(achievement);
       await _loadAchievements();
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -220,7 +216,7 @@ class AchievementNotifier extends StateNotifier<AsyncValue<List<Achievement>>> {
     try {
       await _repository.deleteAchievement(id);
       await _loadAchievements();
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }

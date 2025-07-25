@@ -127,9 +127,9 @@ class _NotFoundScreen extends StatelessWidget {
   const _NotFoundScreen();
 
   @override
-  Widget build(BuildContext context) => CupertinoPageScaffold(
-    navigationBar: const CupertinoNavigationBar(middle: Text('Page Not Found')),
-    child: const Center(
+  Widget build(BuildContext context) => const CupertinoPageScaffold(
+    navigationBar: CupertinoNavigationBar(middle: Text('Page Not Found')),
+    child: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

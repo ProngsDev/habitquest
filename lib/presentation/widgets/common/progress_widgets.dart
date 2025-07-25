@@ -6,17 +6,9 @@ import '../../../core/utils/xp_calculator.dart';
 
 /// Circular progress indicator with percentage
 class CircularProgressWidget extends StatelessWidget {
-  final double progress; // 0.0 to 1.0
-  final double size;
-  final double strokeWidth;
-  final Color? progressColor;
-  final Color? backgroundColor;
-  final Widget? child;
-  final bool showPercentage;
 
   const CircularProgressWidget({
-    super.key,
-    required this.progress,
+    required this.progress, super.key,
     this.size = 80,
     this.strokeWidth = 8,
     this.progressColor,
@@ -24,6 +16,13 @@ class CircularProgressWidget extends StatelessWidget {
     this.child,
     this.showPercentage = true,
   });
+  final double progress; // 0.0 to 1.0
+  final double size;
+  final double strokeWidth;
+  final Color? progressColor;
+  final Color? backgroundColor;
+  final Widget? child;
+  final bool showPercentage;
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -58,10 +57,6 @@ class CircularProgressWidget extends StatelessWidget {
 }
 
 class _CircularProgressPainter extends CustomPainter {
-  final double progress;
-  final double strokeWidth;
-  final Color progressColor;
-  final Color backgroundColor;
 
   _CircularProgressPainter({
     required this.progress,
@@ -69,6 +64,10 @@ class _CircularProgressPainter extends CustomPainter {
     required this.progressColor,
     required this.backgroundColor,
   });
+  final double progress;
+  final double strokeWidth;
+  final Color progressColor;
+  final Color backgroundColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -109,20 +108,19 @@ class _CircularProgressPainter extends CustomPainter {
 
 /// Linear progress bar
 class LinearProgressWidget extends StatelessWidget {
-  final double progress; // 0.0 to 1.0
-  final double height;
-  final Color? progressColor;
-  final Color? backgroundColor;
-  final BorderRadius? borderRadius;
 
   const LinearProgressWidget({
-    super.key,
-    required this.progress,
+    required this.progress, super.key,
     this.height = 8,
     this.progressColor,
     this.backgroundColor,
     this.borderRadius,
   });
+  final double progress; // 0.0 to 1.0
+  final double height;
+  final Color? progressColor;
+  final Color? backgroundColor;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -151,18 +149,15 @@ class LinearProgressWidget extends StatelessWidget {
 
 /// XP Progress bar with level information
 class XpProgressWidget extends StatelessWidget {
+
+  const XpProgressWidget({
+    required this.currentXp, required this.xpForNextLevel, required this.level, super.key,
+    this.title,
+  });
   final int currentXp;
   final int xpForNextLevel;
   final int level;
   final String? title;
-
-  const XpProgressWidget({
-    super.key,
-    required this.currentXp,
-    required this.xpForNextLevel,
-    required this.level,
-    this.title,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -221,16 +216,14 @@ class XpProgressWidget extends StatelessWidget {
 
 /// Streak progress widget
 class StreakProgressWidget extends StatelessWidget {
+
+  const StreakProgressWidget({
+    required this.currentStreak, required this.targetStreak, super.key,
+    this.title,
+  });
   final int currentStreak;
   final int targetStreak;
   final String? title;
-
-  const StreakProgressWidget({
-    super.key,
-    required this.currentStreak,
-    required this.targetStreak,
-    this.title,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +272,6 @@ class StreakProgressWidget extends StatelessWidget {
         const SizedBox(height: 8),
         LinearProgressWidget(
           progress: progress,
-          height: 8,
           progressColor: CupertinoColors.systemOrange,
         ),
       ],

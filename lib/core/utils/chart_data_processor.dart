@@ -13,7 +13,7 @@ class ChartDataProcessor {
     final weekStart = now.subtract(Duration(days: now.weekday - 1));
     final spots = <FlSpot>[];
 
-    for (int i = 0; i < 7; i++) {
+    for (var i = 0; i < 7; i++) {
       final day = weekStart.add(Duration(days: i));
       final dayCompletions = completions.where((completion) {
         final completionDate = completion.completedAt;
@@ -33,11 +33,10 @@ class ChartDataProcessor {
     List<HabitCompletion> completions,
   ) {
     final now = DateTime.now();
-    final monthStart = DateTime(now.year, now.month, 1);
     final daysInMonth = DateTime(now.year, now.month + 1, 0).day;
     final spots = <FlSpot>[];
 
-    for (int i = 1; i <= daysInMonth; i++) {
+    for (var i = 1; i <= daysInMonth; i++) {
       final day = DateTime(now.year, now.month, i);
       final dayCompletions = completions.where((completion) {
         final completionDate = completion.completedAt;
@@ -60,16 +59,18 @@ class ChartDataProcessor {
     final now = DateTime.now();
     final startDate = now.subtract(Duration(days: days));
     final spots = <FlSpot>[];
-    int cumulativeXp = 0;
+    var cumulativeXp = 0;
 
-    for (int i = 0; i < days; i++) {
+    for (var i = 0; i < days; i++) {
       final day = startDate.add(Duration(days: i));
-      final dayXp = completions.where((completion) {
-        final completionDate = completion.completedAt;
-        return completionDate.year == day.year &&
-            completionDate.month == day.month &&
-            completionDate.day == day.day;
-      }).fold<int>(0, (sum, completion) => sum + completion.xpEarned);
+      final dayXp = completions
+          .where((completion) {
+            final completionDate = completion.completedAt;
+            return completionDate.year == day.year &&
+                completionDate.month == day.month &&
+                completionDate.day == day.day;
+          })
+          .fold<int>(0, (sum, completion) => sum + completion.xpEarned);
 
       cumulativeXp += dayXp;
       spots.add(FlSpot(i.toDouble(), cumulativeXp.toDouble()));
@@ -86,9 +87,9 @@ class ChartDataProcessor {
     final now = DateTime.now();
     final startDate = now.subtract(Duration(days: days));
     final spots = <FlSpot>[];
-    int currentStreak = 0;
+    var currentStreak = 0;
 
-    for (int i = 0; i < days; i++) {
+    for (var i = 0; i < days; i++) {
       final day = startDate.add(Duration(days: i));
       final hasCompletion = completions.any((completion) {
         final completionDate = completion.completedAt;
@@ -114,7 +115,10 @@ class ChartDataProcessor {
     Map<String, int> categoryCompletions,
     Map<String, Color> categoryColors,
   ) {
-    final total = categoryCompletions.values.fold<int>(0, (sum, count) => sum + count);
+    final total = categoryCompletions.values.fold<int>(
+      0,
+      (sum, count) => sum + count,
+    );
     if (total == 0) return [];
 
     return categoryCompletions.entries.map((entry) {
@@ -141,7 +145,7 @@ class ChartDataProcessor {
     final weekStart = now.subtract(Duration(days: now.weekday - 1));
     final barGroups = <BarChartGroupData>[];
 
-    for (int i = 0; i < 7; i++) {
+    for (var i = 0; i < 7; i++) {
       final day = weekStart.add(Duration(days: i));
       final dayCompletions = completions.where((completion) {
         final completionDate = completion.completedAt;
@@ -186,7 +190,8 @@ class ChartDataProcessor {
             completionDate.day == current.day;
       }).length;
 
-      heatmapData[DateTime(current.year, current.month, current.day)] = dayCompletions;
+      heatmapData[DateTime(current.year, current.month, current.day)] =
+          dayCompletions;
       current.add(const Duration(days: 1));
     }
 
@@ -194,24 +199,38 @@ class ChartDataProcessor {
   }
 
   /// Get week day labels
-  static List<String> getWeekDayLabels() {
-    return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  }
+  static List<String> getWeekDayLabels() => [
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun',
+  ];
 
   /// Get month labels
-  static List<String> getMonthLabels() {
-    return [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-  }
+  static List<String> getMonthLabels() => [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
 
   /// Calculate completion rate for a period
   static double calculateCompletionRate(
     List<HabitCompletion> completions,
     int totalPossibleCompletions,
   ) {
-    if (totalPossibleCompletions == 0) return 0.0;
+    if (totalPossibleCompletions == 0) return 0;
     return (completions.length / totalPossibleCompletions).clamp(0.0, 1.0);
   }
 
@@ -224,16 +243,11 @@ class ChartDataProcessor {
   }
 
   /// Generate gradient for charts
-  static LinearGradient getChartGradient(Color color) {
-    return LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [
-        color.withOpacity(0.8),
-        color.withOpacity(0.1),
-      ],
-    );
-  }
+  static LinearGradient getChartGradient(Color color) => LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [color.withValues(alpha: 0.8), color.withValues(alpha: 0.1)],
+  );
 
   /// Format chart values for display
   static String formatChartValue(double value) {
@@ -244,39 +258,29 @@ class ChartDataProcessor {
   }
 
   /// Get chart title style
-  static TextStyle getChartTitleStyle() {
-    return const TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-      color: CupertinoColors.label,
-    );
-  }
+  static TextStyle getChartTitleStyle() => const TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: CupertinoColors.label,
+  );
 
   /// Get chart axis label style
-  static TextStyle getChartAxisLabelStyle() {
-    return const TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w400,
-      color: CupertinoColors.secondaryLabel,
-    );
-  }
+  static TextStyle getChartAxisLabelStyle() => const TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    color: CupertinoColors.secondaryLabel,
+  );
 
   /// Get chart grid line style
-  static FlLine getChartGridLine() {
-    return FlLine(
-      color: CupertinoColors.separator,
-      strokeWidth: 0.5,
-    );
-  }
+  static FlLine getChartGridLine() =>
+      const FlLine(color: CupertinoColors.separator, strokeWidth: 0.5);
 
   /// Get chart border style
-  static FlBorderData getChartBorder() {
-    return FlBorderData(
-      show: true,
-      border: const Border(
-        bottom: BorderSide(color: CupertinoColors.separator, width: 0.5),
-        left: BorderSide(color: CupertinoColors.separator, width: 0.5),
-      ),
-    );
-  }
+  static FlBorderData getChartBorder() => FlBorderData(
+    show: true,
+    border: const Border(
+      bottom: BorderSide(color: CupertinoColors.separator, width: 0.5),
+      left: BorderSide(color: CupertinoColors.separator, width: 0.5),
+    ),
+  );
 }

@@ -9,20 +9,19 @@ import '../common/custom_card.dart';
 
 /// Elegant iOS-style card for displaying individual habits
 class HabitCard extends ConsumerWidget {
-  final Habit habit;
-  final VoidCallback? onTap;
-  final VoidCallback? onComplete;
-  final bool isCompleted;
-  final bool showProgress;
 
   const HabitCard({
-    super.key,
-    required this.habit,
+    required this.habit, super.key,
     this.onTap,
     this.onComplete,
     this.isCompleted = false,
     this.showProgress = true,
   });
+  final Habit habit;
+  final VoidCallback? onTap;
+  final VoidCallback? onComplete;
+  final bool isCompleted;
+  final bool showProgress;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -51,8 +50,7 @@ class HabitCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildLeadingSection(Color categoryColor) {
-    return Column(
+  Widget _buildLeadingSection(Color categoryColor) => Column(
       children: [
         // Completion button
         GestureDetector(
@@ -87,10 +85,8 @@ class HabitCard extends ConsumerWidget {
         ),
       ],
     );
-  }
 
-  Widget _buildContentSection(BuildContext context, bool isDarkMode) {
-    return Column(
+  Widget _buildContentSection(BuildContext context, bool isDarkMode) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Habit name
@@ -143,10 +139,8 @@ class HabitCard extends ConsumerWidget {
         ),
       ],
     );
-  }
 
-  Widget _buildTrailingSection(BuildContext context, bool isDarkMode) {
-    return Column(
+  Widget _buildTrailingSection(BuildContext context, bool isDarkMode) => Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         // XP value
@@ -220,10 +214,8 @@ class HabitCard extends ConsumerWidget {
         ],
       ],
     );
-  }
 
-  Widget _buildInfoChip(String text, IconData icon, Color color) {
-    return Container(
+  Widget _buildInfoChip(String text, IconData icon, Color color) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
@@ -246,29 +238,22 @@ class HabitCard extends ConsumerWidget {
         ],
       ),
     );
-  }
 
   Widget _buildDifficultyIndicator() {
     final stars = habit.difficulty.index + 1;
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(3, (index) {
-        return Icon(
+      children: List.generate(3, (index) => Icon(
           index < stars ? CupertinoIcons.star_fill : CupertinoIcons.star,
           color: index < stars
               ? CupertinoColors.systemYellow
               : CupertinoColors.systemGrey4,
           size: 12,
-        );
-      }),
+        )),
     );
   }
 
-  IconData _getCategoryIcon(HabitCategory category) {
-    return category.icon;
-  }
+  IconData _getCategoryIcon(HabitCategory category) => category.icon;
 
-  int _calculateXP() {
-    return (habit.difficulty.xpMultiplier * 10).round();
-  }
+  int _calculateXP() => (habit.difficulty.xpMultiplier * 10).round();
 }

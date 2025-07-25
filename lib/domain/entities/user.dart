@@ -3,20 +3,6 @@ import 'package:flutter/foundation.dart';
 /// Domain entity representing a user
 @immutable
 class User {
-  final String id;
-  final String name;
-  final String? email;
-  final int totalXp;
-  final int level;
-  final DateTime createdAt;
-  final DateTime lastActiveAt;
-  final String? avatarPath;
-  final int coins;
-  final Map<String, dynamic> preferences;
-  final List<String> unlockedAchievements;
-  final int longestStreak;
-  final int currentStreak;
-  final int totalHabitsCompleted;
 
   const User({
     required this.id,
@@ -34,6 +20,20 @@ class User {
     this.currentStreak = 0,
     this.totalHabitsCompleted = 0,
   });
+  final String id;
+  final String name;
+  final String? email;
+  final int totalXp;
+  final int level;
+  final DateTime createdAt;
+  final DateTime lastActiveAt;
+  final String? avatarPath;
+  final int coins;
+  final Map<String, dynamic> preferences;
+  final List<String> unlockedAchievements;
+  final int longestStreak;
+  final int currentStreak;
+  final int totalHabitsCompleted;
 
   User copyWith({
     String? name,

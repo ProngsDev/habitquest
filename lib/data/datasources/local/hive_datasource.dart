@@ -1,10 +1,10 @@
 import 'package:hive/hive.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../models/achievement_model.dart';
 import '../../models/habit_completion_model.dart';
 import '../../models/habit_model.dart';
 import '../../models/user_model.dart';
-import '../../../core/constants/app_constants.dart';
 
 /// Local data source using Hive for offline storage
 class HiveDataSource {
@@ -135,9 +135,7 @@ class HiveDataSource {
     await _achievementsBox.put(achievement.id, achievement);
   }
 
-  Future<AchievementModel?> getAchievementById(String id) async {
-    return _achievementsBox.get(id);
-  }
+  Future<AchievementModel?> getAchievementById(String id) async => _achievementsBox.get(id);
 
   Future<void> deleteAchievement(String id) async {
     await _achievementsBox.delete(id);

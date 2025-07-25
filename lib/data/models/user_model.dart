@@ -5,6 +5,38 @@ part 'user_model.g.dart';
 
 @HiveType(typeId: 2)
 class UserModel extends HiveObject {
+  UserModel({
+    required this.id,
+    required this.name,
+    required this.createdAt,
+    required this.lastActiveAt,
+    this.email,
+    this.totalXp = 0,
+    this.level = 1,
+    this.avatarPath,
+    this.coins = 0,
+    this.preferences = const {},
+    this.unlockedAchievements = const [],
+    this.longestStreak = 0,
+    this.currentStreak = 0,
+    this.totalHabitsCompleted = 0,
+  });
+
+  factory UserModel.create({
+    required String name,
+    String? email,
+    String? avatarPath,
+  }) {
+    final now = DateTime.now();
+    return UserModel(
+      id: const Uuid().v4(),
+      name: name,
+      email: email,
+      createdAt: now,
+      lastActiveAt: now,
+      avatarPath: avatarPath,
+    );
+  }
   @HiveField(0)
   final String id;
 
@@ -47,39 +79,6 @@ class UserModel extends HiveObject {
   @HiveField(13)
   final int totalHabitsCompleted;
 
-  UserModel({
-    required this.id,
-    required this.name,
-    this.email,
-    this.totalXp = 0,
-    this.level = 1,
-    required this.createdAt,
-    required this.lastActiveAt,
-    this.avatarPath,
-    this.coins = 0,
-    this.preferences = const {},
-    this.unlockedAchievements = const [],
-    this.longestStreak = 0,
-    this.currentStreak = 0,
-    this.totalHabitsCompleted = 0,
-  });
-
-  factory UserModel.create({
-    required String name,
-    String? email,
-    String? avatarPath,
-  }) {
-    final now = DateTime.now();
-    return UserModel(
-      id: const Uuid().v4(),
-      name: name,
-      email: email,
-      createdAt: now,
-      lastActiveAt: now,
-      avatarPath: avatarPath,
-    );
-  }
-
   UserModel copyWith({
     String? name,
     String? email,
@@ -93,31 +92,29 @@ class UserModel extends HiveObject {
     int? longestStreak,
     int? currentStreak,
     int? totalHabitsCompleted,
-  }) {
-    return UserModel(
-      id: id,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      totalXp: totalXp ?? this.totalXp,
-      level: level ?? this.level,
-      createdAt: createdAt,
-      lastActiveAt: lastActiveAt ?? this.lastActiveAt,
-      avatarPath: avatarPath ?? this.avatarPath,
-      coins: coins ?? this.coins,
-      preferences: preferences ?? this.preferences,
-      unlockedAchievements: unlockedAchievements ?? this.unlockedAchievements,
-      longestStreak: longestStreak ?? this.longestStreak,
-      currentStreak: currentStreak ?? this.currentStreak,
-      totalHabitsCompleted: totalHabitsCompleted ?? this.totalHabitsCompleted,
-    );
-  }
+  }) => UserModel(
+    id: id,
+    name: name ?? this.name,
+    email: email ?? this.email,
+    totalXp: totalXp ?? this.totalXp,
+    level: level ?? this.level,
+    createdAt: createdAt,
+    lastActiveAt: lastActiveAt ?? this.lastActiveAt,
+    avatarPath: avatarPath ?? this.avatarPath,
+    coins: coins ?? this.coins,
+    preferences: preferences ?? this.preferences,
+    unlockedAchievements: unlockedAchievements ?? this.unlockedAchievements,
+    longestStreak: longestStreak ?? this.longestStreak,
+    currentStreak: currentStreak ?? this.currentStreak,
+    totalHabitsCompleted: totalHabitsCompleted ?? this.totalHabitsCompleted,
+  );
 
   /// Add XP and update level if necessary
   UserModel addXp(int xp) {
     final newTotalXp = totalXp + xp;
     final newLevel = _calculateLevel(newTotalXp);
     final coinsEarned = newLevel > level ? (newLevel - level) * 10 : 0;
-    
+
     return copyWith(
       totalXp: newTotalXp,
       level: newLevel,
@@ -127,31 +124,27 @@ class UserModel extends HiveObject {
   }
 
   /// Update streak information
-  UserModel updateStreak(int newStreak) {
-    return copyWith(
-      currentStreak: newStreak,
-      longestStreak: newStreak > longestStreak ? newStreak : longestStreak,
-      lastActiveAt: DateTime.now(),
-    );
-  }
+  UserModel updateStreak(int newStreak) => copyWith(
+    currentStreak: newStreak,
+    longestStreak: newStreak > longestStreak ? newStreak : longestStreak,
+    lastActiveAt: DateTime.now(),
+  );
 
   /// Add completed habit
-  UserModel addCompletedHabit() {
-    return copyWith(
-      totalHabitsCompleted: totalHabitsCompleted + 1,
-      lastActiveAt: DateTime.now(),
-    );
-  }
+  UserModel addCompletedHabit() => copyWith(
+    totalHabitsCompleted: totalHabitsCompleted + 1,
+    lastActiveAt: DateTime.now(),
+  );
 
   /// Unlock achievement
   UserModel unlockAchievement(String achievementId) {
     if (unlockedAchievements.contains(achievementId)) {
       return this;
     }
-    
+
     final newAchievements = List<String>.from(unlockedAchievements)
       ..add(achievementId);
-    
+
     return copyWith(
       unlockedAchievements: newAchievements,
       coins: coins + 50, // Bonus coins for achievement
@@ -164,22 +157,16 @@ class UserModel extends HiveObject {
     if (coins < amount) {
       throw Exception('Insufficient coins');
     }
-    
-    return copyWith(
-      coins: coins - amount,
-      lastActiveAt: DateTime.now(),
-    );
+
+    return copyWith(coins: coins - amount, lastActiveAt: DateTime.now());
   }
 
   /// Update preference
   UserModel updatePreference(String key, dynamic value) {
     final newPreferences = Map<String, dynamic>.from(preferences);
     newPreferences[key] = value;
-    
-    return copyWith(
-      preferences: newPreferences,
-      lastActiveAt: DateTime.now(),
-    );
+
+    return copyWith(preferences: newPreferences, lastActiveAt: DateTime.now());
   }
 
   /// Calculate level from total XP
@@ -198,16 +185,6 @@ class UserModel extends HiveObject {
   double get levelProgressPercentage => xpProgressInLevel / 100.0;
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is UserModel && other.id == id;
-  }
-
-  @override
-  int get hashCode => id.hashCode;
-
-  @override
-  String toString() {
-    return 'UserModel(id: $id, name: $name, level: $level, totalXp: $totalXp)';
-  }
+  String toString() =>
+      'UserModel(id: $id, name: $name, level: $level, totalXp: $totalXp)';
 }

@@ -140,7 +140,14 @@ lib/
 
 2. **Run tests**
    ```bash
+   # Run unit and widget tests
    flutter test
+
+   # Run integration tests
+   ./integration_test/run_tests.sh
+
+   # Run specific integration test
+   flutter test integration_test/app_test.dart
    ```
 
 3. **Analyze code**

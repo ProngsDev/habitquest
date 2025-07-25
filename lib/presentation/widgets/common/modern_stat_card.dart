@@ -5,6 +5,19 @@ import 'modern_card.dart';
 
 /// Modern stat card with iOS-like design
 class ModernStatCard extends StatefulWidget {
+  const ModernStatCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.iconColor,
+    super.key,
+    this.subtitle,
+    this.backgroundColor,
+    this.onTap,
+    this.showTrend = false,
+    this.trendValue,
+    this.animateOnAppear = true,
+  });
   final String title;
   final String value;
   final String? subtitle;
@@ -15,20 +28,6 @@ class ModernStatCard extends StatefulWidget {
   final bool showTrend;
   final double? trendValue;
   final bool animateOnAppear;
-
-  const ModernStatCard({
-    super.key,
-    required this.title,
-    required this.value,
-    this.subtitle,
-    required this.icon,
-    required this.iconColor,
-    this.backgroundColor,
-    this.onTap,
-    this.showTrend = false,
-    this.trendValue,
-    this.animateOnAppear = true,
-  });
 
   @override
   State<ModernStatCard> createState() => _ModernStatCardState();
@@ -55,21 +54,13 @@ class _ModernStatCardState extends State<ModernStatCard>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutBack,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
   }
 
   void _animateIn() {
@@ -102,14 +93,10 @@ class _ModernStatCardState extends State<ModernStatCard>
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: widget.iconColor.withOpacity(0.1),
+                  color: widget.iconColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  widget.icon,
-                  color: widget.iconColor,
-                  size: 20,
-                ),
+                child: Icon(widget.icon, color: widget.iconColor, size: 20),
               ),
               const Spacer(),
               if (widget.showTrend && widget.trendValue != null)
@@ -151,15 +138,10 @@ class _ModernStatCardState extends State<ModernStatCard>
     if (widget.animateOnAppear) {
       content = AnimatedBuilder(
         animation: _animationController,
-        builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Opacity(
-              opacity: _fadeAnimation.value,
-              child: child,
-            ),
-          );
-        },
+        builder: (context, child) => Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Opacity(opacity: _fadeAnimation.value, child: child),
+        ),
         child: content,
       );
     }
@@ -169,8 +151,7 @@ class _ModernStatCardState extends State<ModernStatCard>
 
   Widget _buildTrendIndicator() {
     final isPositive = widget.trendValue! > 0;
-    final isNegative = widget.trendValue! < 0;
-    
+
     if (widget.trendValue == 0) {
       return const SizedBox.shrink();
     }
@@ -187,9 +168,7 @@ class _ModernStatCardState extends State<ModernStatCard>
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            isPositive
-                ? CupertinoIcons.arrow_up
-                : CupertinoIcons.arrow_down,
+            isPositive ? CupertinoIcons.arrow_up : CupertinoIcons.arrow_down,
             size: 12,
             color: isPositive
                 ? CupertinoColors.systemGreen
@@ -214,6 +193,16 @@ class _ModernStatCardState extends State<ModernStatCard>
 
 /// Modern level card with progress indicator
 class ModernLevelCard extends StatefulWidget {
+  const ModernLevelCard({
+    required this.currentLevel,
+    required this.totalXp,
+    required this.xpInCurrentLevel,
+    required this.xpRequiredForNextLevel,
+    required this.progressPercentage,
+    super.key,
+    this.levelColor,
+    this.animateProgress = true,
+  });
   final int currentLevel;
   final int totalXp;
   final int xpInCurrentLevel;
@@ -221,17 +210,6 @@ class ModernLevelCard extends StatefulWidget {
   final double progressPercentage;
   final Color? levelColor;
   final bool animateProgress;
-
-  const ModernLevelCard({
-    super.key,
-    required this.currentLevel,
-    required this.totalXp,
-    required this.xpInCurrentLevel,
-    required this.xpRequiredForNextLevel,
-    required this.progressPercentage,
-    this.levelColor,
-    this.animateProgress = true,
-  });
 
   @override
   State<ModernLevelCard> createState() => _ModernLevelCardState();
@@ -254,13 +232,13 @@ class _ModernLevelCardState extends State<ModernLevelCard>
       vsync: this,
     );
 
-    _progressAnimation = Tween<double>(
-      begin: 0.0,
-      end: widget.progressPercentage,
-    ).animate(CurvedAnimation(
-      parent: _progressController,
-      curve: Curves.easeOutCubic,
-    ));
+    _progressAnimation = Tween<double>(begin: 0, end: widget.progressPercentage)
+        .animate(
+          CurvedAnimation(
+            parent: _progressController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     if (widget.animateProgress) {
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -275,17 +253,21 @@ class _ModernLevelCardState extends State<ModernLevelCard>
   void didUpdateWidget(ModernLevelCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.progressPercentage != oldWidget.progressPercentage) {
-      _progressAnimation = Tween<double>(
-        begin: oldWidget.progressPercentage,
-        end: widget.progressPercentage,
-      ).animate(CurvedAnimation(
-        parent: _progressController,
-        curve: Curves.easeOutCubic,
-      ));
+      _progressAnimation =
+          Tween<double>(
+            begin: oldWidget.progressPercentage,
+            end: widget.progressPercentage,
+          ).animate(
+            CurvedAnimation(
+              parent: _progressController,
+              curve: Curves.easeOutCubic,
+            ),
+          );
 
       if (widget.animateProgress) {
-        _progressController.reset();
-        _progressController.forward();
+        _progressController
+          ..reset()
+          ..forward();
       }
     }
   }
@@ -314,7 +296,7 @@ class _ModernLevelCardState extends State<ModernLevelCard>
                     end: Alignment.bottomRight,
                     colors: [
                       effectiveLevelColor,
-                      effectiveLevelColor.withOpacity(0.7),
+                      effectiveLevelColor.withValues(alpha: 0.7),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
@@ -397,9 +379,13 @@ class _ModernLevelCardState extends State<ModernLevelCard>
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: AnimatedBuilder(
-                  animation: widget.animateProgress ? _progressAnimation : AlwaysStoppedAnimation(widget.progressPercentage),
+                  animation: widget.animateProgress
+                      ? _progressAnimation
+                      : AlwaysStoppedAnimation(widget.progressPercentage),
                   builder: (context, child) {
-                    final currentProgress = widget.animateProgress ? _progressAnimation.value : widget.progressPercentage;
+                    final currentProgress = widget.animateProgress
+                        ? _progressAnimation.value
+                        : widget.progressPercentage;
                     return FractionallySizedBox(
                       alignment: Alignment.centerLeft,
                       widthFactor: currentProgress.clamp(0.0, 1.0),
@@ -408,7 +394,7 @@ class _ModernLevelCardState extends State<ModernLevelCard>
                           gradient: LinearGradient(
                             colors: [
                               effectiveLevelColor,
-                              effectiveLevelColor.withOpacity(0.8),
+                              effectiveLevelColor.withValues(alpha: 0.8),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(4),

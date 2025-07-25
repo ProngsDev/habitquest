@@ -76,18 +76,17 @@ final userNotifierProvider =
 
 /// User state notifier for managing user operations
 class UserNotifier extends StateNotifier<AsyncValue<User?>> {
-  final UserRepository _repository;
-
   UserNotifier(this._repository) : super(const AsyncValue.loading()) {
     _loadUser();
   }
+  final UserRepository _repository;
 
   /// Load current user
   Future<void> _loadUser() async {
     try {
       final user = await _repository.getCurrentUser();
       state = AsyncValue.data(user);
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -112,7 +111,7 @@ class UserNotifier extends StateNotifier<AsyncValue<User?>> {
 
       await _repository.createUser(user);
       state = AsyncValue.data(user);
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -122,7 +121,7 @@ class UserNotifier extends StateNotifier<AsyncValue<User?>> {
     try {
       await _repository.updateUser(user);
       state = AsyncValue.data(user);
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -135,7 +134,7 @@ class UserNotifier extends StateNotifier<AsyncValue<User?>> {
     try {
       final updatedUser = await _repository.addXpToUser(currentUser.id, xp);
       state = AsyncValue.data(updatedUser);
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -151,7 +150,7 @@ class UserNotifier extends StateNotifier<AsyncValue<User?>> {
         newStreak,
       );
       state = AsyncValue.data(updatedUser);
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -167,7 +166,7 @@ class UserNotifier extends StateNotifier<AsyncValue<User?>> {
         achievementId,
       );
       state = AsyncValue.data(updatedUser);
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -180,7 +179,7 @@ class UserNotifier extends StateNotifier<AsyncValue<User?>> {
     try {
       final updatedUser = await _repository.spendCoins(currentUser.id, amount);
       state = AsyncValue.data(updatedUser);
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -197,7 +196,7 @@ class UserNotifier extends StateNotifier<AsyncValue<User?>> {
         value,
       );
       state = AsyncValue.data(updatedUser);
-    } catch (error, stackTrace) {
+    } on Exception catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
   }

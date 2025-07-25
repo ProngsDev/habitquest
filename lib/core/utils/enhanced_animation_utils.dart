@@ -112,7 +112,7 @@ class EnhancedAnimationUtils {
     double intensity = 0.2,
   }) {
     final animation = Tween<double>(
-      begin: 1.0,
+      begin: 1,
       end: 1.0 + intensity,
     ).animate(CurvedAnimation(parent: controller, curve: Curves.elasticOut));
 
@@ -132,12 +132,8 @@ class EnhancedAnimationUtils {
 
     return AnimatedBuilder(
       animation: animation,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(animation.value, 0),
-          child: child,
-        );
-      },
+      builder: (context, child) =>
+          Transform.translate(offset: Offset(animation.value, 0), child: child),
       child: child,
     );
   }
@@ -173,8 +169,9 @@ class EnhancedAnimationUtils {
 
     // Start the animation with a delay based on index
     Future.delayed(staggerDelay * index, () {
-      if (delayedController.isCompleted || delayedController.isAnimating)
+      if (delayedController.isCompleted || delayedController.isAnimating) {
         return;
+      }
       delayedController.forward();
     });
 
@@ -207,15 +204,13 @@ class EnhancedAnimationUtils {
 
     return AnimatedBuilder(
       animation: controller,
-      builder: (context, child) {
-        return Container(
-          decoration: BoxDecoration(
-            color: colorAnimation.value,
-            borderRadius: borderRadiusAnimation.value,
-          ),
-          child: child,
-        );
-      },
+      builder: (context, child) => DecoratedBox(
+        decoration: BoxDecoration(
+          color: colorAnimation.value,
+          borderRadius: borderRadiusAnimation.value,
+        ),
+        child: child,
+      ),
       child: child,
     );
   }
@@ -228,13 +223,13 @@ class EnhancedAnimationUtils {
     double maxRadius = 100.0,
   }) {
     final radiusAnimation = Tween<double>(
-      begin: 0.0,
+      begin: 0,
       end: maxRadius,
     ).animate(CurvedAnimation(parent: controller, curve: Curves.easeOut));
 
     final opacityAnimation = Tween<double>(
       begin: 0.5,
-      end: 0.0,
+      end: 0,
     ).animate(CurvedAnimation(parent: controller, curve: Curves.easeOut));
 
     return Stack(
@@ -243,16 +238,14 @@ class EnhancedAnimationUtils {
         child,
         AnimatedBuilder(
           animation: controller,
-          builder: (context, child) {
-            return Container(
-              width: radiusAnimation.value * 2,
-              height: radiusAnimation.value * 2,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: rippleColor.withOpacity(opacityAnimation.value),
-              ),
-            );
-          },
+          builder: (context, child) => Container(
+            width: radiusAnimation.value * 2,
+            height: radiusAnimation.value * 2,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: rippleColor.withValues(alpha: opacityAnimation.value),
+            ),
+          ),
         ),
       ],
     );
@@ -264,18 +257,16 @@ class EnhancedAnimationUtils {
     required AnimationController controller,
     TextStyle? style,
     Duration characterDelay = const Duration(milliseconds: 50),
-  }) {
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, child) {
-        final progress = controller.value;
-        final visibleCharacters = (text.length * progress).round();
-        final visibleText = text.substring(0, visibleCharacters);
+  }) => AnimatedBuilder(
+    animation: controller,
+    builder: (context, child) {
+      final progress = controller.value;
+      final visibleCharacters = (text.length * progress).round();
+      final visibleText = text.substring(0, visibleCharacters);
 
-        return Text(visibleText, style: style);
-      },
-    );
-  }
+      return Text(visibleText, style: style);
+    },
+  );
 
   /// Create a progress bar animation
   static Widget createProgressBarAnimation({
@@ -287,31 +278,29 @@ class EnhancedAnimationUtils {
     BorderRadius? borderRadius,
   }) {
     final progressAnimation = Tween<double>(
-      begin: 0.0,
+      begin: 0,
       end: progress,
     ).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
 
     return AnimatedBuilder(
       animation: controller,
-      builder: (context, child) {
-        return Container(
-          height: height,
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: borderRadius ?? BorderRadius.circular(height / 2),
-          ),
-          child: FractionallySizedBox(
-            alignment: Alignment.centerLeft,
-            widthFactor: progressAnimation.value,
-            child: Container(
-              decoration: BoxDecoration(
-                color: progressColor,
-                borderRadius: borderRadius ?? BorderRadius.circular(height / 2),
-              ),
+      builder: (context, child) => Container(
+        height: height,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: borderRadius ?? BorderRadius.circular(height / 2),
+        ),
+        child: FractionallySizedBox(
+          alignment: Alignment.centerLeft,
+          widthFactor: progressAnimation.value,
+          child: Container(
+            decoration: BoxDecoration(
+              color: progressColor,
+              borderRadius: borderRadius ?? BorderRadius.circular(height / 2),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

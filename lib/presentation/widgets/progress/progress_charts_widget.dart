@@ -2,17 +2,14 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../core/utils/chart_data_processor.dart';
-import '../../../core/utils/enhanced_animation_utils.dart';
 import '../../../domain/entities/habit_completion.dart';
 import '../common/custom_card.dart';
-import '../common/modern_card.dart';
-import '../common/modern_header.dart';
 
 /// Widget for displaying progress charts and analytics
 class ProgressChartsWidget extends StatefulWidget {
-  final List<HabitCompletion> completions;
 
-  const ProgressChartsWidget({super.key, required this.completions});
+  const ProgressChartsWidget({required this.completions, super.key});
+  final List<HabitCompletion> completions;
 
   @override
   State<ProgressChartsWidget> createState() => _ProgressChartsWidgetState();
@@ -22,8 +19,7 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
   int _selectedChartIndex = 0;
 
   @override
-  Widget build(BuildContext context) {
-    return CustomCard(
+  Widget build(BuildContext context) => CustomCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -77,7 +73,6 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
         ],
       ),
     );
-  }
 
   Widget _buildSelectedChart() {
     switch (_selectedChartIndex) {
@@ -104,19 +99,17 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
     return LineChart(
       LineChartData(
         gridData: FlGridData(
-          show: true,
           drawVerticalLine: false,
           horizontalInterval: 1,
           getDrawingHorizontalLine: (value) =>
               ChartDataProcessor.getChartGridLine(),
         ),
         titlesData: FlTitlesData(
-          show: true,
           rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
+            
           ),
           topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
+            
           ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
@@ -140,12 +133,10 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
               showTitles: true,
               interval: 1,
               reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                return Text(
+              getTitlesWidget: (value, meta) => Text(
                   ChartDataProcessor.formatChartValue(value),
                   style: ChartDataProcessor.getChartAxisLabelStyle(),
-                );
-              },
+                ),
             ),
           ),
         ),
@@ -165,7 +156,6 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
             ),
             barWidth: 3,
             isStrokeCapRound: true,
-            dotData: const FlDotData(show: true),
             belowBarData: BarAreaData(
               show: true,
               gradient: ChartDataProcessor.getChartGradient(
@@ -190,31 +180,27 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
     return LineChart(
       LineChartData(
         gridData: FlGridData(
-          show: true,
           drawVerticalLine: false,
           horizontalInterval: 1,
           getDrawingHorizontalLine: (value) =>
               ChartDataProcessor.getChartGridLine(),
         ),
         titlesData: FlTitlesData(
-          show: true,
           rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
+            
           ),
           topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
+            
           ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 30,
               interval: 5,
-              getTitlesWidget: (value, meta) {
-                return Text(
+              getTitlesWidget: (value, meta) => Text(
                   value.toInt().toString(),
                   style: ChartDataProcessor.getChartAxisLabelStyle(),
-                );
-              },
+                ),
             ),
           ),
           leftTitles: AxisTitles(
@@ -222,12 +208,10 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
               showTitles: true,
               interval: 1,
               reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                return Text(
+              getTitlesWidget: (value, meta) => Text(
                   ChartDataProcessor.formatChartValue(value),
                   style: ChartDataProcessor.getChartAxisLabelStyle(),
-                );
-              },
+                ),
             ),
           ),
         ),
@@ -273,31 +257,27 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
     return LineChart(
       LineChartData(
         gridData: FlGridData(
-          show: true,
           drawVerticalLine: false,
           horizontalInterval: 100,
           getDrawingHorizontalLine: (value) =>
               ChartDataProcessor.getChartGridLine(),
         ),
         titlesData: FlTitlesData(
-          show: true,
           rightTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
+            
           ),
           topTitles: const AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
+            
           ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 30,
               interval: 5,
-              getTitlesWidget: (value, meta) {
-                return Text(
+              getTitlesWidget: (value, meta) => Text(
                   '${value.toInt()}d',
                   style: ChartDataProcessor.getChartAxisLabelStyle(),
-                );
-              },
+                ),
             ),
           ),
           leftTitles: AxisTitles(
@@ -305,12 +285,10 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
               showTitles: true,
               interval: 100,
               reservedSize: 50,
-              getTitlesWidget: (value, meta) {
-                return Text(
+              getTitlesWidget: (value, meta) => Text(
                   ChartDataProcessor.formatChartValue(value),
                   style: ChartDataProcessor.getChartAxisLabelStyle(),
-                );
-              },
+                ),
             ),
           ),
         ),
@@ -342,8 +320,7 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
     );
   }
 
-  Widget _buildEmptyChart(String message) {
-    return Center(
+  Widget _buildEmptyChart(String message) => Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -364,5 +341,4 @@ class _ProgressChartsWidgetState extends State<ProgressChartsWidget> {
         ],
       ),
     );
-  }
 }

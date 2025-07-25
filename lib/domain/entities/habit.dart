@@ -5,19 +5,6 @@ import '../../core/enums/habit_enums.dart';
 /// Domain entity representing a habit
 @immutable
 class Habit {
-  final String id;
-  final String name;
-  final String description;
-  final HabitCategory category;
-  final HabitDifficulty difficulty;
-  final HabitFrequency frequency;
-  final DateTime createdAt;
-  final DateTime? reminderTime;
-  final bool isActive;
-  final String? iconName;
-  final int colorValue;
-  final int targetCount;
-  final String? unit;
 
   const Habit({
     required this.id,
@@ -34,6 +21,19 @@ class Habit {
     this.targetCount = 1,
     this.unit,
   });
+  final String id;
+  final String name;
+  final String description;
+  final HabitCategory category;
+  final HabitDifficulty difficulty;
+  final HabitFrequency frequency;
+  final DateTime createdAt;
+  final DateTime? reminderTime;
+  final bool isActive;
+  final String? iconName;
+  final int colorValue;
+  final int targetCount;
+  final String? unit;
 
   Habit copyWith({
     String? name,

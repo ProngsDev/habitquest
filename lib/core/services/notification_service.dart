@@ -2,16 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 import '../constants/app_constants.dart';
 
 /// Service for managing local notifications
 class NotificationService {
-  static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
   NotificationService._internal();
+  static final NotificationService _instance = NotificationService._internal();
 
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -27,13 +27,7 @@ class NotificationService {
       tz.initializeTimeZones();
 
       // iOS initialization settings
-      const iosInitializationSettings = DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-        requestCriticalPermission: false,
-        requestProvisionalPermission: false,
-      );
+      const iosInitializationSettings = DarwinInitializationSettings();
 
       // Android initialization settings
       const androidInitializationSettings = AndroidInitializationSettings(
@@ -53,7 +47,7 @@ class NotificationService {
         onDidReceiveNotificationResponse: _onNotificationTapped,
       );
 
-      if (result == true) {
+      if (result ?? false) {
         _isInitialized = true;
 
         // Create notification channel for Android
@@ -63,7 +57,7 @@ class NotificationService {
       }
 
       return result ?? false;
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Failed to initialize notifications: $e');
       return false;
     }
@@ -76,8 +70,6 @@ class NotificationService {
       AppConstants.notificationChannelName,
       description: AppConstants.notificationChannelDescription,
       importance: Importance.high,
-      playSound: true,
-      enableVibration: true,
     );
 
     await _flutterLocalNotificationsPlugin
@@ -90,7 +82,7 @@ class NotificationService {
   /// Handle notification tap
   void _onNotificationTapped(NotificationResponse response) {
     debugPrint('Notification tapped: ${response.payload}');
-    // TODO: Handle navigation based on payload
+    // TODO(dev): Handle navigation based on payload
   }
 
   /// Request notification permissions
@@ -171,15 +163,8 @@ class NotificationService {
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
-          playSound: true,
-          enableVibration: true,
         ),
-        iOS: DarwinNotificationDetails(
-          presentAlert: true,
-          presentBadge: true,
-          presentSound: true,
-          sound: 'default',
-        ),
+        iOS: DarwinNotificationDetails(),
       );
 
       await _flutterLocalNotificationsPlugin.zonedSchedule(
@@ -193,7 +178,7 @@ class NotificationService {
       );
 
       debugPrint('Scheduled notification for $habitName at $scheduledTime');
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Failed to schedule notification: $e');
     }
   }
@@ -205,7 +190,7 @@ class NotificationService {
     try {
       await _flutterLocalNotificationsPlugin.cancel(id);
       debugPrint('Cancelled notification with id: $id');
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Failed to cancel notification: $e');
     }
   }
@@ -217,7 +202,7 @@ class NotificationService {
     try {
       await _flutterLocalNotificationsPlugin.cancelAll();
       debugPrint('Cancelled all notifications');
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Failed to cancel all notifications: $e');
     }
   }
@@ -229,7 +214,7 @@ class NotificationService {
     try {
       return await _flutterLocalNotificationsPlugin
           .pendingNotificationRequests();
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Failed to get pending notifications: $e');
       return [];
     }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -67,19 +68,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     );
 
     // Logo animations
-    _logoScaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+    _logoScaleAnimation = Tween<double>(begin: 0.5, end: 1).animate(
       CurvedAnimation(parent: _logoController, curve: Curves.easeOutBack),
     );
 
     _logoFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(parent: _logoController, curve: Curves.easeOut));
 
     // Title animations
     _titleFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(parent: _titleController, curve: Curves.easeOut));
 
     _titleSlideAnimation =
@@ -88,7 +89,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         );
 
     // Tagline animations
-    _taglineFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _taglineFadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _taglineController, curve: Curves.easeOut),
     );
 
@@ -101,24 +102,24 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         );
 
     // Background animation
-    _backgroundAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _backgroundAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _backgroundController, curve: Curves.easeInOut),
     );
   }
 
-  void _startAnimationSequence() async {
+  Future<void> _startAnimationSequence() async {
     // Start background animation immediately
-    _backgroundController.forward();
+    unawaited(_backgroundController.forward());
 
     // Staggered animation sequence
     await Future<void>.delayed(const Duration(milliseconds: 300));
-    _logoController.forward();
+    unawaited(_logoController.forward());
 
     await Future<void>.delayed(const Duration(milliseconds: 400));
-    _titleController.forward();
+    unawaited(_titleController.forward());
 
     await Future<void>.delayed(const Duration(milliseconds: 200));
-    _taglineController.forward();
+    unawaited(_taglineController.forward());
 
     // Wait for animations to complete, then navigate
     await Future<void>.delayed(const Duration(milliseconds: 1500));
@@ -149,7 +150,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final isDark = brightness == Brightness.dark;
 
     return CupertinoPageScaffold(
-      child: Container(
+      child: DecoratedBox(
         decoration: _buildBackgroundDecoration(isDark),
         child: SafeArea(
           child: Stack(
@@ -184,142 +185,122 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     );
   }
 
-  BoxDecoration _buildBackgroundDecoration(bool isDark) {
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: isDark
-            ? [
-                const Color(0xFF1C1C1E),
-                const Color(0xFF2C2C2E),
-                const Color(0xFF3A3A3C),
-              ]
-            : [
-                const Color(0xFFF2F2F7),
-                const Color(0xFFFFFFFF),
-                const Color(0xFFF2F2F7),
-              ],
+  BoxDecoration _buildBackgroundDecoration(bool isDark) => BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: isDark
+          ? [
+              const Color(0xFF1C1C1E),
+              const Color(0xFF2C2C2E),
+              const Color(0xFF3A3A3C),
+            ]
+          : [
+              const Color(0xFFF2F2F7),
+              const Color(0xFFFFFFFF),
+              const Color(0xFFF2F2F7),
+            ],
+    ),
+  );
+
+  Widget _buildAnimatedBackground(bool isDark) => AnimatedBuilder(
+    animation: _backgroundAnimation,
+    builder: (context, child) => Positioned.fill(
+      child: CustomPaint(
+        painter: _BackgroundPainter(
+          progress: _backgroundAnimation.value,
+          isDark: isDark,
+        ),
       ),
-    );
-  }
+    ),
+  );
 
-  Widget _buildAnimatedBackground(bool isDark) {
-    return AnimatedBuilder(
-      animation: _backgroundAnimation,
-      builder: (context, child) {
-        return Positioned.fill(
-          child: CustomPaint(
-            painter: _BackgroundPainter(
-              progress: _backgroundAnimation.value,
-              isDark: isDark,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildLogoSection(bool isDark) {
-    return AnimatedBuilder(
-      animation: Listenable.merge([_logoScaleAnimation, _logoFadeAnimation]),
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _logoScaleAnimation.value,
-          child: Opacity(
-            opacity: _logoFadeAnimation.value,
-            child: GlassmorphismCard(
-              padding: const EdgeInsets.all(24),
-              blurIntensity: 15,
-              opacity: 0.9,
-              borderRadius: BorderRadius.circular(24),
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppTheme.primaryBlue, AppTheme.primaryPurple],
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(
-                  CupertinoIcons.checkmark_seal_fill,
-                  size: 40,
-                  color: CupertinoColors.white,
-                ),
+  Widget _buildLogoSection(bool isDark) => AnimatedBuilder(
+    animation: Listenable.merge([_logoScaleAnimation, _logoFadeAnimation]),
+    builder: (context, child) => Transform.scale(
+      scale: _logoScaleAnimation.value,
+      child: Opacity(
+        opacity: _logoFadeAnimation.value,
+        child: GlassmorphismCard(
+          padding: const EdgeInsets.all(24),
+          blurIntensity: 15,
+          opacity: 0.9,
+          borderRadius: BorderRadius.circular(24),
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppTheme.primaryBlue, AppTheme.primaryPurple],
               ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Icon(
+              CupertinoIcons.checkmark_seal_fill,
+              size: 40,
+              color: CupertinoColors.white,
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      ),
+    ),
+  );
 
-  Widget _buildTitleSection(bool isDark) {
-    return AnimatedBuilder(
-      animation: Listenable.merge([_titleFadeAnimation, _titleSlideAnimation]),
-      builder: (context, child) {
-        return SlideTransition(
-          position: _titleSlideAnimation,
-          child: FadeTransition(
-            opacity: _titleFadeAnimation,
-            child: GlassmorphismWidget(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              blurIntensity: 12,
-              opacity: 0.8,
-              borderRadius: BorderRadius.circular(16),
-              child: Text(
-                'HabitQuest',
-                style: AppTheme.headingLarge.copyWith(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? CupertinoColors.white : CupertinoColors.black,
-                ),
-              ),
+  Widget _buildTitleSection(bool isDark) => AnimatedBuilder(
+    animation: Listenable.merge([_titleFadeAnimation, _titleSlideAnimation]),
+    builder: (context, child) => SlideTransition(
+      position: _titleSlideAnimation,
+      child: FadeTransition(
+        opacity: _titleFadeAnimation,
+        child: GlassmorphismWidget(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          blurIntensity: 12,
+          borderRadius: BorderRadius.circular(16),
+          child: Text(
+            'HabitQuest',
+            style: AppTheme.headingLarge.copyWith(
+              fontSize: 36,
+              fontWeight: FontWeight.w700,
+              color: isDark ? CupertinoColors.white : CupertinoColors.black,
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      ),
+    ),
+  );
 
-  Widget _buildTaglineSection(bool isDark) {
-    return AnimatedBuilder(
-      animation: Listenable.merge([
-        _taglineFadeAnimation,
-        _taglineSlideAnimation,
-      ]),
-      builder: (context, child) {
-        return SlideTransition(
-          position: _taglineSlideAnimation,
-          child: FadeTransition(
-            opacity: _taglineFadeAnimation,
-            child: Text(
-              'Build Better Habits, Build Better Life',
-              style: AppTheme.bodyLarge.copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: isDark
-                    ? CupertinoColors.systemGrey
-                    : CupertinoColors.systemGrey2,
-              ),
-              textAlign: TextAlign.center,
-            ),
+  Widget _buildTaglineSection(bool isDark) => AnimatedBuilder(
+    animation: Listenable.merge([
+      _taglineFadeAnimation,
+      _taglineSlideAnimation,
+    ]),
+    builder: (context, child) => SlideTransition(
+      position: _taglineSlideAnimation,
+      child: FadeTransition(
+        opacity: _taglineFadeAnimation,
+        child: Text(
+          'Build Better Habits, Build Better Life',
+          style: AppTheme.bodyLarge.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: isDark
+                ? CupertinoColors.systemGrey
+                : CupertinoColors.systemGrey2,
           ),
-        );
-      },
-    );
-  }
+          textAlign: TextAlign.center,
+        ),
+      ),
+    ),
+  );
 }
 
 /// Custom painter for animated background effects
 class _BackgroundPainter extends CustomPainter {
+  _BackgroundPainter({required this.progress, required this.isDark});
   final double progress;
   final bool isDark;
-
-  _BackgroundPainter({required this.progress, required this.isDark});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -384,7 +365,6 @@ class _BackgroundPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _BackgroundPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.isDark != isDark;
-  }
+  bool shouldRepaint(covariant _BackgroundPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.isDark != isDark;
 }

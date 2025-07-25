@@ -4,18 +4,16 @@ import 'package:lottie/lottie.dart';
 
 /// Widget for displaying task completion animations
 class CompletionAnimationWidget extends StatefulWidget {
+
+  const CompletionAnimationWidget({
+    required this.child, required this.isCompleted, super.key,
+    this.onAnimationComplete,
+    this.animationType = CompletionAnimationType.scale,
+  });
   final Widget child;
   final bool isCompleted;
   final VoidCallback? onAnimationComplete;
   final CompletionAnimationType animationType;
-
-  const CompletionAnimationWidget({
-    super.key,
-    required this.child,
-    required this.isCompleted,
-    this.onAnimationComplete,
-    this.animationType = CompletionAnimationType.scale,
-  });
 
   @override
   State<CompletionAnimationWidget> createState() =>
@@ -46,7 +44,7 @@ class _CompletionAnimationWidgetState extends State<CompletionAnimationWidget>
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween<double>(
-          begin: 1.0,
+          begin: 1,
           end: 1.05,
         ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 40, // 40% of animation (80ms) - quick scale up
@@ -54,7 +52,7 @@ class _CompletionAnimationWidgetState extends State<CompletionAnimationWidget>
       TweenSequenceItem(
         tween: Tween<double>(
           begin: 1.05,
-          end: 1.0,
+          end: 1,
         ).chain(CurveTween(curve: Curves.easeOutCubic)),
         weight: 60, // 60% of animation (120ms) - smooth scale down
       ),
@@ -103,19 +101,15 @@ class _CompletionAnimationWidgetState extends State<CompletionAnimationWidget>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return RepaintBoundary(
+  Widget build(BuildContext context) => RepaintBoundary(
       child: AnimatedBuilder(
         animation: _scaleController,
-        builder: (context, child) {
-          return Transform.scale(
+        builder: (context, child) => Transform.scale(
             scale: _scaleAnimation.value,
             child: widget.child,
-          );
-        },
+          ),
       ),
     );
-  }
 }
 
 /// Types of completion animations
@@ -123,16 +117,14 @@ enum CompletionAnimationType { scale, checkmark, bounce }
 
 /// Confetti animation widget for celebrations
 class ConfettiAnimationWidget extends StatefulWidget {
+
+  const ConfettiAnimationWidget({
+    required this.child, required this.shouldPlay, super.key,
+    this.onComplete,
+  });
   final Widget child;
   final bool shouldPlay;
   final VoidCallback? onComplete;
-
-  const ConfettiAnimationWidget({
-    super.key,
-    required this.child,
-    required this.shouldPlay,
-    this.onComplete,
-  });
 
   @override
   State<ConfettiAnimationWidget> createState() =>
@@ -168,8 +160,7 @@ class _ConfettiAnimationWidgetState extends State<ConfettiAnimationWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Stack(
+  Widget build(BuildContext context) => Stack(
       children: [
         widget.child,
         Align(
@@ -177,11 +168,9 @@ class _ConfettiAnimationWidgetState extends State<ConfettiAnimationWidget> {
           child: ConfettiWidget(
             confettiController: _confettiController,
             blastDirection: 1.5708, // radians for downward
-            particleDrag: 0.05,
             emissionFrequency: 0.05,
             numberOfParticles: 50,
             gravity: 0.05,
-            shouldLoop: false,
             colors: const [
               CupertinoColors.systemBlue,
               CupertinoColors.systemGreen,
@@ -194,23 +183,20 @@ class _ConfettiAnimationWidgetState extends State<ConfettiAnimationWidget> {
         ),
       ],
     );
-  }
 }
 
 /// Lottie animation widget for celebrations
 class CelebrationLottieWidget extends StatefulWidget {
+
+  const CelebrationLottieWidget({
+    required this.animationAsset, required this.shouldPlay, super.key,
+    this.onComplete,
+    this.size = 200,
+  });
   final String animationAsset;
   final bool shouldPlay;
   final VoidCallback? onComplete;
   final double size;
-
-  const CelebrationLottieWidget({
-    super.key,
-    required this.animationAsset,
-    required this.shouldPlay,
-    this.onComplete,
-    this.size = 200,
-  });
 
   @override
   State<CelebrationLottieWidget> createState() =>

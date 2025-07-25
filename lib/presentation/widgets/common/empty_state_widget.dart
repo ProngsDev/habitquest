@@ -2,22 +2,20 @@ import 'package:flutter/cupertino.dart';
 
 /// Empty state widget for when there's no data to display
 class EmptyStateWidget extends StatelessWidget {
+
+  const EmptyStateWidget({
+    required this.icon, required this.title, super.key,
+    this.subtitle,
+    this.actionText,
+    this.onAction,
+    this.iconColor,
+  });
   final IconData icon;
   final String title;
   final String? subtitle;
   final String? actionText;
   final VoidCallback? onAction;
   final Color? iconColor;
-
-  const EmptyStateWidget({
-    super.key,
-    required this.icon,
-    required this.title,
-    this.subtitle,
-    this.actionText,
-    this.onAction,
-    this.iconColor,
-  });
 
   @override
   Widget build(BuildContext context) => Center(
@@ -76,12 +74,12 @@ class EmptyStateWidget extends StatelessWidget {
 
 /// Specific empty states for different sections
 class EmptyHabitsWidget extends StatelessWidget {
-  final VoidCallback? onCreateHabit;
 
   const EmptyHabitsWidget({
     super.key,
     this.onCreateHabit,
   });
+  final VoidCallback? onCreateHabit;
 
   @override
   Widget build(BuildContext context) => EmptyStateWidget(
@@ -119,12 +117,11 @@ class EmptyProgressWidget extends StatelessWidget {
 }
 
 class EmptySearchWidget extends StatelessWidget {
-  final String searchQuery;
 
   const EmptySearchWidget({
-    super.key,
-    required this.searchQuery,
+    required this.searchQuery, super.key,
   });
+  final String searchQuery;
 
   @override
   Widget build(BuildContext context) => EmptyStateWidget(
@@ -137,18 +134,17 @@ class EmptySearchWidget extends StatelessWidget {
 
 /// Error state widget
 class ErrorStateWidget extends StatelessWidget {
-  final String title;
-  final String? subtitle;
-  final String? actionText;
-  final VoidCallback? onAction;
 
   const ErrorStateWidget({
-    super.key,
-    required this.title,
+    required this.title, super.key,
     this.subtitle,
     this.actionText,
     this.onAction,
   });
+  final String title;
+  final String? subtitle;
+  final String? actionText;
+  final VoidCallback? onAction;
 
   @override
   Widget build(BuildContext context) => EmptyStateWidget(

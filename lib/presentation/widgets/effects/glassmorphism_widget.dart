@@ -3,19 +3,9 @@ import 'package:flutter/cupertino.dart';
 
 /// Glassmorphism effect widget for modern iOS-like design
 class GlassmorphismWidget extends StatelessWidget {
-  final Widget child;
-  final double blurIntensity;
-  final double opacity;
-  final BorderRadius? borderRadius;
-  final Color? backgroundColor;
-  final List<Color>? gradientColors;
-  final Border? border;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
 
   const GlassmorphismWidget({
-    super.key,
-    required this.child,
+    required this.child, super.key,
     this.blurIntensity = 10.0,
     this.opacity = 0.8,
     this.borderRadius,
@@ -25,6 +15,15 @@ class GlassmorphismWidget extends StatelessWidget {
     this.padding,
     this.margin,
   });
+  final Widget child;
+  final double blurIntensity;
+  final double opacity;
+  final BorderRadius? borderRadius;
+  final Color? backgroundColor;
+  final List<Color>? gradientColors;
+  final Border? border;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
 
   @override
   Widget build(BuildContext context) {
@@ -70,18 +69,26 @@ class GlassmorphismWidget extends StatelessWidget {
     );
   }
 
-  Border _getDefaultBorder(bool isDark) {
-    return Border.all(
+  Border _getDefaultBorder(bool isDark) => Border.all(
       color: isDark
           ? CupertinoColors.white.withValues(alpha: 0.1)
           : CupertinoColors.black.withValues(alpha: 0.05),
-      width: 1,
     );
-  }
 }
 
 /// Glassmorphism card with enhanced styling
 class GlassmorphismCard extends StatelessWidget {
+
+  const GlassmorphismCard({
+    required this.child, super.key,
+    this.onTap,
+    this.blurIntensity = 12.0,
+    this.opacity = 0.85,
+    this.padding,
+    this.margin,
+    this.borderRadius,
+    this.showShadow = true,
+  });
   final Widget child;
   final VoidCallback? onTap;
   final double blurIntensity;
@@ -91,24 +98,12 @@ class GlassmorphismCard extends StatelessWidget {
   final BorderRadius? borderRadius;
   final bool showShadow;
 
-  const GlassmorphismCard({
-    super.key,
-    required this.child,
-    this.onTap,
-    this.blurIntensity = 12.0,
-    this.opacity = 0.85,
-    this.padding,
-    this.margin,
-    this.borderRadius,
-    this.showShadow = true,
-  });
-
   @override
   Widget build(BuildContext context) {
     final brightness = CupertinoTheme.of(context).brightness;
     final isDark = brightness == Brightness.dark;
 
-    Widget content = Container(
+    final Widget content = Container(
       margin: margin,
       decoration: BoxDecoration(
         borderRadius: borderRadius ?? BorderRadius.circular(16),
